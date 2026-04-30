@@ -572,7 +572,119 @@ render_mode blend_add;             // Additive blending
 
 ---
 
-## 9. Common Pitfalls
+## 9. Stencil Buffer Effects (Godot 4.5+)
+
+Godot 4.5 exposes hardware stencil operations on all backends (Vulkan, D3D12, Metal, GLES3). Stencils let you mark pixels during one draw pass and test against those marks in a later pass — enabling portals, X-ray vision through walls, per-object masks, and holes-in-geometry that were impossible without custom CompositorEffect code before 4.5.
+
+### How It Works
+
+The stencil works in two passes:
+1. **Write pass** — marks pixels with a reference value using `stencil_write_mode`
+2. **Read pass** — tests pixels against the written value using `stencil_read_mode`
+
+### Key Render Modes (spatial and canvas_item)
+
+| Render mode keyword | Effect |
+|---------------------|--------|
+| `stencil_write_mode` | Marks stencil during this draw (`write`, `write_inv`, or off) |
+| `stencil_read_mode` | Reads (tests against) the stencil (`read`, `read_inv`, or off) |
+| `stencil_value` | Reference value used for the stencil test (0–255) |
+| `stencil_compare` | Comparison function: `equal`, `not_equal`, `always`, `never`, etc. |
+
+### Example — X-Ray Vision Portal
+
+Pass 1: Mask shader marks where the portal mesh is rendered.
+
+```glsl
+// portal_mask.gdshader
+shader_type spatial;
+render_mode unshaded, stencil_write_mode, stencil_value = 1;
+
+void fragment() {
+    // Write stencil value 1 everywhere the portal mesh appears.
+    // The portal itself can be invisible — just set ALPHA = 0 if needed.
+    ALBEDO = vec3(0.0);
+    ALPHA = 0.0;
+}
+```
+
+Pass 2: X-ray shader only draws where stencil value is 1.
+
+```glsl
+// xray_object.gdshader
+shader_type spatial;
+render_mode unshaded, stencil_read_mode, stencil_compare = equal, stencil_value = 1;
+
+void fragment() {
+    // Only visible inside the portal area.
+    ALBEDO = vec3(0.2, 0.8, 1.0);
+}
+```
+
+In your scene, assign `portal_mask.gdshader` to the portal mesh and `xray_object.gdshader` to the character/object you want to see through walls. Render priority controls draw order (portal mask must render before the x-ray pass).
+
+> **Note:** Stencil render modes are a Godot 4.5+ feature. The exact keyword names were settled at release — consult the [PR #80710](https://github.com/godotengine/godot/pull/80710) for the full list of compare functions and write modes.
+
+> **When to use:** Use stencil effects for portal/window cutouts, selective object highlights, and masking effects. For per-object outlines without stencils, the multi-pass highlight approach in Section 3 is simpler.
+
+C# uses the same shader code and `ShaderMaterial.SetShaderParameter()` API — stencil state is set entirely in the `.gdshader` render modes, not in GDScript/C#.
+
+---
+
+## 10. SMAA Antialiasing (Godot 4.5+)
+
+Sub-pixel Morphological Antialiasing (SMAA 1x) is a built-in post-processing AA mode added in Godot 4.5. It produces sharper, more temporally stable results than FXAA and is less costly than MSAA for deferred-heavy scenes.
+
+### Enabling SMAA
+
+1. Open **Project Settings**
+2. Navigate to **Rendering → Anti Aliasing → Quality**
+3. Set **Screen Space AA** to **SMAA**
+
+SMAA can be combined with MSAA (for geometry edge aliasing) or used standalone. It does not require any shader code changes.
+
+| AA Mode | Sharpness | GPU cost | Ghosting |
+|---------|-----------|----------|----------|
+| Disabled | N/A | None | None |
+| FXAA | Low (blurry) | Very low | Low |
+| **SMAA** | High | Low | Very low |
+| TAA | Medium (slight blur) | Medium | Possible |
+| MSAA 4x | High | High | None |
+
+> **When to use SMAA:** Prefer SMAA over FXAA for most desktop projects — it delivers noticeably sharper text and thin edges with a similar performance profile. Combine SMAA + MSAA 2x for best quality at moderate cost.
+
+This is an editor/export setting only — no runtime API is needed.
+
+---
+
+## 11. Shader Baker — Export-time Pre-compilation (Godot 4.5+)
+
+The Shader Baker pre-compiles all your project's shaders for the target platform at export time rather than at runtime. This eliminates the stutter players experience the first time a new material renders in-game, which is especially severe on macOS/Apple Silicon (Metal) and D3D12 (Windows) where shader translation is expensive.
+
+### Enabling Shader Baker
+
+Shader baking is configured per export preset:
+
+1. Open **Project → Export**
+2. Select (or create) an export preset for your target platform
+3. In the preset options, locate **Shader Baker** and set it to **Enabled**
+4. Export as normal — baked shader cache files are bundled into the export
+
+### What It Does
+
+| Stage | Without Shader Baker | With Shader Baker |
+|-------|----------------------|-------------------|
+| Export | Fast | Slower (compiles shaders) |
+| First material use in game | Stutter (compiles shader on GPU) | Instant (pre-compiled) |
+| Subsequent loads | Cached after first run | Always cached |
+
+> **When to use:** Enable Shader Baker for all release builds targeting desktop (macOS, Windows/D3D12) or mobile. The extra export time is worth the stutter-free player experience. For development builds, leave it off to keep iteration fast.
+
+Shader Baker operates at the Godot export pipeline level — see the **export-pipeline** skill for how to configure export presets.
+
+---
+
+## 12. Common Pitfalls
 
 | Symptom                             | Cause                                             | Fix                                                              |
 |-------------------------------------|----------------------------------------------------|------------------------------------------------------------------|
@@ -587,7 +699,7 @@ render_mode blend_add;             // Additive blending
 
 ---
 
-## 10. Implementation Checklist
+## 13. Implementation Checklist
 
 - [ ] Shader type matches the node type (`canvas_item` for 2D, `spatial` for 3D)
 - [ ] Uniforms use appropriate hints (`hint_range`, `source_color`, `filter_linear_mipmap`)
@@ -598,3 +710,6 @@ render_mode blend_add;             // Additive blending
 - [ ] Animated shader parameters (dissolve, flash) are driven by Tweens or AnimationPlayer, not `_process`
 - [ ] Screen-reading shaders use `hint_screen_texture` on a `sampler2D` uniform (Godot 4.x approach)
 - [ ] Complex shaders are profiled with the Godot profiler to check GPU frame time
+- [ ] Stencil effects use two-pass materials (write pass first, read pass second) with correct render priority (Godot 4.5+)
+- [ ] SMAA is preferred over FXAA for desktop builds (sharper edges, similar cost) — set in Project Settings → Rendering → Anti Aliasing (Godot 4.5+)
+- [ ] Shader Baker is enabled in all release export presets to eliminate first-use compilation stutters (Godot 4.5+)

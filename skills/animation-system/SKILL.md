@@ -557,6 +557,133 @@ public partial class LookAtExample : CharacterBody3D
 }
 ```
 
+### BoneConstraint3D Modifiers (Godot 4.5+)
+
+Godot 4.5 introduces `BoneConstraint3D` — a new base class for skeleton modifiers that operate relative to another bone rather than a world-space target. Three concrete subclasses ship with 4.5:
+
+| Modifier | What it does |
+|----------|-------------|
+| `AimModifier3D` | Rotates a bone to aim along its primary axis toward a reference bone |
+| `CopyTransformModifier3D` | Copies position/rotation/scale from one bone to another (useful for mirroring or binding secondary rigs) |
+| `ConvertTransformModifier3D` | Converts between transform spaces — translates, rotates, or scales a bone based on another bone's transform, with remapping |
+
+These complement `LookAtModifier3D` (which targets a world-space `Node3D`). Use `AimModifier3D` when the aim target is itself a bone on the same skeleton.
+
+**Scene structure:**
+
+```
+Character (CharacterBody3D)
+└── Skeleton3D
+    ├── AimModifier3D         ← child of Skeleton3D
+    └── CopyTransformModifier3D
+```
+
+**AimModifier3D — bone-to-bone aiming:**
+
+```gdscript
+@onready var skeleton: Skeleton3D = $Skeleton3D
+
+func _ready() -> void:
+    var aim := AimModifier3D.new()
+    skeleton.add_child(aim)
+    aim.bone_name = "RightArm"           # bone that aims
+    aim.target_bone_name = "RightHand"   # bone it aims toward
+    aim.primary_rotation_axis = Vector3.RIGHT  # axis to rotate around
+
+    # Limit how far the bone can rotate
+    aim.use_angle_limitation = true
+    aim.symmetry_limitation = deg_to_rad(90.0)
+```
+
+```csharp
+public override void _Ready()
+{
+    var skeleton = GetNode<Skeleton3D>("Skeleton3D");
+    var aim = new AimModifier3D();
+    skeleton.AddChild(aim);
+    aim.BoneName = "RightArm";
+    aim.TargetBoneName = "RightHand";
+    aim.PrimaryRotationAxis = Vector3.Right;
+    aim.UseAngleLimitation = true;
+    aim.SymmetryLimitation = Mathf.DegToRad(90f);
+}
+```
+
+**CopyTransformModifier3D — mirror/bind bones:**
+
+```gdscript
+func _ready() -> void:
+    var copy := CopyTransformModifier3D.new()
+    skeleton.add_child(copy)
+    copy.bone_name = "LeftArm"        # bone receiving the transform
+    copy.source_bone_name = "RightArm"  # bone being copied
+    copy.copy_position = false
+    copy.copy_rotation = true
+    copy.copy_scale = false
+```
+
+```csharp
+var copy = new CopyTransformModifier3D();
+skeleton.AddChild(copy);
+copy.BoneName = "LeftArm";
+copy.SourceBoneName = "RightArm";
+copy.CopyPosition = false;
+copy.CopyRotation = true;
+copy.CopyScale = false;
+```
+
+> **Note:** API property names were finalized at Godot 4.5 release. If property names differ in your Godot version, verify via the built-in Inspector on the modifier node. See [PR #100984](https://github.com/godotengine/godot/pull/100984) for the authoritative property list.
+
+> **When to use:** Prefer `BoneConstraint3D` subclasses over manual bone transform manipulation in `_process()` — they integrate with the modifier pipeline and respect the animation blend stack.
+
+### IKModifier3D — Full Skeletal IK (Godot 4.6+)
+
+Godot 4.6 adds `IKModifier3D`, a new base class for skeletal inverse kinematics solvers, with eight subclasses covering the most common IK algorithms. These are `SkeletonModifier3D` children of `Skeleton3D` and work alongside other modifiers (e.g., `LookAtModifier3D`).
+
+| Subclass | Algorithm | Best For |
+|----------|-----------|----------|
+| `CCDIK3D` | Cyclic Coordinate Descent | Arms, tentacles, simple chains |
+| `FABRIK3D` | Forward And Backward Reaching IK | Natural-looking limb reach |
+| `JacobianIK3D` | Jacobian / pseudo-inverse | Overdetermined rigs, robotic arms |
+| `TwoBoneIK3D` | Analytical two-bone solver | Legs, arms (fast and exact) |
+| (and 4 further subclasses) | Various | See 4.6 release notes |
+
+**Basic setup — FABRIK arm IK:**
+
+```
+Character (CharacterBody3D)
+└── Skeleton3D
+    └── FABRIK3D
+        (bone_chain = ["Shoulder", "Elbow", "Wrist"])
+```
+
+```gdscript
+@onready var skeleton: Skeleton3D = $Skeleton3D
+
+func _ready() -> void:
+    var ik := FABRIK3D.new()
+    skeleton.add_child(ik)
+    # Define the bone chain from root to tip
+    ik.bone_chain = PackedStringArray(["Shoulder", "Elbow", "Wrist"])
+    # Set the IK target — a Node3D in the scene
+    ik.target_node = $"../IKTarget"
+```
+
+```csharp
+public override void _Ready()
+{
+    var skeleton = GetNode<Skeleton3D>("Skeleton3D");
+    var ik = new FABRIK3D();
+    skeleton.AddChild(ik);
+    ik.BoneChain = new string[] { "Shoulder", "Elbow", "Wrist" };
+    ik.TargetNode = GetNode("../IKTarget").GetPath();
+}
+```
+
+> **Note:** `IKModifier3D` was introduced in Godot 4.6 beta 1 and is still being finalized. Property names and subclass count may change before the stable release. Use the built-in Inspector for the current API, and see the [4.6 release announcement](https://godotengine.org/article/dev-snapshot-godot-4-6-beta-1/) for details.
+
+> **When to use:** `IKModifier3D` subclasses replace custom IK scripts and third-party IK plugins. Use `TwoBoneIK3D` for leg/arm IK (fastest, exact), `FABRIK3D` for longer chains and natural-looking reach, `CCDIK3D` for tentacles or tails.
+
 ### SpringBoneSimulator3D (Godot 4.4+)
 
 Simulates spring physics on bones — hair, capes, tails, antennas bounce and sway procedurally.
@@ -743,3 +870,5 @@ func shake(intensity: float = 5.0, duration: float = 0.2) -> void:
 - [ ] Head/eye tracking uses `LookAtModifier3D` instead of manual bone rotation (Godot 4.4+)
 - [ ] Hair, capes, and tails use `SpringBoneSimulator3D` instead of custom physics scripts (Godot 4.4+)
 - [ ] Shared animation libraries use retargeting with `SkeletonProfileHumanoid` (Godot 4.3+)
+- [ ] Bone-to-bone aim/copy constraints use `AimModifier3D` / `CopyTransformModifier3D` instead of manual bone transform code (Godot 4.5+)
+- [ ] Arm/leg IK uses `IKModifier3D` subclasses (`TwoBoneIK3D` for two-bone limbs, `FABRIK3D` for longer chains) rather than custom IK scripts (Godot 4.6+)

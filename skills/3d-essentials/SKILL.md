@@ -355,6 +355,43 @@ Configure these on the Environment resource — no shader code needed:
 | Adjustments | Brightness, contrast, saturation, color correction | All          |
 | Auto Exposure | Adaptive exposure (via CameraAttributes) | Forward+, Mobile     |
 
+### Glow Pipeline and AgX Controls (Godot 4.6+)
+
+Godot 4.6 changes the order of the post-processing pipeline: **Glow now runs before tonemapping** (previously it ran after). This is physically more correct — glow should operate on HDR values before they are tone-mapped to LDR. The result is that bright emissive surfaces produce more natural-looking bloom.
+
+**Upgrade impact:** Projects upgrading from 4.5 to 4.6 may notice a visible change in glow appearance. If your glow looks more intense or differently colored after upgrading, re-tune `glow_intensity`, `glow_bloom`, and `glow_hdr_threshold` on your Environment resource.
+
+Godot 4.6 also adds two new controls to the **AgX** tonemapper:
+
+| Property | Description |
+|----------|-------------|
+| `tonemap_white` | White point — the luminance at which the scene clips to pure white |
+| `tonemap_contrast` | Contrast of the AgX sigmoid curve |
+
+```gdscript
+var env: Environment = $WorldEnvironment.environment
+env.tonemap_mode = Environment.TONE_MAP_AGX
+# New AgX controls (Godot 4.6+)
+env.tonemap_white = 1.0       # default; increase for brighter highlights
+env.tonemap_contrast = 1.0    # default; increase for more contrast
+```
+
+```csharp
+var env = GetNode<WorldEnvironment>("WorldEnvironment").Environment;
+env.TonemapMode = Godot.Environment.ToneMapper.Agx;
+// New AgX controls (Godot 4.6+)
+env.TonemapWhite = 1.0f;
+env.TonemapContrast = 1.0f;
+```
+
+> **When to use AgX:** AgX maintains hue as brightness increases, which avoids the "neon burn" artefact common with ACES on saturated emissives. The new `white` and `contrast` controls let you match a specific look reference.
+
+### Screen-Space Reflections — Quality Upgrade (Godot 4.6+)
+
+SSR in Godot 4.6 has been redesigned for higher quality at reduced GPU cost. The WorldEnvironment SSR settings (`ssr_enabled`, `ssr_max_steps`, `ssr_fade_in`, `ssr_fade_out`, `ssr_depth_tolerance`) remain unchanged — the improvement is automatic for all existing projects that upgrade to 4.6.
+
+If you previously disabled SSR due to performance concerns, it is worth re-enabling after upgrading to 4.6 and re-profiling.
+
 ---
 
 ## 5. Global Illumination
@@ -424,6 +461,63 @@ env.SdfgiEnabled = true;
 env.SdfgiCascades = 4;
 env.SdfgiUseOcclusion = true;
 ```
+
+### Specular Occlusion from Ambient Light (Godot 4.5+)
+
+Godot 4.5 automatically computes specular occlusion from the ambient light probe when baked global illumination (SDFGI, VoxelGI, or LightmapGI) is active. This prevents unrealistically bright specular highlights in areas that receive little or no indirect light — a common artifact when GI and specular are not coordinated.
+
+No API change is required. The improvement is automatic whenever a GI method that bakes an irradiance probe is enabled:
+
+| GI Method | Specular Occlusion |
+|-----------|-------------------|
+| None / ambient color only | No specular occlusion |
+| ReflectionProbe | No specular occlusion |
+| **LightmapGI** | Automatic (Godot 4.5+) |
+| **VoxelGI** | Automatic (Godot 4.5+) |
+| **SDFGI** | Automatic (Godot 4.5+) |
+
+> **When to use:** If your scene uses LightmapGI, VoxelGI, or SDFGI and has metallic or low-roughness surfaces, upgrade to 4.5 and re-bake to see improved specular quality in occluded areas (under eaves, inside crevices, in corners).
+
+C# uses the same GI API — specular occlusion is renderer-driven and requires no code change.
+
+### Bent Normal Maps (Godot 4.5+)
+
+Bent normal maps encode the mean unoccluded direction from each texel — the average direction toward open sky across the hemisphere. When assigned to the **Bent Normal** slot on `StandardMaterial3D`, Godot uses this information to improve indirect lighting directionality and specular occlusion accuracy. The result is more realistic ambient lighting on complex surfaces like cloth, carved stone, or organic shapes.
+
+**Inspector setup:**
+
+1. In `StandardMaterial3D`, enable **Bent Normal** → assign your bent normal texture
+2. The texture should be in tangent space (standard baked format from Marmoset, Substance, or xNormal)
+
+```gdscript
+@onready var mesh: MeshInstance3D = $MeshInstance3D
+
+func _ready() -> void:
+    var mat := mesh.get_surface_override_material(0) as StandardMaterial3D
+    if mat == null:
+        mat = StandardMaterial3D.new()
+    mat.bent_normal_enabled = true
+    mat.bent_normal_texture = preload("res://textures/rock_bent_normal.png")
+    mesh.set_surface_override_material(0, mat)
+```
+
+```csharp
+private MeshInstance3D _mesh;
+
+public override void _Ready()
+{
+    _mesh = GetNode<MeshInstance3D>("MeshInstance3D");
+    var mat = _mesh.GetSurfaceOverrideMaterial(0) as StandardMaterial3D
+        ?? new StandardMaterial3D();
+    mat.BentNormalEnabled = true;
+    mat.BentNormalTexture = GD.Load<Texture2D>("res://textures/rock_bent_normal.png");
+    _mesh.SetSurfaceOverrideMaterial(0, mat);
+}
+```
+
+> **Note:** Bent normal maps have the most visible impact on materials that combine low roughness or high metallic values with baked GI. On fully rough dielectric surfaces the benefit is subtler.
+
+> **When to use:** Use bent normals on hero assets (characters, key props) where you have the budget to bake them. Skip them on background geometry.
 
 ---
 
@@ -773,3 +867,7 @@ Choose in **Project Settings > Rendering > Renderer > Rendering Method**.
 - [ ] Occlusion culling is enabled and baked for scenes with heavy occlusion (indoor, urban)
 - [ ] MultiMeshInstance3D is used for instanced geometry (grass, trees, props) instead of individual nodes
 - [ ] Renderer matches target platform (Forward+ desktop, Mobile mobile, Compatibility web)
+- [ ] Projects using LightmapGI/VoxelGI/SDFGI take advantage of automatic specular occlusion by upgrading to Godot 4.5+ (no API change required)
+- [ ] Hero assets with complex surface detail use bent normal maps in the StandardMaterial3D Bent Normal slot for improved indirect lighting (Godot 4.5+)
+- [ ] After upgrading to Godot 4.6, glow settings are re-tuned if appearance has changed (glow now runs before tonemapping)
+- [ ] AgX `tonemap_white` and `tonemap_contrast` are adjusted when using AgX tonemapper for precise look control (Godot 4.6+)
