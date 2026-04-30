@@ -12,7 +12,7 @@ Inspired by and built on top of the [Superpowers](https://github.com/obra/superp
 
 GodotPrompter is a plugin that provides **skills** — structured domain knowledge that AI agents load on demand. When you ask your agent to "add a state machine" or "set up multiplayer", it loads the relevant GodotPrompter skill and follows Godot-specific best practices instead of relying on generic knowledge.
 
-**44 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, optimization, and C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples.
+**44 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, optimization, and C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
 
 ## Quick Start
 
@@ -117,13 +117,15 @@ Ask for a code review. The agent loads `godot-code-review` and checks against Go
 
 ### Agents
 
-GodotPrompter includes 3 specialized agents:
+GodotPrompter includes 5 specialized agents:
 
 | Agent | Purpose |
 |-------|---------|
 | **godot-game-architect** | Designs systems, plans scene trees, chooses patterns |
 | **godot-game-dev** | Implements features guided by skills |
 | **godot-code-reviewer** | Reviews code against Godot best practices |
+| **godot-shader-author** | Authors custom shaders, post-processing, Compositor effects |
+| **godot-performance-profiler** | Diagnoses performance issues from profiler data |
 
 ## Supported Platforms
 
