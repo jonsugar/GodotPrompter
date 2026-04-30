@@ -5,6 +5,8 @@ description: Bootstrap skill — establishes how to find and use GodotPrompter s
 
 # Using GodotPrompter
 
+> **Related skills:** **godot-project-setup** for scaffolding a new project, **godot-brainstorming** for design exploration, **godot-code-review** for reviewing finished code, **godot-debugging** for diagnosing runtime issues.
+
 GodotPrompter provides Godot 4.x domain-specific skills for AI coding agents. Skills cover project setup, architecture patterns, gameplay systems, UI, multiplayer, testing, and deployment — for both GDScript and C#.
 
 ## How to Access Skills
@@ -150,3 +152,15 @@ Skills use Claude Code tool names as the canonical reference. Non-Claude platfor
 
 ### Math & Data
 - `math-essentials` — Vectors, transforms, interpolation, curves, paths, RNG
+
+---
+
+## Implementation Checklist
+
+- [ ] Read this bootstrap skill before starting any Godot-related work in a session
+- [ ] Identify the matching domain skill via the table above before writing any system code
+- [ ] Invoke the identified skill with the `Skill` tool (or your platform's equivalent) before implementation
+- [ ] If using a workflow plugin (Superpowers, etc.), still invoke the relevant godot-prompter domain skill during implementation — they are complementary, not exclusive
+- [ ] For new projects, load `godot-prompter:godot-project-setup` before writing any code
+- [ ] For system design, load `godot-prompter:godot-brainstorming` to explore trade-offs before committing to a pattern
+- [ ] After implementation, load `godot-prompter:godot-code-review` to validate against Godot best practices

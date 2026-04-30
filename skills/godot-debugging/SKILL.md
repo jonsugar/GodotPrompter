@@ -736,3 +736,18 @@ public void TakeDamage_DoesNotGoBelowZero_Regression()
     AssertThat(_health.CurrentHealth).IsEqual(0);
 }
 ```
+
+---
+
+## Implementation Checklist
+
+- [ ] Use `print_debug()` for verbose frame-level output that must not appear in release builds
+- [ ] Use `push_error()` / `push_warning()` (not `print()`) for invalid state and recoverable problems — they include stack traces
+- [ ] Set a breakpoint with `F9` or the `breakpoint` statement to pause execution rather than sprinkling prints
+- [ ] Check signal connections with `get_signal_connection_list()` before assuming a signal is wired correctly
+- [ ] Inspect the live scene tree with **Scene → Remote** during a debug session to verify runtime node state
+- [ ] Open **Debugger → Profiler** to measure Self time before optimizing — identify the real bottleneck first
+- [ ] Watch **Debugger → Monitors** for growing Object Count or Video RAM that indicate a leak
+- [ ] Use `is_instance_valid()` to guard any code that runs after an `await` in case the node was freed during the wait
+- [ ] Follow the Reproduce → Isolate → Hypothesize → Trace → Fix → Verify → Test order; do not skip ahead to a fix
+- [ ] Write a named regression test after fixing a bug so the same failure cannot silently recur
