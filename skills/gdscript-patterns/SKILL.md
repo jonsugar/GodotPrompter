@@ -9,6 +9,8 @@ All examples target Godot 4.3+ with no deprecated APIs.
 
 > **Related skills:** **godot-code-review** for style rules and anti-patterns, **csharp-godot** for GDScript-to-C# translation, **state-machine** for state patterns, **event-bus** for signal architecture.
 
+> **Note:** This skill is GDScript-specific by design. For C# patterns, see **csharp-godot** and **csharp-signals**.
+
 ---
 
 ## 1. Static Typing
