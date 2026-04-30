@@ -622,6 +622,121 @@ var health: int = 100:
 
 ---
 
+---
+
+## 12. Variadic Functions (Godot 4.5+)
+
+Godot 4.5 adds variadic function support to GDScript. Append `...` before the last parameter name to collect all trailing arguments passed at the call site into an `Array`. This replaces patterns that required callers to pass an explicit array literal.
+
+> **Note:** This skill is GDScript-specific by design. For C# patterns, see **csharp-godot** and **csharp-signals**.
+
+```gdscript
+# The ...args parameter collects any number of trailing arguments as an Array.
+func log_message(level: String, ...args: Array) -> void:
+    var text := " ".join(args.map(func(a) -> String: return str(a)))
+    print("[%s] %s" % [level, text])
+
+# Call with any number of trailing arguments — no array literal needed.
+log_message("INFO", "Player", "joined", "the", "game")
+log_message("WARN", "Health low:", current_health)
+
+
+# Variadic math helper
+func sum(...values: Array) -> float:
+    var total := 0.0
+    for v in values:
+        total += float(v)
+    return total
+
+print(sum(1, 2, 3, 4, 5))  # 15.0
+
+
+# Combine required parameters with variadic trailing args
+func spawn_enemies(scene: PackedScene, ...positions: Array) -> void:
+    for pos in positions:
+        var enemy: Node2D = scene.instantiate()
+        enemy.global_position = pos
+        add_child(enemy)
+
+spawn_enemies(enemy_scene,
+    Vector2(100, 200),
+    Vector2(300, 200),
+    Vector2(500, 200),
+)
+```
+
+> **Rules:** The variadic parameter must be the **last** parameter. It always arrives as a plain `Array` (not typed). A function may have at most one variadic parameter.
+
+---
+
+## 13. Abstract Classes and Methods (Godot 4.5+)
+
+The `@abstract` annotation prevents a class from being instantiated directly and forces subclasses to implement any method annotated with `@abstract`. This is the GDScript equivalent of C#'s `abstract` keyword.
+
+> **Note:** This skill is GDScript-specific by design. For C# patterns, see **csharp-godot** and **csharp-signals**.
+
+```gdscript
+# base_enemy.gd — abstract base class; cannot be instantiated directly
+class_name BaseEnemy
+extends CharacterBody2D
+
+@abstract
+
+## Subclasses must implement this to define their attack behavior.
+@abstract func perform_attack() -> void
+
+## Subclasses must implement this to return their display name.
+@abstract func get_display_name() -> String
+
+# Non-abstract methods are fine — they provide shared behavior.
+func take_damage(amount: int) -> void:
+    health -= amount
+    if health <= 0:
+        die()
+
+func die() -> void:
+    print(get_display_name(), " has died")
+    queue_free()
+
+var health: int = 100
+```
+
+```gdscript
+# melee_enemy.gd — concrete subclass
+class_name MeleeEnemy
+extends BaseEnemy
+
+func perform_attack() -> void:
+    $HitboxArea.monitoring = true
+    await get_tree().create_timer(0.2).timeout
+    $HitboxArea.monitoring = false
+
+func get_display_name() -> String:
+    return "Melee Enemy"
+```
+
+```gdscript
+# ranged_enemy.gd — another concrete subclass
+class_name RangedEnemy
+extends BaseEnemy
+
+@export var projectile_scene: PackedScene
+
+func perform_attack() -> void:
+    var proj: Node2D = projectile_scene.instantiate()
+    proj.global_position = global_position
+    get_tree().root.add_child(proj)
+
+func get_display_name() -> String:
+    return "Ranged Enemy"
+```
+
+> **Instantiation guard:** GDScript raises an error at runtime if you call `BaseEnemy.new()` directly. The `@abstract` annotation on the class is the guard — no constructor override needed.
+
+> **Partial abstraction:** Only the methods annotated `@abstract` are required by subclasses. A class can be `@abstract` without any abstract methods (to signal "don't instantiate this directly") or can have abstract methods without the class-level annotation (each method still enforces implementation).
+
+---
+
 ## 11. Implementation Checklist
 
 - [ ] All variables, parameters, and return types have explicit type hints
@@ -635,3 +750,5 @@ var health: int = 100:
 - [ ] `is` type check precedes `as` cast when the type isn't guaranteed
 - [ ] Properties with setters validate and clamp values
 - [ ] Overridden virtual methods call `super()` when extending non-built-in base classes
+- [ ] Variadic functions (`...args`) used when the number of trailing arguments is open-ended (Godot 4.5+)
+- [ ] Base classes that must not be instantiated use `@abstract`; required methods use `@abstract func` (Godot 4.5+)

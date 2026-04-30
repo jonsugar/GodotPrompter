@@ -1090,7 +1090,42 @@ public partial class ChaseAttackEnemy : CharacterBody2D
 
 ---
 
-## 8. Common Pitfalls
+## 8. Dedicated 2D Navigation Server (Godot 4.5+)
+
+Prior to Godot 4.5, `NavigationServer2D` was a thin frontend that delegated all work to the 3D navigation server internally. Godot 4.5 splits them into fully independent servers. The change is **transparent** — no API changes and no code migration is required — but it brings two practical benefits:
+
+- **Performance:** 2D pathfinding no longer competes with 3D navigation for server resources. Large 2D scenes with many agents see lower CPU overhead.
+- **Smaller exports for 2D-only games:** The 3D navigation server can be stripped from 2D-only export templates, reducing binary size.
+
+```gdscript
+# No code change needed — NavigationServer2D calls work identically.
+# The split is internal; you continue using NavigationServer2D as before.
+
+# Example: query a path directly via the server (unchanged API).
+func get_path_to(target: Vector2) -> PackedVector2Array:
+    var map: RID = get_world_2d().get_navigation_map()
+    return NavigationServer2D.map_get_path(
+        map,
+        global_position,
+        target,
+        true  # optimize path
+    )
+```
+
+```csharp
+// No code change needed — NavigationServer2D calls work identically.
+public PackedVector2Array GetPathTo(Vector2 target)
+{
+    var map = GetWorld2D().GetNavigationMap();
+    return NavigationServer2D.MapGetPath(map, GlobalPosition, target, true);
+}
+```
+
+> **2D-only projects:** In **Project Settings → Modules**, you can disable the `NavigationServer3D` module to reduce export size. This is only safe if no 3D navigation nodes (`NavigationRegion3D`, `NavigationAgent3D`) are used anywhere in the project.
+
+---
+
+## 9. Common Pitfalls
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
@@ -1105,7 +1140,7 @@ public partial class ChaseAttackEnemy : CharacterBody2D
 
 ---
 
-## 9. Checklist
+## 10. Checklist
 
 - [ ] NavigationRegion2D/3D added to the scene with a NavigationPolygon/NavigationMesh resource
 - [ ] Navigation mesh baked (edit-time or at runtime before the agent needs a path)
@@ -1118,3 +1153,4 @@ public partial class ChaseAttackEnemy : CharacterBody2D
 - [ ] `agent_radius` small enough to fit through the narrowest passage in the level
 - [ ] Gravity applied independently of horizontal nav velocity (3D only)
 - [ ] Large or dynamic maps use async baking (`bake_navigation_mesh(true)`) to avoid frame drops (Godot 4.4+)
+- [ ] 2D-only projects on Godot 4.5+ can disable `NavigationServer3D` in Project Settings to reduce export size

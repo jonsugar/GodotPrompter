@@ -638,7 +638,9 @@ public override void _PhysicsProcess(double delta)
 
 ## 8. Jolt Physics
 
-Jolt is a built-in alternative physics engine available since Godot 4.4. It is the **default for new 3D projects** starting in 4.4.
+Jolt is a built-in alternative physics engine available since Godot 4.4. It is the **default for new 3D projects** starting in 4.4. **(Godot 4.6+)** Jolt is no longer marked experimental and is the confirmed stable default for all new 3D projects.
+
+> **Note:** Godot 4.6 is in beta; verify behavior on stable release.
 
 ### Enabling Jolt
 
@@ -677,6 +679,8 @@ If migrating from the Godot Jolt extension (now maintenance mode), project setti
 ## 9. Physics Interpolation
 
 Physics interpolation smooths visual motion between physics ticks, eliminating "staircase" jitter when physics tick rate differs from frame rate.
+
+**(Godot 4.5+)** The 3D interpolation system was fully restructured in Godot 4.5: processing moved from `RenderingServer` to `SceneTree`, making behavior more accurate (particularly for complex scene hierarchies and nested transforms). There is no breaking API change — existing code using `reset_physics_interpolation()` and `physics_interpolation_mode` continues to work unchanged, but visual results improve automatically on 4.5.
 
 ### Enabling
 
@@ -847,7 +851,55 @@ Physics interpolation does NOT affect SoftBody3D rendering. If soft bodies look 
 
 ---
 
-## 12. Troubleshooting Physics Issues
+## 12. SoftBody3D Forces and Impulses (Godot 4.5+)
+
+Godot 4.5 adds `apply_central_impulse()` and `apply_central_force()` to `SoftBody3D`, making it possible to push or propel soft bodies from code in the same style as `RigidBody3D`. Forces distribute across all simulation points automatically, so a single call produces a convincing whole-body response.
+
+```gdscript
+extends SoftBody3D
+
+func _ready() -> void:
+    # Jolt Physics is recommended for SoftBody3D simulation.
+    pass
+
+# Apply a one-time impulse (e.g. explosion knockback).
+func explode_outward(force_magnitude: float, source_position: Vector3) -> void:
+    var direction: Vector3 = (global_position - source_position).normalized()
+    apply_central_impulse(direction * force_magnitude)
+
+# Apply a continuous force while called from _physics_process (e.g. wind).
+func apply_wind(wind_direction: Vector3, wind_strength: float) -> void:
+    apply_central_force(wind_direction * wind_strength)
+```
+
+```csharp
+public partial class ClothBody : SoftBody3D
+{
+    // Apply a one-time impulse (e.g. explosion knockback).
+    public void ExplodeOutward(float forceMagnitude, Vector3 sourcePosition)
+    {
+        Vector3 direction = (GlobalPosition - sourcePosition).Normalized();
+        ApplyCentralImpulse(direction * forceMagnitude);
+    }
+
+    // Apply a continuous force while called from _PhysicsProcess (e.g. wind).
+    public void ApplyWind(Vector3 windDirection, float windStrength)
+    {
+        ApplyCentralForce(windDirection * windStrength);
+    }
+}
+```
+
+| Method | Effect |
+|--------|--------|
+| `apply_central_impulse(impulse: Vector3)` | Instant velocity change distributed across all soft body points |
+| `apply_central_force(force: Vector3)` | Continuous force distributed each physics step (call from `_physics_process`) |
+
+> **Note:** `apply_central_force()` must be called every `_physics_process()` frame where the force should be active — it does not persist between frames, matching the `RigidBody3D` API contract.
+
+---
+
+## 13. Troubleshooting Physics Issues
 
 ### Tunneling (Objects Pass Through at High Speed)
 
@@ -903,7 +955,7 @@ For planetary-scale games, recompile with `precision=double` or implement origin
 
 ---
 
-## 13. Implementation Checklist
+## 14. Implementation Checklist
 
 - [ ] All dynamic bodies use primitive collision shapes where possible
 - [ ] Collision layers are named in Project Settings and bodies use layer/mask correctly
@@ -915,3 +967,6 @@ For planetary-scale games, recompile with `precision=double` or implement origin
 - [ ] Physics interpolation is enabled and `reset_physics_interpolation()` is called on teleport
 - [ ] Concave collision shapes are only used on StaticBodies
 - [ ] Ragdoll bones are on separate collision layers from the character's main collider
+- [ ] SoftBody3D forces/impulses use `apply_central_force()` / `apply_central_impulse()` (Godot 4.5+)
+- [ ] Projects on Godot 4.5+ benefit from the improved 3D physics interpolation automatically; `reset_physics_interpolation()` usage is unchanged
+- [ ] Jolt is used for 3D; confirmed non-experimental default in Godot 4.6+
