@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Bumps version across in-repo files and (if present) sibling marketplace repos.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
