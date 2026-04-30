@@ -157,10 +157,8 @@ Skills use Claude Code tool names as the canonical reference. Non-Claude platfor
 
 ## Implementation Checklist
 
-- [ ] Read this bootstrap skill before starting any Godot-related work in a session
-- [ ] Identify the matching domain skill via the table above before writing any system code
-- [ ] Invoke the identified skill with the `Skill` tool (or your platform's equivalent) before implementation
-- [ ] If using a workflow plugin (Superpowers, etc.), still invoke the relevant godot-prompter domain skill during implementation — they are complementary, not exclusive
-- [ ] For new projects, load `godot-prompter:godot-project-setup` before writing any code
-- [ ] For system design, load `godot-prompter:godot-brainstorming` to explore trade-offs before committing to a pattern
-- [ ] After implementation, load `godot-prompter:godot-code-review` to validate against Godot best practices
+- [ ] Identified the matching domain skill via the table above before writing any system code
+- [ ] Invoked the identified skill with the `Skill` tool (or platform equivalent) before implementation
+- [ ] When a workflow plugin is also active (Superpowers, etc.), still invoked the relevant godot-prompter domain skill during implementation — they are complementary, not exclusive
+- [ ] After implementation, ran `godot-prompter:godot-code-review` to validate against Godot best practices
+- [ ] Logged any newly-discovered domain gap that no current skill covers, so it can become a future skill
