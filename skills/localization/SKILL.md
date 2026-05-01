@@ -244,6 +244,41 @@ control.layout_direction = Control.LAYOUT_DIRECTION_RTL
 rich_text.text = "النتيجة: [ltr]100/200[/ltr]"
 ```
 
+### C# parity
+
+```csharp
+// LocaleAwarePanel.cs — flip layout direction whenever the locale changes.
+using Godot;
+
+public partial class LocaleAwarePanel : Control
+{
+    public override void _Ready()
+    {
+        ApplyLayoutForLocale();
+        TranslationServer.Singleton.LocaleChanged += ApplyLayoutForLocale;
+    }
+
+    private void ApplyLayoutForLocale()
+    {
+        string locale = TranslationServer.Singleton.GetLocale();
+        bool isRtl = TextServerManager.GetPrimaryInterface().IsLocaleRightToLeft(locale);
+        LayoutDirection = isRtl
+            ? Control.LayoutDirectionEnum.Rtl
+            : Control.LayoutDirectionEnum.Ltr;
+    }
+}
+
+// RichTextLabel mixed-direction example — same BBCode as GDScript, just assigned in C#.
+public partial class ScoreLabel : RichTextLabel
+{
+    public void SetArabicScore(int score, int max)
+    {
+        BbcodeEnabled = true;
+        Text = $"النتيجة: [ltr]{score}/{max}[/ltr]";
+    }
+}
+```
+
 ### Font Requirements
 
 RTL scripts need fonts that support the relevant Unicode ranges. Godot's default font does not cover Arabic/Hebrew. Import a font like Noto Sans Arabic and assign it via Theme.
