@@ -53,6 +53,30 @@ func _ready() -> void:
         ClientBootstrap.start()
 ```
 
+```csharp
+// Boot.cs — autoload, runs before any scene loads.
+using Godot;
+
+public partial class Boot : Node
+{
+    public override void _Ready()
+    {
+        if (OS.HasFeature("dedicated_server") || DisplayServer.GetName() == "headless")
+        {
+            // Disable the render loop. The window is invisible but the engine still ticks.
+            RenderingServer.SetRenderLoopEnabled(false);
+            ServerBootstrap.Start();
+        }
+        else
+        {
+            ClientBootstrap.Start();
+        }
+    }
+}
+```
+
+> **Note:** the export preset configuration (custom features, exclude list, "Export As Dedicated Server" flag) is identical regardless of language — see the GDScript section above for preset settings.
+
 **Feature tag summary:**
 
 | Tag | Set by | Notes |
