@@ -640,13 +640,17 @@ copy.CopyScale = false;
 
 Godot 4.6 adds `IKModifier3D`, a new base class for skeletal inverse kinematics solvers, with eight subclasses covering the most common IK algorithms. These are `SkeletonModifier3D` children of `Skeleton3D` and work alongside other modifiers (e.g., `LookAtModifier3D`).
 
-| Subclass | Algorithm | Best For |
-|----------|-----------|----------|
-| `CCDIK3D` | Cyclic Coordinate Descent | Arms, tentacles, simple chains |
-| `FABRIK3D` | Forward And Backward Reaching IK | Natural-looking limb reach |
-| `JacobianIK3D` | Jacobian / pseudo-inverse | Overdetermined rigs, robotic arms |
-| `TwoBoneIK3D` | Analytical two-bone solver | Legs, arms (fast and exact) |
-| (and 4 further subclasses) | Various | See 4.6 release notes |
+**Pick the right solver:**
+
+| Solver | Algorithm | Cost | Best for | Joint count | Notes |
+|---|---|---|---|---|---|
+| `TwoBoneIK3D` | Analytical two-bone | Cheapest | Legs, arms (chain is exactly 2 bones) | Exactly 2 | Fast and exact. Default when the chain is hip→knee→ankle or shoulder→elbow→wrist. |
+| `CCDIK3D` | Cyclic Coordinate Descent | Cheap | Tails, tentacles, simple arms | 2–6 joints | Iterative; can twist unnaturally on long chains. Good default for short arms. |
+| `FABRIK3D` | Forward And Backward Reaching | Moderate | Spines, longer limbs, natural reach | 3–10 joints | Forward-and-backward reaching; smooth, stable. Best when the chain length is variable. |
+| `JacobianIK3D` | Jacobian / pseudo-inverse | Expensive | Overdetermined rigs, robotic arms | Any | Solves a Jacobian per step; most accurate, most CPU. Reserve for cinematic or hero rigs. |
+| (4 further subclasses) | Various | Varies | See 4.6 release notes | — | — |
+
+Default to `TwoBoneIK3D` when the chain is exactly 2 bones (the common humanoid case). Use `CCDIK3D` for short non-2-bone chains. Upgrade to `FABRIK3D` when the result twists or overshoots, or when chain length varies. Reach for `JacobianIK3D` only when rig accuracy is the bottleneck of frame quality, not frame time.
 
 **Basic setup — FABRIK arm IK:**
 
@@ -679,6 +683,139 @@ public override void _Ready()
     ik.TargetNode = GetNode("../IKTarget").GetPath();
 }
 ```
+
+#### Recipe: Two-bone arm reach with influence blending (CCDIK3D)
+
+A character reaches for a moving target (a pickup, a held weapon's grip, a button) and blends the IK influence in / out based on distance. The IK modifier is added in the scene editor under the `Skeleton3D`; the script just drives `influence`.
+
+**Scene tree:**
+
+```
+Character (Node3D)
+├── Skeleton3D
+│   ├── (bones: Spine, Shoulder, UpperArm, Forearm, Hand)
+│   └── CCDIK3D
+│       ├── target_node = NodePath("../../Target")
+│       ├── tip_bone = "Hand"
+│       └── root_bone = "Shoulder"
+└── Target (Node3D)
+```
+
+```gdscript
+# arm_ik_controller.gd
+extends Node3D
+
+@export var target: Node3D
+@export var ccdik: CCDIK3D
+@export var blend_speed: float = 4.0
+@export var reach_range: float = 2.0
+
+var _blend: float = 0.0
+
+func _process(delta: float) -> void:
+    var want_ik := target != null and target.global_position.distance_to(global_position) < reach_range
+    _blend = move_toward(_blend, 1.0 if want_ik else 0.0, blend_speed * delta)
+    ccdik.influence = _blend
+```
+
+```csharp
+// ArmIKController.cs
+using Godot;
+
+public partial class ArmIKController : Node3D
+{
+    [Export] public Node3D Target { get; set; }
+    [Export] public Ccdik3D Ccdik { get; set; }
+    [Export] public float BlendSpeed { get; set; } = 4.0f;
+    [Export] public float ReachRange { get; set; } = 2.0f;
+
+    private float _blend;
+
+    public override void _Process(double delta)
+    {
+        bool wantIk = Target != null && Target.GlobalPosition.DistanceTo(GlobalPosition) < ReachRange;
+        _blend = Mathf.MoveToward(_blend, wantIk ? 1.0f : 0.0f, BlendSpeed * (float)delta);
+        Ccdik.Influence = _blend;
+    }
+}
+```
+
+**Verification:** Move the `Target` node in the editor while the game runs. The hand should chase the target when within 2 m, and return to the keyframed pose when out of range. Watch `CCDIK3D.influence` ramp 0 → 1.
+
+#### Recipe: Foot placement on uneven terrain (FABRIK3D + raycast)
+
+The character's feet plant on the ground regardless of slope. One `FABRIK3D` per leg (or `TwoBoneIK3D` for exactly-2-bone humanoid legs), plus a per-leg raycast to find the ground hit point.
+
+**Scene tree (per leg):**
+
+```
+Character (Node3D)
+├── Skeleton3D
+│   ├── (bones: Hip, ThighL, ShinL, FootL)
+│   └── FABRIK3D_L
+│       ├── target_node = NodePath("../../FootTarget_L")
+│       ├── tip_bone = "FootL"
+│       └── root_bone = "Hip"
+├── FootTarget_L (Node3D)   # IK target driven by raycast
+└── RayCast3D_L (RayCast3D) # downward ray from foot bone position
+```
+
+```gdscript
+# foot_ik.gd
+extends Node3D
+
+@export var skeleton: Skeleton3D
+@export var foot_bone: String = "FootL"
+@export var ray: RayCast3D
+@export var foot_target: Node3D
+@export var max_offset: float = 0.4  # how high/low the foot can plant
+
+func _process(_delta: float) -> void:
+    if skeleton == null or ray == null or foot_target == null:
+        return
+    var bone_idx := skeleton.find_bone(foot_bone)
+    var bone_xform := skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx)
+    ray.global_position = bone_xform.origin + Vector3.UP * 0.5
+    ray.target_position = Vector3.DOWN * (0.5 + max_offset)
+    if ray.is_colliding():
+        foot_target.global_position = ray.get_collision_point()
+    else:
+        foot_target.global_position = bone_xform.origin
+```
+
+```csharp
+// FootIK.cs
+using Godot;
+
+public partial class FootIK : Node3D
+{
+    [Export] public Skeleton3D Skeleton { get; set; }
+    [Export] public string FootBone { get; set; } = "FootL";
+    [Export] public RayCast3D Ray { get; set; }
+    [Export] public Node3D FootTarget { get; set; }
+    [Export] public float MaxOffset { get; set; } = 0.4f;
+
+    public override void _Process(double delta)
+    {
+        if (Skeleton == null || Ray == null || FootTarget == null)
+            return;
+
+        int boneIdx = Skeleton.FindBone(FootBone);
+        Transform3D boneXform = Skeleton.GlobalTransform * Skeleton.GetBoneGlobalPose(boneIdx);
+        Ray.GlobalPosition = boneXform.Origin + Vector3.Up * 0.5f;
+        Ray.TargetPosition = Vector3.Down * (0.5f + MaxOffset);
+
+        if (Ray.IsColliding())
+            FootTarget.GlobalPosition = Ray.GetCollisionPoint();
+        else
+            FootTarget.GlobalPosition = boneXform.Origin;
+    }
+}
+```
+
+**Verification:** Place the character on a slope or staircase. Both feet should plant on the ground polygons rather than floating or clipping. Toggle `FABRIK3D.influence` between 0 and 1 to compare.
+
+**Perf cost:** One raycast and one `FABRIK3D` per leg every frame. Two-leg humanoid → 2 raycasts + 2 IK solves. For background NPCs, gate this behind a distance check or run on `_physics_process` at 30 Hz instead of `_process`. For exactly-2-bone humanoid legs, `TwoBoneIK3D` solves in roughly half the time of `FABRIK3D`.
 
 > **Note:** `IKModifier3D` was introduced in Godot 4.6 beta 1 and is still being finalized. Property names and subclass count may change before the stable release. Use the built-in Inspector for the current API, and see the [4.6 release announcement](https://godotengine.org/article/dev-snapshot-godot-4-6-beta-1/) for details.
 
