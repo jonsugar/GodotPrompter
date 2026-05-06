@@ -410,8 +410,6 @@ The recurring small patterns: ternary expressions (`value if cond else other`), 
 
 ---
 
----
-
 ## 12. Variadic Functions (Godot 4.5+)
 
 Godot 4.5 added trailing-argument arrays via `...args`. The args are collected into an `Array`. Useful for printf-style helpers and flexible APIs without overloads.
