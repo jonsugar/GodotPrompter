@@ -51,23 +51,32 @@ Plus the new **`gdscript-advanced`** skill ships with 3 references at 9.8 KB SKI
 
 Validator: 56 → 42 warnings (10 token-budget closures + 4 incidental C# parity closures as sections moved to references along with their already-paired C# blocks).
 
-## Deferred (count: 14)
+## v1.7.2 progress (2026-05-07)
 
-Listed largest-first. Each entry suggests a natural cut. v1.7.x releases pick rows off this list.
+10 more skills restructured to Pattern X (next 10 heaviest from the v1.7.1 deferred list):
 
-- `skills/gdscript-patterns/SKILL.md` (~23 KB) — keep examples concise; consider moving the longest sections (variadic, abstract) into a `references/` if they grow with future Godot versions
-- `skills/tween-animation/SKILL.md` (~22 KB) — easing recipes, parallel sequences, common UI/gameplay motion → `references/`
-- `skills/save-load/SKILL.md` (~22 KB) — ConfigFile/JSON/Resource patterns, version migration recipes → `references/`
-- `skills/dependency-injection/SKILL.md` (~20 KB) — testing patterns, anti-pattern catalog → `references/`
-- `skills/godot-testing/SKILL.md` (~20 KB) — GUT vs gdUnit4 deep dive, CI patterns → `references/`
-- `skills/camera-system/SKILL.md` (~20 KB) — SpringArm3D, orbit camera, transitions, split-screen → `references/`
-- `skills/resource-pattern/SKILL.md` (~20 KB) — Resource collections, sharing vs unique, anti-patterns → `references/`
-- `skills/csharp-signals/SKILL.md` (~19 KB) — async signal awaiting, [Signal] generic patterns → `references/`
-- `skills/responsive-ui/SKILL.md` (~19 KB) — stretch modes deep dive, mobile vs desktop adaptation → `references/`
-- `skills/math-essentials/SKILL.md` (~18 KB) — interpolation/curves recipes, geometric helpers → `references/`
+| Skill | Before | After | Reference files |
+|---|---:|---:|---:|
+| `gdscript-patterns` | 23 KB | 14.8 KB | 5 |
+| `tween-animation` | 22 KB | 13.2 KB | 4 |
+| `save-load` | 22 KB | 4.6 KB | 4 |
+| `dependency-injection` | 20 KB | 9.1 KB | 5 |
+| `godot-testing` | 20 KB | 9.3 KB | 3 |
+| `camera-system` | 20 KB | 10.8 KB | 4 |
+| `resource-pattern` | 19 KB | 9.3 KB | 5 |
+| `csharp-signals` | 19 KB | 9.4 KB | 4 |
+| `responsive-ui` | 18 KB | 8.6 KB | 4 |
+| `math-essentials` | 18 KB | 12.4 KB | 3 |
+
+Validator: 42 → 22 warnings (10 token-budget closures + 10 incidental parity closures as sections moved to references along with their already-paired C# blocks, including 4 from gdscript-patterns moving accepted-warning sections into references).
+
+## Deferred (count: 4)
+
+Listed largest-first. v1.7.3 (or later) closes these.
+
 - `skills/state-machine/SKILL.md` (~18 KB) — node-based vs resource-based deep dives → `references/`
 - `skills/export-pipeline/SKILL.md` (~18 KB) — per-platform export deep dives, CI recipes → `references/`
-- `skills/godot-brainstorming/SKILL.md` (~18 KB) — process skill; consider whether the recipe section can move to `references/`
+- `skills/godot-brainstorming/SKILL.md` (~17 KB) — process skill; consider whether the recipe section can move to `references/`
 - `skills/event-bus/SKILL.md` (~17 KB) — typed signal patterns, testing recipes → `references/`
 
 ## Accepted

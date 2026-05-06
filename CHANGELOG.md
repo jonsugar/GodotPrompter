@@ -4,6 +4,27 @@ All notable changes to GodotPrompter will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.7.2] - 2026-05-07
+
+### Changed
+
+- 10 more skills restructured to **Pattern X** (core SKILL.md + `references/<topic>.md`) — the next 10 heaviest from the v1.7.1 token-budget debt list:
+  - `gdscript-patterns` (23 → 14.8 KB) — 5 references: export-annotations, common-idioms, variadic-functions, abstract-classes, super-in-virtual-methods
+  - `tween-animation` (22 → 13.2 KB) — 4 references: property-tweener-modifiers, looping-and-signals, lifecycle, common-recipes
+  - `save-load` (22 → 4.6 KB) — 4 references: configfile, json-saves, save-architecture, version-migration
+  - `dependency-injection` (20 → 9.1 KB) — 5 references: autoloads, export-injection, service-locator, scene-injection, testing-with-di
+  - `godot-testing` (20 → 9.3 KB) — 3 references: tdd-workflow, running-tests, testing-patterns
+  - `camera-system` (20 → 10.8 KB) — 4 references: camera-zones, camera3d-patterns, transitions, split-screen
+  - `resource-pattern` (19 → 9.3 KB) — 5 references: editor-integration, configuration-pattern, collections, sharing-vs-unique, saving-resources (v1.6.0 C# parity preserved in collections + sharing-vs-unique)
+  - `csharp-signals` (19 → 9.4 KB) — 4 references: disconnecting, awaiting-signals, custom-signal-patterns, connecting-gdscript-signals
+  - `responsive-ui` (18 → 8.6 KB) — 4 references: pixel-art-setup, dpi-scaling, mobile, adaptive-layouts
+  - `math-essentials` (18 → 12.4 KB) — 3 references: curves-and-paths, random-numbers, game-math-recipes
+- 41 new reference files created across the 10 restructured skills
+- `docs/superpowers/notes/2026-05-06-token-budget-debt.md` — 14 → 4 deferred skills; v1.7.2 progress block added
+- `docs/token-budget.md` — regenerated to reflect post-restructure state
+
+> **Release notes:** Validator baseline at release: 0 errors, 22 warnings (8 deferred C# parity + 10 accepted GDScript-only + 4 token-budget). Down from 42 in v1.7.1. Token-budget warnings closed: 14 → 4 (10 restructures). Deferred parity warnings closed: 14 → 8 (6 incidental closures as sections moved to references with their already-paired C# blocks). Accepted GDScript-only: 14 → 10 (4 gdscript-patterns sections moved into references). Repo-wide minimum stays at Godot 4.3+. Only 4 skills remain over the 16 KB SKILL.md budget — the v1.7.0 token-budget initiative is 86% complete after this release.
+
 ## [1.7.1] - 2026-05-07
 
 ### Changed
