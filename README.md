@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot 4.x](https://img.shields.io/badge/Godot-4.3+-blue.svg)](https://godotengine.org)
-[![Skills: 44](https://img.shields.io/badge/Skills-44-green.svg)](#available-skills)
+[![Skills: 45](https://img.shields.io/badge/Skills-45-green.svg)](#available-skills)
 
 Agentic skills framework for Godot 4.x game development. Gives AI coding agents domain-specific expertise for GDScript and C# projects.
 
@@ -119,7 +119,7 @@ Ask for a code review. The agent loads `godot-code-review` and checks against Go
 
 ### Agents
 
-GodotPrompter includes 8 specialized agents:
+GodotPrompter includes 9 specialized agents:
 
 | Agent | Purpose |
 |-------|---------|

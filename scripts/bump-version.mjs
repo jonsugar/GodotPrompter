@@ -22,9 +22,24 @@ const inRepoTargets = [
   { path: resolve(ROOT, '.claude-plugin/marketplace.json'), key: `plugins[name=${PLUGIN_NAME}].version` },
 ];
 
+// Sibling marketplaces. Tries each candidate path in order; first existing one wins per label.
+// skillsmith historically lives at multiple locations across maintainers' machines, so check both.
 const siblingTargets = [
-  { path: resolve(ROOT, '..', 'skillsmith', '.claude-plugin', 'marketplace.json'), key: `plugins[name=${PLUGIN_NAME}].version`, label: 'skillsmith' },
-  { path: resolve(ROOT, '..', 'godot-prompter-marketplace', '.claude-plugin', 'marketplace.json'), key: `plugins[name=${PLUGIN_NAME}].version`, label: 'godot-prompter-marketplace' },
+  {
+    label: 'skillsmith',
+    paths: [
+      resolve(ROOT, '..', 'skillsmith', '.claude-plugin', 'marketplace.json'),
+      resolve(ROOT, '..', '..', 'AI', 'skillsmith', '.claude-plugin', 'marketplace.json'),
+    ],
+    key: `plugins[name=${PLUGIN_NAME}].version`,
+  },
+  {
+    label: 'godot-prompter-marketplace',
+    paths: [
+      resolve(ROOT, '..', 'godot-prompter-marketplace', '.claude-plugin', 'marketplace.json'),
+    ],
+    key: `plugins[name=${PLUGIN_NAME}].version`,
+  },
 ];
 
 // Path syntax: "a.b.c" walks objects; "a[name=X].b" finds the array element where .name === X.
@@ -86,11 +101,12 @@ for (const t of inRepoTargets) {
 }
 
 for (const t of siblingTargets) {
-  if (existsSync(t.path)) {
-    const prev = bump(t);
-    console.log(`  [${t.label}] ${t.path}: ${prev} -> ${newVersion}`);
+  const found = t.paths.find(p => existsSync(p));
+  if (found) {
+    const prev = bump({ path: found, key: t.key });
+    console.log(`  [${t.label}] ${found}: ${prev} -> ${newVersion}`);
   } else {
-    console.log(`  [${t.label}] not found at ${t.path} — bump manually after the release tag`);
+    console.log(`  [${t.label}] not found at any of: ${t.paths.join(', ')} — bump manually after the release tag`);
   }
 }
 

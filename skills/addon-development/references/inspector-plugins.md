@@ -50,7 +50,7 @@ func _parse_property(
         btn.pressed.connect(func() -> void:
             object.my_special_value = 0
             # Notify the editor that a property changed so undo/redo works.
-            EmitSignal("property_changed", name, 0)
+            emit_signal("property_changed", name, 0)
         )
         add_custom_control(btn)
         return true  # suppress default editor for this property

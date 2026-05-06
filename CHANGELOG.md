@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - 50 new reference files created across 11 restructured skills + the new `gdscript-advanced` skill
 - CONTRIBUTING.md release checklist now includes the `count-tokens.mjs --tokenizer --markdown` regeneration step before tagging
 
-> **Release notes:** Validator baseline at release: 0 errors, 56 warnings (19 deferred C# parity + 14 accepted GDScript-only + 24 token-budget − minor adjustments from the gdscript-only re-categorization). Up from 32 in v1.6.0 because the new budget rule surfaces existing debt that was previously invisible. The 11 restructured skills now load 50-60% lighter into agent context. Repo-wide minimum stays at Godot 4.3+. Agent count: 8 → 9. Skill count: 44 → 45. addon-development becomes the first skill in the repo with fully closed C# parity.
+> **Release notes:** Validator baseline at release: 0 errors, 56 warnings (18 deferred C# parity + 14 accepted GDScript-only + 24 token-budget). Up from 32 in v1.6.0 because the new budget rule surfaces existing debt that was previously invisible. Deferred parity dropped one beyond the planned 19 because Pattern X moved at least one previously-flagged section into a `references/` file alongside its existing C# block, incidentally closing the gap. The 11 restructured skills now load 50-60% lighter into agent context. Repo-wide minimum stays at Godot 4.3+. Agent count: 8 → 9. Skill count: 44 → 45. addon-development becomes the first skill in the repo with fully closed C# parity.
 
 ## [1.6.0] - 2026-05-02
 
