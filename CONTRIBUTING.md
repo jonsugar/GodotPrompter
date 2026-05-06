@@ -93,11 +93,17 @@ Agent system prompt goes here.
 When publishing a new version (e.g., v1.4.1):
 
 1. **Make changes** in the GodotPrompter repo, commit, push
-2. **Update version** in these files:
+2. **Regenerate the token-budget docs page** (added in v1.7.0):
+   ```bash
+   npm install                                                # one-time, installs optional tokenizer deps
+   node scripts/count-tokens.mjs --tokenizer --markdown
+   ```
+   Replace the contents between the `<!-- BEGIN-TOKEN-TABLE -->` / `<!-- END-TOKEN-TABLE -->` markers in `docs/token-budget.md` with the new output. Commit alongside the version bump.
+3. **Update version** in these files:
    - `.claude-plugin/plugin.json` → `"version": "1.4.1"`
    - `package.json` → `"version": "1.4.1"`
    - `CHANGELOG.md` → add `## [1.4.1]` section
-3. **Commit and tag:**
+4. **Commit and tag:**
    ```bash
    git add .claude-plugin/plugin.json package.json CHANGELOG.md
    git commit -m "chore: bump version to 1.4.1"

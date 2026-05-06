@@ -36,11 +36,12 @@ This is a **documentation/skills repository**. There is no application build/lin
 ## Repository Structure
 
 ```
-skills/                     # 44 domain-specific skill folders
+skills/                     # 45 domain-specific skill folders
   <skill-name>/
-    SKILL.md                # Main skill document (YAML frontmatter required)
-    *.md                    # Optional supporting references (e.g. references/ subfolder in using-godot-prompter)
-agents/                     # 8 specialized agent definitions
+    SKILL.md                # Main skill document (YAML frontmatter required) — keep ≤ 16 KB (v1.7.0 token-budget rule)
+    references/             # Optional load-on-demand deep dives (Pattern X)
+    *.md                    # Other supporting docs
+agents/                     # 9 specialized agent definitions
   godot-game-architect.md   # System design and architecture planning
   godot-game-dev.md         # Feature implementation guided by skills
   godot-code-reviewer.md    # Code review against Godot best practices
@@ -49,6 +50,7 @@ agents/                     # 8 specialized agent definitions
   godot-animator.md         # Animation graphs, IKModifier3D, BoneConstraint3D, retargeting
   godot-csharp-engineer.md  # C#-first development; parity mode for repo C# debt
   godot-ui-designer.md      # Control-tree UI, themes, responsive layouts, localization
+  godot-tools-engineer.md   # Editor plugins, custom inspectors, gizmos, @tool scripts
 commands/                   # Slash commands (reserved)
 docs/superpowers/           # Design specs and implementation plans
   plans/                    # Phase implementation plans

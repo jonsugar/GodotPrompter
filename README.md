@@ -12,7 +12,9 @@ Inspired by and built on top of the [Superpowers](https://github.com/obra/superp
 
 GodotPrompter is a plugin that provides **skills** — structured domain knowledge that AI agents load on demand. When you ask your agent to "add a state machine" or "set up multiplayer", it loads the relevant GodotPrompter skill and follows Godot-specific best practices instead of relying on generic knowledge.
 
-**44 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, optimization, and C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
+**45 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, optimization, and GDScript / C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
+
+**v1.7.0 introduces a 16 KB token budget** for `SKILL.md` files (validator-enforced) and the new **`gdscript-advanced`** skill for production-grade GDScript depth (performance idioms, metaprogramming, `@tool` lifecycle, profiler-driven idioms).
 
 ## Quick Start
 
@@ -129,6 +131,7 @@ GodotPrompter includes 8 specialized agents:
 | **godot-animator** | Designs animation graphs, blend trees, IKModifier3D, BoneConstraint3D, retargeting |
 | **godot-csharp-engineer** | C#-first development; parity mode for closing this repo's C# debt |
 | **godot-ui-designer** | Builds Control-tree UI — themes, responsive layouts, localization-aware |
+| **godot-tools-engineer** | Editor plugins, custom inspectors, gizmos, `@tool` scripts, plugin distribution |
 
 ## Supported Platforms
 
