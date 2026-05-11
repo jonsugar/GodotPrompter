@@ -26,12 +26,13 @@ Enable GodotPrompter skills in Codex via native skill discovery. Just clone and 
    ```
 3. **Create the subagents symlink (Optional)**
    ```bash
-   ln -s ~/.codex/godot-prompter/.codex/agents ~/.codex
+   mkdir -p ~/.codex/agents
+   ln -s ~/.codex/godot-prompter/.codex/agents/godot-prompter ~/.codex/agents
    ```
 
    **Windows (PowerShell):**
    ```powershell
-   cmd /c mklink /J "$env:USERPROFILE\.codex\agents\" "$env:USERPROFILE\.codex\godot-prompter\.codex\agents"
+   cmd /c mklink /J "$env:USERPROFILE\.codex\agents\godot-prompter" "$env:USERPROFILE\.codex\godot-prompter\.codex\agents\godot-prompter"
    ```
 
 4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
