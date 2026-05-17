@@ -63,6 +63,61 @@ func transition_3d(next_cam: Camera3D, duration: float = 0.5) -> void:
     current_cam.top_level = false
 ```
 
+```csharp
+// CameraTransitionManager.cs — Autoload or attach to a scene manager node
+using Godot;
+using System.Threading.Tasks;
+
+public partial class CameraTransitionManager : Node
+{
+    /// <summary>Transition the active Camera2D to match position and zoom of <paramref name="nextCam"/>
+    /// over <paramref name="duration"/> seconds, then make it current.</summary>
+    public async Task Transition2D(Camera2D nextCam, float duration = 0.5f)
+    {
+        var currentCam = GetViewport().GetCamera2D();
+        if (currentCam == null || currentCam == nextCam)
+            return;
+
+        // Temporarily detach so it doesn't follow its parent
+        currentCam.TopLevel = true;
+
+        var tween = CreateTween().SetParallel();
+        tween.SetEase(Tween.EaseType.InOut);
+        tween.SetTrans(Tween.TransitionType.Cubic);
+        tween.TweenProperty(currentCam, "global_position", nextCam.GlobalPosition, duration);
+        tween.TweenProperty(currentCam, "zoom", nextCam.Zoom, duration);
+
+        await ToSignal(tween, Tween.SignalName.Finished);
+
+        // Hand off — make the destination camera active and restore state
+        nextCam.MakeCurrent();
+        currentCam.TopLevel = false;
+    }
+
+    /// <summary>Transition between two Camera3D nodes (blends position, rotation, and FOV).</summary>
+    public async Task Transition3D(Camera3D nextCam, float duration = 0.5f)
+    {
+        var currentCam = GetViewport().GetCamera3D();
+        if (currentCam == null || currentCam == nextCam)
+            return;
+
+        currentCam.TopLevel = true;
+
+        var tween = CreateTween().SetParallel();
+        tween.SetEase(Tween.EaseType.InOut);
+        tween.SetTrans(Tween.TransitionType.Cubic);
+        tween.TweenProperty(currentCam, "global_position", nextCam.GlobalPosition, duration);
+        tween.TweenProperty(currentCam, "global_rotation", nextCam.GlobalRotation, duration);
+        tween.TweenProperty(currentCam, "fov", nextCam.Fov, duration);
+
+        await ToSignal(tween, Tween.SignalName.Finished);
+
+        nextCam.MakeCurrent();
+        currentCam.TopLevel = false;
+    }
+}
+```
+
 **Usage:**
 
 ```gdscript
