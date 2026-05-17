@@ -61,5 +61,80 @@ func test_died_signal_emitted_at_zero_health() -> void:
     assert_signal_emitted(health, "died")
 ```
 
+### C# (using GdUnit4)
+
+GdUnit4 supports C# since v4.4. Note: GdUnit4 signal assertions use `AssertSignal` rather than GUT's `watch_signals` / `assert_signal_emitted`. If a node emits a Godot signal from a C# `async Task` method, GDScript callers cannot `await` that task directly — emit a Godot signal at completion and `await` the signal instead.
+
+```csharp
+using GdUnit4;
+using static GdUnit4.Assertions;
+
+// StubAudio.cs — a lightweight stand-in for AudioManager
+public partial class StubAudio : Node
+{
+    public string LastSfx { get; private set; } = "";
+    public int PlayCount { get; private set; } = 0;
+
+    public void PlaySfx(string key)
+    {
+        LastSfx = key;
+        PlayCount++;
+    }
+}
+```
+
+```csharp
+using GdUnit4;
+using static GdUnit4.Assertions;
+
+[TestSuite]
+public partial class HealthComponentTest : GdUnit4.GodotTestCase
+{
+    private HealthComponent _health = null!;
+    private StubAudio _audioStub = null!;
+
+    [Before]
+    public async System.Threading.Tasks.Task BeforeEach()
+    {
+        _audioStub = new StubAudio();
+        AddChild(_audioStub);
+
+        _health = GD.Load<PackedScene>("res://components/health_component.tscn")
+                    .Instantiate<HealthComponent>();
+        _health.Audio = _audioStub;   // inject the stub — no real AudioManager needed
+        _health.MaxHealth = 100;
+        AddChild(_health);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+    }
+
+    [TestCase]
+    public void TakeDamage_PlaysHurtSfx()
+    {
+        _health.TakeDamage(10);
+
+        AssertThat(_audioStub.LastSfx).IsEqual("hurt");
+        AssertThat(_audioStub.PlayCount).IsEqual(1);
+    }
+
+    [TestCase]
+    public void TakeDamage_WhenAudioIsNull_DoesNotCrash()
+    {
+        _health.Audio = null;   // also valid — null is handled gracefully
+        _health.TakeDamage(10);
+        // should not throw
+    }
+
+    [TestCase]
+    public void TakeDamage_AtZeroHealth_EmitsDiedSignal()
+    {
+        var signalAssert = AssertSignal(_health).IsEmitted(nameof(HealthComponent.SignalName.Died));
+
+        _health.TakeDamage(100);
+
+        signalAssert.WithTimeout(100);
+    }
+}
+```
+
 ---
 

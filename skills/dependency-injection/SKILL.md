@@ -167,6 +167,15 @@ Does a parent scene own both the consumer and the dependency?
 # EnemySpawner is a node in the Level scene, injected into enemies that need it.
 ```
 
+```csharp
+// BAD — GameManager, EnemySpawner, InventorySystem, DialogueSystem all as autoloads.
+// Every node in the game is coupled to every other system at module level.
+// Test one component → must initialise all autoloads.
+
+// GOOD — Only AudioManager, Settings, and SceneTransition are autoloads.
+// EnemySpawner is a node in the Level scene, injected into enemies that need it.
+```
+
 ### Deep dependency chains
 
 ```gdscript
@@ -176,6 +185,15 @@ Does a parent scene own both the consumer and the dependency?
 
 # GOOD — flatten: HealthComponent takes only AudioManager (or a narrow interface).
 # Each node declares only immediate dependencies.
+```
+
+```csharp
+// BAD — Player needs HealthComponent, which needs AudioManager,
+// which needs SoundBank, which needs FileSystem...
+// A change deep in the chain breaks everything above it.
+
+// GOOD — flatten: HealthComponent takes only AudioManager (or a narrow interface).
+// Each node declares only immediate dependencies.
 ```
 
 ### Circular dependencies
@@ -191,6 +209,17 @@ Does a parent scene own both the consumer and the dependency?
 # PlayerController never holds a reference to InventorySystem at all.
 ```
 
+```csharp
+// BAD
+// PlayerController._Ready() calls ServiceLocator.GetService("inventory")
+// InventorySystem._Ready() calls ServiceLocator.GetService("player")
+// Neither can fully initialise because the other isn't ready yet.
+
+// GOOD — break the cycle with a signal.
+// InventorySystem emits ItemUsed; PlayerController connects to it.
+// PlayerController never holds a reference to InventorySystem at all.
+```
+
 ### Service Locator as a god object
 
 ```gdscript
@@ -199,6 +228,14 @@ Does a parent scene own both the consumer and the dependency?
 
 # GOOD — only register stable, long-lived services (audio, analytics, save system).
 # Short-lived nodes are wired by their parent via scene injection.
+```
+
+```csharp
+// BAD — everything is registered: enemies, UI panels, individual nodes.
+// ServiceLocator becomes a second, untyped scene tree.
+
+// GOOD — only register stable, long-lived services (audio, analytics, save system).
+// Short-lived nodes are wired by their parent via scene injection.
 ```
 
 ### Forgetting null checks after injection
@@ -217,6 +254,28 @@ func take_damage(amount: int) -> void:
 func take_damage(amount: int) -> void:
     if audio != null:
         audio.play_sfx("hurt")
+```
+
+```csharp
+// BAD — crashes if the [Export] was never set in the editor
+public void TakeDamage(int amount)
+{
+    _audio.PlaySfx("hurt");   // NullReferenceException if _audio was not wired
+}
+
+// GOOD — guard or assert clearly
+public void TakeDamage(int amount)
+{
+    GD.PushError("HealthComponent: audio dependency was not injected");
+    System.Diagnostics.Debug.Assert(_audio != null, "HealthComponent: audio dependency was not injected");
+    _audio.PlaySfx("hurt");
+}
+
+// OR — treat it as optional
+public void TakeDamage(int amount)
+{
+    _audio?.PlaySfx("hurt");
+}
 ```
 
 ---
