@@ -42,8 +42,9 @@ Validator visible `csharp-parity-missing` count: 7 → **0**. Overall validator:
 **The v1.5.0 C# parity initiative spanning v1.6.0–v1.8.0 is complete after this release** (33 → 0 deferred sections). Every skill in the repo now has matching C# code for every GDScript example, except the intentional `csharp-parity-accepted` category (the `gdscript-patterns` skill, which is GDScript-by-design).
 
 Carry-over notes for follow-up polish:
-- `player-controller/SKILL.md` Dash + WallJump C# blocks were compressed to fit the 16 KB token budget; consider a future Pattern X restructure (move Section 5 "Common Movement Recipes" to `references/common-movement-recipes.md`) for proper formatting.
 - 5 skills still trigger `token-budget-exceeded`: `3d-essentials`, `ai-navigation`, `animation-system`, `multiplayer-basics`, `physics-system`. All sit at 16.1–16.3 KB. Candidate for a future token-budget point release.
+
+Pre-tag code review surfaced four correctness issues (inverted null-check semantics in dependency-injection, broken `.Connect(methodGroup)` in dialogue-system, missing gravity + horizontal movement in player-controller Wall Jump C#, fictitious gdUnit4 APIs in test examples). All four were fixed before re-tagging; the player-controller fix used Pattern X to move Section 5 into `references/common-movement-recipes.md`, where proper C# could be written without budget pressure.
 
 ---
 
@@ -75,7 +76,7 @@ These sections have GDScript code but no C# block. Each entry notes what kind of
 - ~~`skills/localization/SKILL.md` — Section "6. Locale-Aware Formatting" — needs C# `string.Format` / `CultureInfo` patterns plus `Time.GetDatetimeDictFromSystem()` → `System.DateTime` equivalents; medium~~ **(closed in v1.8.0)**
 - ~~`skills/particles-vfx/SKILL.md` — Section "6. Subemitters" — `SubEmitter2D`/`SubEmitter3D` node properties; C# equivalent is setting `SubEmitterMode` and `SubEmitterMaterial` as Inspector properties; no runtime code needed beyond a short note~~ **(closed in v1.6.0)**
 - ~~`skills/particles-vfx/SKILL.md` — Section "9. Flipbook Animation (2D)" — `AnimatedTexture` and `GPUParticles2D` process material properties; C# equivalent is direct property assignment on `ParticleProcessMaterial`; short~~ **(closed in v1.6.0)**
-- ~~`skills/player-controller/SKILL.md` — Section "5. Common Movement Recipes" — Dash and WallJump examples labeled "(GDScript)" in subsection headings; C# translation is direct (`CharacterBody2D` subclass, `_PhysicsProcess`, `IsOnFloor()`, `GetWallNormal()`); medium~~ **(closed in v1.8.0)** — compressed to fit 16 KB budget; polish candidate for v1.9.0
+- ~~`skills/player-controller/SKILL.md` — Section "5. Common Movement Recipes" — Dash and WallJump examples labeled "(GDScript)" in subsection headings; C# translation is direct (`CharacterBody2D` subclass, `_PhysicsProcess`, `IsOnFloor()`, `GetWallNormal()`); medium~~ **(closed in v1.8.0)** — moved to `references/common-movement-recipes.md` via Pattern X after pre-tag review
 - ~~`skills/resource-pattern/SKILL.md` — Section "6. Resource Collections" — typed array of `Resource` subclasses; C# `[Export] public Godot.Collections.Array<MyResource>` pattern; short~~ **(closed in v1.6.0)**
 - ~~`skills/resource-pattern/SKILL.md` — Section "8. Sharing vs Unique" — `.Duplicate()` and resource instancing concepts; C# `.Duplicate()` call is identical API; short~~ **(closed in v1.6.0)**
 - ~~`skills/resource-pattern/SKILL.md` — Section "10. Anti-patterns" — comment-only GDScript blocks showing bad patterns; C# equivalents are structural translations of the anti-pattern comments; short but low value~~ **(closed in v1.8.0)**
