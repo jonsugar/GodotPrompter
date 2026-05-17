@@ -50,6 +50,75 @@ func test_score_increments_correctly() -> void:
     assert_signal_emitted_with_parameters(event_bus, "score_changed", [75])
 ```
 
+```csharp
+// C# equivalent — gdUnit4 producer-side signal assertions
+// Requires: gdUnit4 NuGet package (https://github.com/MikeSchulze/gdUnit4Net)
+using GdUnit4;
+using static GdUnit4.Assertions;
+
+[TestSuite]
+public partial class PlayerSignalTest : GdUnit4.GodotTestCase
+{
+    private Player _player;
+    private EventBus _eventBus;
+
+    [Before]
+    public async Task Before()
+    {
+        // Use the real autoload EventBus (registered in project settings)
+        _eventBus = GetTree().Root.GetNode<EventBus>("EventBus");
+        _player = (Player)await Scene.LoadScene("res://player/player.tscn");
+        AddChild(_player);
+    }
+
+    [TestCase]
+    public async Task TakeDamage_EmitsHealthChanged()
+    {
+        // Assert the signal fires with the expected (current=90, maximum=100) args
+        var signalAssert = AssertSignal(_eventBus)
+            .IsEmitted(nameof(EventBus.SignalName.HealthChanged))
+            .WithArgs(90, 100);
+
+        _player.TakeDamage(10);
+
+        await signalAssert.WithTimeout(100);
+    }
+
+    [TestCase]
+    public async Task LethalDamage_EmitsPlayerDied()
+    {
+        var signalAssert = AssertSignal(_eventBus)
+            .IsEmitted(nameof(EventBus.SignalName.PlayerDied));
+
+        _player.TakeDamage(999);
+
+        await signalAssert.WithTimeout(100);
+    }
+
+    [TestCase]
+    public async Task AddScore_EmitsScoreChangedTwice()
+    {
+        // Capture emissions via a counter helper before firing
+        int emitCount = 0;
+        _eventBus.ScoreChanged += (_) => emitCount++;
+
+        _player.AddScore(50);
+        _player.AddScore(25);
+
+        // Allow one frame for signal processing
+        await ToSignal(GetTree(), "process_frame");
+
+        AssertThat(emitCount).IsEqual(2);
+
+        // Verify the cumulative value from the last emission
+        var signalAssert = AssertSignal(_eventBus)
+            .IsEmitted(nameof(EventBus.SignalName.ScoreChanged))
+            .WithArgs(75);
+        await signalAssert.WithTimeout(100);
+    }
+}
+```
+
 ## Testing signal reception (consumer side)
 
 ```gdscript
@@ -78,6 +147,52 @@ func test_hud_updates_score_label() -> void:
     event_bus.score_changed.emit(1234)
 
     assert_eq(hud.get_node("ScoreLabel").text, "Score: 1234")
+```
+
+```csharp
+// C# equivalent — gdUnit4 consumer-side state assertions
+using GdUnit4;
+using static GdUnit4.Assertions;
+
+[TestSuite]
+public partial class HudLayerTest : GdUnit4.GodotTestCase
+{
+    private HudLayer _hud;
+    private EventBus _eventBus;
+
+    [Before]
+    public async Task Before()
+    {
+        _eventBus = GetTree().Root.GetNode<EventBus>("EventBus");
+        _hud = (HudLayer)await Scene.LoadScene("res://ui/hud_layer.tscn");
+        AddChild(_hud);
+    }
+
+    [TestCase]
+    public async Task PlayerDied_ShowsDeathScreen()
+    {
+        var deathScreen = _hud.GetNode<Control>("DeathScreen");
+        AssertThat(deathScreen.Visible).IsFalse("death screen should start hidden");
+
+        // Emit directly on the autoload — HudLayer's handler fires synchronously
+        _eventBus.EmitSignal(EventBus.SignalName.PlayerDied);
+
+        // Allow one frame for _Process / deferred calls to settle
+        await ToSignal(GetTree(), "process_frame");
+
+        AssertThat(deathScreen.Visible).IsTrue("death screen should be visible after PlayerDied");
+    }
+
+    [TestCase]
+    public async Task ScoreChanged_UpdatesScoreLabel()
+    {
+        _eventBus.EmitSignal(EventBus.SignalName.ScoreChanged, 1234);
+
+        await ToSignal(GetTree(), "process_frame");
+
+        AssertThat(_hud.GetNode<Label>("ScoreLabel").Text).IsEqual("Score: 1234");
+    }
+}
 ```
 
 **Key GUT helpers for event bus testing:**

@@ -321,6 +321,44 @@ func _on_combat_hit(data: CombatEventData) -> void:
         _show_critical_text(data.target_id, data.damage_amount)
 ```
 
+```csharp
+// CombatEventData.cs — Resource-based payload (Inspector-friendly, fully typed)
+using Godot;
+
+public partial class CombatEventData : Resource
+{
+    [Export] public int AttackerId   { get; set; }
+    [Export] public int TargetId     { get; set; }
+    [Export] public int DamageAmount { get; set; }
+    [Export] public string DamageType { get; set; } = "physical";
+    [Export] public bool IsCritical  { get; set; }
+}
+
+// In EventBus.cs — add the signal:
+// [Signal] public delegate void CombatHitEventHandler(CombatEventData data);
+
+// Producer
+public void FireCombatHit(Node target, int damageAmount, string damageType, bool isCritical)
+{
+    var data = new CombatEventData
+    {
+        AttackerId   = (int)GetInstanceId(),
+        TargetId     = (int)target.GetInstanceId(),
+        DamageAmount = damageAmount,
+        DamageType   = damageType,
+        IsCritical   = isCritical,
+    };
+    _eventBus.EmitSignal(EventBus.SignalName.CombatHit, data);
+}
+
+// Consumer
+private void OnCombatHit(CombatEventData data)
+{
+    if (data.IsCritical)
+        ShowCriticalText(data.TargetId, data.DamageAmount);
+}
+```
+
 ### Option B — Dictionary payload (acceptable for prototyping)
 
 ```gdscript
@@ -339,6 +377,29 @@ EventBus.combat_hit.emit({
 func _on_combat_hit(data: Dictionary) -> void:
     if data.get("is_critical", false):
         _show_critical_text(data["target_id"], data["damage_amount"])
+```
+
+```csharp
+// Option B equivalent — Dictionary payload (prototyping only; prefer Resource above)
+// In EventBus.cs:
+// [Signal] public delegate void CombatHitEventHandler(Godot.Collections.Dictionary data);
+
+// Producer
+var data = new Godot.Collections.Dictionary
+{
+    { "attacker_id",   (int)GetInstanceId() },
+    { "target_id",     (int)target.GetInstanceId() },
+    { "damage_amount", 25 },
+    { "is_critical",   true },
+};
+_eventBus.EmitSignal(EventBus.SignalName.CombatHit, data);
+
+// Consumer — no compile-time safety; key typos surface only at runtime
+private void OnCombatHit(Godot.Collections.Dictionary data)
+{
+    if (data.TryGetValue("is_critical", out var isCrit) && isCrit.AsBool())
+        ShowCriticalText(data["target_id"].AsInt32(), data["damage_amount"].AsInt32());
+}
 ```
 
 **Prefer Resources when:** the payload has more than 2–3 fields, the data is reused across multiple signals, or you want Inspector visibility and static typing.
