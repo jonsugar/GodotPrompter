@@ -266,8 +266,11 @@ public void TakeDamage(int amount)
 // GOOD — guard or assert clearly
 public void TakeDamage(int amount)
 {
-    GD.PushError("HealthComponent: audio dependency was not injected");
-    System.Diagnostics.Debug.Assert(_audio != null, "HealthComponent: audio dependency was not injected");
+    if (_audio == null)
+    {
+        GD.PushError("HealthComponent: audio dependency was not injected");
+        return;
+    }
     _audio.PlaySfx("hurt");
 }
 

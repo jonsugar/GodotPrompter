@@ -144,9 +144,9 @@ public partial class DialogueUI : Control
 
         Manager ??= GetNode<DialogueManager>("/root/DialogueManager");
 
-        Manager.LineDisplayed.Connect(OnLineDisplayed);
-        Manager.ChoicePresented.Connect(OnChoicePresented);
-        Manager.DialogueEnded.Connect(OnDialogueEnded);
+        Manager.LineDisplayed += OnLineDisplayed;
+        Manager.ChoicePresented += OnChoicePresented;
+        Manager.DialogueEnded += OnDialogueEnded;
 
         _typewriterTimer.Timeout += OnTypewriterTick;
 
