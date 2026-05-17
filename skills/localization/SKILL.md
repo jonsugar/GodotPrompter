@@ -318,6 +318,25 @@ func format_number(value: int) -> String:
 
 Godot doesn't provide built-in locale-aware date formatting. Use `Time.get_datetime_dict_from_system()` and format manually per locale.
 
+### C#
+
+```csharp
+using Godot;
+using System.Globalization;
+
+public partial class LocaleFormatter : Node
+{
+    public string FormatNumber(double value)
+    {
+        var culture = CultureInfo.GetCultureInfo(TranslationServer.GetLocale().Replace("_", "-"));
+        return value.ToString("N", culture);
+    }
+
+    // FormatCurrency and FormatDate follow the same pattern — same culture lookup,
+    // ToString("C", culture) and ToString("d", culture) respectively.
+}
+```
+
 ---
 
 ## 7. Project Organization
