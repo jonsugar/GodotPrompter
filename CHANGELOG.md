@@ -4,6 +4,32 @@ All notable changes to GodotPrompter will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.0] - 2026-05-17
+
+### Added
+
+- **9 Codex sub-agents** under `.codex/agents/godot-prompter/`: `godot-animator`, `godot-code-reviewer`, `godot-csharp-engineer`, `godot-game-architect`, `godot-game-dev`, `godot-performance-profiler`, `godot-shader-author`, `godot-tools-engineer`, `godot-ui-designer`. Codex now reaches agent parity with the other platforms (PR #1, @hagonzalez95).
+
+### Changed
+
+- **C# parity initiative complete.** All 19 remaining deferred GDScript-only sections closed across 13 skills:
+  - `camera-system` — 3 sections in references/ (camera3d-patterns, transitions, split-screen)
+  - `dedicated-server` — 1 section in references/ (deployment)
+  - `dependency-injection` — 1 SKILL.md + 1 references/ section (anti-patterns, testing-with-di)
+  - `dialogue-system` — 3 sections in references/ (branching, UI, external-formats)
+  - `event-bus` — 1 SKILL.md + 1 references/ section (typed-signal-parameters, testing)
+  - `localization` — 1 SKILL.md section (locale-aware-formatting)
+  - `player-controller` — 1 SKILL.md section (Dash + WallJump recipes)
+  - `resource-pattern` — 1 SKILL.md section (anti-patterns)
+  - `save-load` — 2 sections in references/ (save-architecture, version-migration)
+  - `scene-organization` — 1 SKILL.md section (node-communication-patterns)
+  - `shader-basics` — 1 section in references/ (compositor-effects)
+  - `state-machine` — 1 SKILL.md section (resource-based approach)
+- `.opencode/INSTALL.md` — factual corrections from real-world usage: `/skills` slash command, corrected auto-update statement, accurate Windows/Unix log paths, link to OpenCode config docs (PR #2, @vasekhodina)
+- `docs/superpowers/notes/2026-04-30-csharp-parity-debt.md` — 19 → 0 deferred sections; v1.8.0 progress block added; initiative marked complete
+
+> **Release notes:** Validator baseline at release: 0 errors, 15 warnings (10 `csharp-parity-accepted` intentional GDScript-only + 5 `token-budget-exceeded` pre-existing). Down from 22 in v1.7.3. **`csharp-parity-missing` warnings closed: 7 → 0** (all sections still in SKILL.md). Plus 12 silent closures in `references/<topic>.md` files (not validator-visible). Every skill in the repo now has matching C# for every GDScript example, except the intentional `csharp-parity-accepted` category (the `gdscript-patterns` skill, which is GDScript-by-design). The v1.5.0 C# parity initiative spanning v1.6.0–v1.8.0 is complete (33 → 0 deferred sections). Plus 9 new Codex sub-agents (platform parity for Codex). Repo-wide minimum stays at Godot 4.3+. Follow-up polish candidates documented in `csharp-parity-debt.md`: the player-controller Dash/WallJump C# blocks were compressed to fit the 16 KB SKILL.md budget; 5 skills (`3d-essentials`, `ai-navigation`, `animation-system`, `multiplayer-basics`, `physics-system`) carry pre-existing `token-budget-exceeded` warnings at 16.1–16.3 KB.
+
 ## [1.7.3] - 2026-05-07
 
 ### Changed
