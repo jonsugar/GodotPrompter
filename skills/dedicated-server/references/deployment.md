@@ -159,7 +159,7 @@ public partial class ServerBoot : Node
 
     private void LogError(string msg)
     {
-        GD.PrintErr($"[ERROR] {Time.GetDatetimeStringFromSystem()}  {msg}");
+        GD.PushError($"[ERROR] {Time.GetDatetimeStringFromSystem()}  {msg}");
     }
 }
 ```
