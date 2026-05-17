@@ -130,5 +130,39 @@ func log_error(msg: String) -> void:
     push_error("[ERROR] %s  %s" % [Time.get_datetime_string_from_system(), msg])
 ```
 
+When exporting a C# dedicated server, ensure the .NET runtime is bundled in the export preset (Project → Export → Dotnet → Include Scripts Content = enabled, and the target system has the matching `dotnet` runtime installed).
+
+```csharp
+using Godot;
+
+public partial class ServerBoot : Node
+{
+    public override void _Ready()
+    {
+        if (OS.HasFeature("dedicated_server"))
+        {
+            RenderingServer.SetRenderLoopEnabled(false);
+            GD.Print($"Dedicated server build — display: {DisplayServer.GetName()}");
+            StartGameLoop();
+        }
+    }
+
+    private void StartGameLoop()
+    {
+        // Server tick loop entry point
+    }
+
+    private void LogInfo(string msg)
+    {
+        GD.Print($"[INFO]  {Time.GetDatetimeStringFromSystem()}  {msg}");
+    }
+
+    private void LogError(string msg)
+    {
+        GD.PrintErr($"[ERROR] {Time.GetDatetimeStringFromSystem()}  {msg}");
+    }
+}
+```
+
 ---
 
