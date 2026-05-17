@@ -229,6 +229,101 @@ extends Resource
 @export var speed:  float = 80.0
 ```
 
+```csharp
+// ❌ Anti-pattern: mutating a shared Resource — accidental shared state
+// All enemies share the same EnemyStats object loaded from the .tres file.
+// Damaging one enemy damages all of them.
+[GlobalClass]
+public partial class Enemy : CharacterBody2D
+{
+    [Export] public EnemyStats Stats;  // loaded from .tres, shared by default
+
+    public void TakeDamage(int amount)
+    {
+        Stats.Health -= amount;  // mutates the shared Resource — affects every Enemy!
+    }
+}
+
+// ✅ Correct: duplicate before mutating so each instance owns its own copy.
+public partial class EnemyGood : CharacterBody2D
+{
+    [Export] public EnemyStats Stats;
+
+    public override void _Ready()
+    {
+        Stats = (EnemyStats)Stats.Duplicate();  // now safe to mutate independently
+    }
+
+    public void TakeDamage(int amount)
+    {
+        Stats.Health -= amount;  // only affects this instance
+    }
+}
+
+// ❌ Anti-pattern: game logic inside a Resource
+// Resources have no scene-tree access, no _Process, and cannot call GetTree() or read Input.
+[GlobalClass]
+public partial class EnemyStatsBad : Resource
+{
+    [Export] public float Health    { get; set; }
+    [Export] public float MaxHealth { get; set; }
+    [Export] public float RegenRate { get; set; }
+
+    // This logic belongs in a Node, not a Resource.
+    public void UpdateHealthRegen(double delta)
+    {
+        // Cannot call GetTree(), cannot access nodes, cannot read Input.
+        Health = Mathf.Min(Health + RegenRate * (float)delta, MaxHealth);
+    }
+}
+
+// ✅ Correct: keep logic in Nodes, data in Resources.
+public partial class EnemyCorrect : CharacterBody2D
+{
+    [Export] public EnemyStats Stats;
+    private float _currentHealth;
+
+    public override void _Ready()
+    {
+        Stats = (EnemyStats)Stats.Duplicate();
+        _currentHealth = Stats.MaxHealth;
+    }
+
+    public override void _Process(double delta)
+    {
+        _currentHealth = Mathf.Min(_currentHealth + Stats.RegenRate * (float)delta, Stats.MaxHealth);
+    }
+}
+
+// ❌ Anti-pattern: giant monolithic Resource
+// One Resource holds everything; impossible to reuse individual pieces.
+[GlobalClass]
+public partial class GameConfigBad : Resource
+{
+    [Export] public int   PlayerHealth      { get; set; }
+    [Export] public float PlayerSpeed       { get; set; }
+    [Export] public int   EnemyGoblinHealth { get; set; }
+    [Export] public float EnemyGoblinSpeed  { get; set; }
+    [Export] public int   EnemyTrollHealth  { get; set; }
+    // ... 200 more properties
+}
+
+// ✅ Correct: small focused Resources, composed together.
+[GlobalClass]
+public partial class PlayerConfig : Resource
+{
+    [Export] public int   Health { get; set; } = 100;
+    [Export] public float Speed  { get; set; } = 200.0f;
+}
+
+[GlobalClass]
+public partial class EnemyConfig : Resource
+{
+    [Export] public int   Health { get; set; } = 50;
+    [Export] public float Speed  { get; set; } = 80.0f;
+}
+```
+
 ---
 
 ## 11. Checklist
