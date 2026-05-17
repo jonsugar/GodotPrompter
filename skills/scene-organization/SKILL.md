@@ -203,6 +203,73 @@ EventBus.enemy_killed.emit(self)
 EventBus.enemy_killed.connect(_on_enemy_killed)
 ```
 
+**C#**
+
+```csharp
+// Pattern 1: Signals travel up (child → parent)
+// Child emits; it does not know who is listening.
+public partial class Player : CharacterBody2D
+{
+    public override void _Ready()
+    {
+        var health = GetNode<HealthComponent>("HealthComponent");
+        health.Died += OnPlayerDied;
+    }
+
+    private void OnPlayerDied()
+    {
+        // Parent reacts — child HealthComponent stays ignorant of context
+    }
+}
+
+// Pattern 2: Method calls travel down (parent → child)
+// Parent drives children by calling their methods directly.
+public partial class Level : Node2D
+{
+    public override void _Ready()
+    {
+        var health = GetNode<HealthComponent>("Player/HealthComponent");
+        health.TakeDamage(10);
+
+        var anim = GetNode<AnimationPlayer>("Player/AnimationPlayer");
+        anim.Play("hurt");
+    }
+}
+
+// Pattern 3: EventBus travels sideways (peer → peer)
+// EventBus.cs — registered as an Autoload singleton named "EventBus"
+public partial class EventBus : Node
+{
+    [Signal] public delegate void EnemyKilledEventHandler(Enemy enemy);
+}
+
+// Enemy scene — emits on the bus; does not reference HUD
+public partial class Enemy : CharacterBody2D
+{
+    private void Die()
+    {
+        var bus = GetNode<EventBus>("/root/EventBus");
+        bus.EmitSignal(EventBus.SignalName.EnemyKilled, this);
+        QueueFree();
+    }
+}
+
+// HUD scene — subscribes on the bus; does not reference Enemy
+public partial class Hud : CanvasLayer
+{
+    public override void _Ready()
+    {
+        var bus = GetNode<EventBus>("/root/EventBus");
+        bus.EnemyKilled += OnEnemyKilled;
+    }
+
+    private void OnEnemyKilled(Enemy enemy)
+    {
+        // Update kill counter, score, etc.
+    }
+}
+```
+
 ---
 
 ## 5. Scene Tree Patterns
