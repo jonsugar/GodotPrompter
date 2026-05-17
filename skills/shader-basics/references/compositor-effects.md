@@ -56,6 +56,48 @@ func _render_callback(effect_callback_type: int, render_data: RenderData) -> voi
     # ... dispatch compute shaders or draw commands
 ```
 
+The C# port requires `[Tool]` (so the effect runs in the editor preview) and explicit `RenderingDevice` lifecycle management via `_Notification(NotificationPredelete)`. The compute pipeline setup mirrors the GDScript version one-to-one.
+
+```csharp
+// CustomOutlineEffect.cs
+using Godot;
+
+[Tool]
+public partial class CustomOutlineEffect : CompositorEffect
+{
+    private RenderingDevice _rd;
+    private Rid _shader;
+
+    public CustomOutlineEffect()
+    {
+        EffectCallbackType = EffectCallbackTypeEnum.PostTransparent;
+        NeedsNormalRoughness = true; // request normal buffer access
+        _rd = RenderingServer.GetRenderingDevice();
+    }
+
+    public override void _RenderCallback(int effectCallbackType, RenderData renderData)
+    {
+        if (_rd == null) return;
+
+        var sceneBuffers = renderData.GetRenderSceneBuffers() as RenderSceneBuffersRD;
+        if (sceneBuffers == null) return;
+
+        var size = sceneBuffers.GetInternalSize();
+        if (size.X == 0 || size.Y == 0) return;
+
+        // Dispatch the compute shader against the resolved color texture.
+        // (Compute pipeline / shader compilation omitted for brevity —
+        // see references/post-processing.md for the full setup.)
+    }
+
+    public override void _Notification(int what)
+    {
+        if (what == NotificationPredelete && _shader.IsValid)
+            _rd.FreeRid(_shader);
+    }
+}
+```
+
 > **Note:** CompositorEffect uses the low-level `RenderingDevice` API. This is an advanced feature — for most post-processing needs, use WorldEnvironment built-in effects or a SubViewport + shader approach.
 
 ### Built-in Compositor Uses
