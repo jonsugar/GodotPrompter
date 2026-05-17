@@ -32,6 +32,51 @@ func _migrate(data: Dictionary) -> Dictionary:
 	return data
 ```
 
+```csharp
+using Godot;
+using Godot.Collections;
+
+public partial class SaveMigrator : Node
+{
+    private const int CurrentVersion = 3;
+
+    public Dictionary Migrate(Dictionary data)
+    {
+        int version = data.ContainsKey("version") ? (int)data["version"] : 0;
+
+        if (version < 1)
+        {
+            // v0 → v1: inventory did not exist, add empty array
+            if (!data.ContainsKey("player"))
+                data["player"] = new Dictionary();
+            ((Dictionary)data["player"])["inventory"] = new Array();
+            version = 1;
+        }
+
+        if (version < 2)
+        {
+            // v1 → v2: skills system added, seed from empty array
+            if (!data.ContainsKey("player"))
+                data["player"] = new Dictionary();
+            ((Dictionary)data["player"])["skills"] = new Array();
+            version = 2;
+        }
+
+        if (version < 3)
+        {
+            // v2 → v3: add stamina stat with default value
+            if (!data.ContainsKey("player"))
+                data["player"] = new Dictionary();
+            ((Dictionary)data["player"])["stamina"] = 100;
+            version = 3;
+        }
+
+        data["version"] = CurrentVersion;
+        return data;
+    }
+}
+```
+
 Key rules:
 - Each migration block is additive — it only adds or transforms, never removes data
 - Use `data.get("key", default)` defensively within migration blocks
