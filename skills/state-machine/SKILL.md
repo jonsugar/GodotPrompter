@@ -422,6 +422,21 @@ extends Resource
 
 Export an `Array[StateData]` on your AI controller. Designers populate each entry in the Inspector — no code changes needed to tune behavior or add states. The runtime reads `can_transition_to` to validate transitions and picks `animation_name` / `move_speed` for each active state.
 
+```csharp
+using Godot;
+
+[GlobalClass]
+public partial class StateData : Resource
+{
+    [Export] public string StateName { get; set; } = string.Empty;
+    [Export] public string AnimationName { get; set; } = string.Empty;
+    [Export] public float MoveSpeed { get; set; } = 0f;
+    [Export] public Godot.Collections.Array<string> CanTransitionTo { get; set; } = new();
+}
+```
+
+Attach an `Array[StateData]` export on your AI controller class (`[Export] public Godot.Collections.Array<StateData> States`). At runtime, look up the active `StateData` by `StateName` and read `AnimationName` / `MoveSpeed` to drive behavior; use `CanTransitionTo` to guard `TransitionTo` calls.
+
 ---
 
 ## 5. Hierarchical and Parallel State Machines
