@@ -388,6 +388,16 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+### Dash (C#)
+
+```csharp
+[Export] public float DashSpeed=800f,DashDuration=.15f;
+private float _t; private Vector2 _dir;
+public override void _PhysicsProcess(double delta) {
+    if (_t>0f) { _t-=(float)delta; Velocity=_dir*DashSpeed; MoveAndSlide(); return; }
+    if (Input.IsActionJustPressed("dash")) { _dir=Input.GetVector("left","right","up","down").Normalized(); _t=DashDuration; }
+}
+```
 
 ### Wall Jump (GDScript)
 
@@ -416,6 +426,16 @@ func _physics_process(delta: float) -> void:
     velocity.x = move_toward(velocity.x, input_x * speed, 1000.0 * delta)
 
     move_and_slide()
+```
+### Wall Jump (C#)
+
+```csharp
+[Export] public float WallJumpForce=350f,WallSlideSpeed=60f;
+public override void _PhysicsProcess(double delta) {
+    var v=Velocity;
+    if (IsOnWall()&&!IsOnFloor()) { v.Y=Mathf.Min(v.Y,WallSlideSpeed); if (Input.IsActionJustPressed("ui_accept")) v=GetWallNormal()*WallJumpForce+Vector2.Up*WallJumpForce; }
+    Velocity=v; MoveAndSlide();
+}
 ```
 
 ---
