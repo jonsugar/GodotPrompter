@@ -18,7 +18,7 @@ See [Opencode Docs](https://opencode.ai/docs/config/) for possible locations.
 
 Restart OpenCode. That's it — the plugin auto-installs and registers all skills.
 
-Verify by typing `/skills` into the OpenCode promtp
+Verify by typing `/skills` into the OpenCode prompt
 
 ## Usage
 
@@ -46,7 +46,7 @@ To pin (or upgrade to) a specific version:
 
 ### Plugin not loading
 
-1. Check logs in `~/.local/share/opencode/log/` or `%USERPROFILE%\.local\share\opencode\log` 
+1. Check logs in `~/.local/share/opencode/log/` on Unix-like systems, or in `%APPDATA%\opencode\log` / `%LOCALAPPDATA%\opencode\log` on Windows
 2. Verify the plugin line in your `opencode.json`
 3. Make sure you're running a recent version of OpenCode
 
