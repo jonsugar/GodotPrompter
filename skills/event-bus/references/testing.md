@@ -57,19 +57,23 @@ using GdUnit4;
 using static GdUnit4.Assertions;
 
 [TestSuite]
-public partial class PlayerSignalTest : GdUnit4.GodotTestCase
+public partial class PlayerSignalTest
 {
+    private ISceneRunner _runner;
     private Player _player;
     private EventBus _eventBus;
 
-    [Before]
-    public async Task Before()
+    [BeforeTest]
+    public void Setup()
     {
+        _runner = ISceneRunner.Load("res://player/player.tscn");
+        _player = _runner.Scene() as Player;
         // Use the real autoload EventBus (registered in project settings)
-        _eventBus = GetTree().Root.GetNode<EventBus>("EventBus");
-        _player = (Player)await Scene.LoadScene("res://player/player.tscn");
-        AddChild(_player);
+        _eventBus = _runner.Scene().GetTree().Root.GetNode<EventBus>("EventBus");
     }
+
+    [AfterTest]
+    public void TearDown() => _runner?.Dispose();
 
     [TestCase]
     public async Task TakeDamage_EmitsHealthChanged()
@@ -106,7 +110,7 @@ public partial class PlayerSignalTest : GdUnit4.GodotTestCase
         _player.AddScore(25);
 
         // Allow one frame for signal processing
-        await ToSignal(GetTree(), "process_frame");
+        await _runner.AwaitSignal(_runner.Scene().GetTree(), "process_frame").WithTimeout(500);
 
         AssertThat(emitCount).IsEqual(2);
 
@@ -155,18 +159,22 @@ using GdUnit4;
 using static GdUnit4.Assertions;
 
 [TestSuite]
-public partial class HudLayerTest : GdUnit4.GodotTestCase
+public partial class HudLayerTest
 {
+    private ISceneRunner _runner;
     private HudLayer _hud;
     private EventBus _eventBus;
 
-    [Before]
-    public async Task Before()
+    [BeforeTest]
+    public void Setup()
     {
-        _eventBus = GetTree().Root.GetNode<EventBus>("EventBus");
-        _hud = (HudLayer)await Scene.LoadScene("res://ui/hud_layer.tscn");
-        AddChild(_hud);
+        _runner = ISceneRunner.Load("res://ui/hud_layer.tscn");
+        _hud = _runner.Scene() as HudLayer;
+        _eventBus = _runner.Scene().GetTree().Root.GetNode<EventBus>("EventBus");
     }
+
+    [AfterTest]
+    public void TearDown() => _runner?.Dispose();
 
     [TestCase]
     public async Task PlayerDied_ShowsDeathScreen()
@@ -178,7 +186,7 @@ public partial class HudLayerTest : GdUnit4.GodotTestCase
         _eventBus.EmitSignal(EventBus.SignalName.PlayerDied);
 
         // Allow one frame for _Process / deferred calls to settle
-        await ToSignal(GetTree(), "process_frame");
+        await _runner.AwaitSignal(_runner.Scene().GetTree(), "process_frame").WithTimeout(500);
 
         AssertThat(deathScreen.Visible).IsTrue("death screen should be visible after PlayerDied");
     }
@@ -188,7 +196,7 @@ public partial class HudLayerTest : GdUnit4.GodotTestCase
     {
         _eventBus.EmitSignal(EventBus.SignalName.ScoreChanged, 1234);
 
-        await ToSignal(GetTree(), "process_frame");
+        await _runner.AwaitSignal(_runner.Scene().GetTree(), "process_frame").WithTimeout(500);
 
         AssertThat(_hud.GetNode<Label>("ScoreLabel").Text).IsEqual("Score: 1234");
     }

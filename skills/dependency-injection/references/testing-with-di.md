@@ -88,23 +88,20 @@ using GdUnit4;
 using static GdUnit4.Assertions;
 
 [TestSuite]
-public partial class HealthComponentTest : GdUnit4.GodotTestCase
+public partial class HealthComponentTest
 {
     private HealthComponent _health = null!;
     private StubAudio _audioStub = null!;
 
-    [Before]
-    public async System.Threading.Tasks.Task BeforeEach()
+    [BeforeTest]
+    public void Setup()
     {
         _audioStub = new StubAudio();
-        AddChild(_audioStub);
-
-        _health = GD.Load<PackedScene>("res://components/health_component.tscn")
-                    .Instantiate<HealthComponent>();
-        _health.Audio = _audioStub;   // inject the stub — no real AudioManager needed
-        _health.MaxHealth = 100;
-        AddChild(_health);
-        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        _health = new HealthComponent
+        {
+            Audio = _audioStub,   // inject the stub — no real AudioManager needed
+            MaxHealth = 100
+        };
     }
 
     [TestCase]
