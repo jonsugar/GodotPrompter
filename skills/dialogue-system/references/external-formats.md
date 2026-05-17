@@ -45,6 +45,55 @@ static func load_from_json(path: String) -> DialogueData:
     return data
 ```
 
+```csharp
+// DialogueLoader.cs
+using Godot;
+using Godot.Collections;
+
+public partial class DialogueLoader : RefCounted
+{
+    public static DialogueData LoadFromJson(string path)
+    {
+        using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+        if (file == null)
+        {
+            GD.PushError($"DialogueLoader: cannot open '{path}'");
+            return null;
+        }
+
+        var json = new Json();
+        var err  = json.Parse(file.GetAsText());
+        if (err != Error.Ok)
+        {
+            GD.PushError($"DialogueLoader: JSON parse error in '{path}' — {json.GetErrorMessage()}");
+            return null;
+        }
+
+        var raw  = (Dictionary)json.Data;
+        var data = new DialogueData();
+        data.StartLineId = raw.TryGetValue("start_line_id", out var sid) ? sid.AsString() : "";
+
+        var lines = raw.TryGetValue("lines", out var linesVar)
+            ? (Dictionary)linesVar
+            : new Dictionary();
+
+        foreach (var id in lines.Keys)
+        {
+            var entry = (Dictionary)lines[id];
+            var line  = new DialogueLine();
+            line.Speaker    = entry.TryGetValue("speaker",      out var sp)  ? sp.AsString()                   : "";
+            line.Text       = entry.TryGetValue("text",         out var tx)  ? tx.AsString()                   : "";
+            line.Choices    = entry.TryGetValue("choices",      out var ch)  ? ch.AsGodotArray<Dictionary>()   : new Array<Dictionary>();
+            line.NextLineId = entry.TryGetValue("next_line_id", out var nid) ? nid.AsString()                  : "";
+            line.Condition  = entry.TryGetValue("condition",    out var cnd) ? cnd.AsString()                  : "";
+            data.Lines[id.AsString()] = line;
+        }
+
+        return data;
+    }
+}
+```
+
 Example JSON layout (`res://dialogue/guard.json`):
 
 ```json
