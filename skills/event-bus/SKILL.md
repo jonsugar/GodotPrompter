@@ -379,32 +379,9 @@ func _on_combat_hit(data: Dictionary) -> void:
         _show_critical_text(data["target_id"], data["damage_amount"])
 ```
 
-```csharp
-// Option B equivalent — Dictionary payload (prototyping only; prefer Resource above)
-// In EventBus.cs:
-// [Signal] public delegate void CombatHitEventHandler(Godot.Collections.Dictionary data);
+The C# equivalent uses `Godot.Collections.Dictionary` in place of the Resource type and `data["key"].AsInt32()` / `.AsString()` to read values — no compile-time safety.
 
-// Producer
-var data = new Godot.Collections.Dictionary
-{
-    { "attacker_id",   (int)GetInstanceId() },
-    { "target_id",     (int)target.GetInstanceId() },
-    { "damage_amount", 25 },
-    { "is_critical",   true },
-};
-_eventBus.EmitSignal(EventBus.SignalName.CombatHit, data);
-
-// Consumer — no compile-time safety; key typos surface only at runtime
-private void OnCombatHit(Godot.Collections.Dictionary data)
-{
-    if (data.TryGetValue("is_critical", out var isCrit) && isCrit.AsBool())
-        ShowCriticalText(data["target_id"].AsInt32(), data["damage_amount"].AsInt32());
-}
-```
-
-**Prefer Resources when:** the payload has more than 2–3 fields, the data is reused across multiple signals, or you want Inspector visibility and static typing.
-
-**Use a Dictionary when:** prototyping quickly, the payload is short-lived and single-use, or the data structure changes frequently during development.
+**Prefer Resources** for structured, reusable payloads with more than 2–3 fields. **Use Dictionary** only when prototyping or the shape changes frequently.
 
 ---
 
