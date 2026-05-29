@@ -36,7 +36,7 @@ This is a **documentation/skills repository**. There is no application build/lin
 ## Repository Structure
 
 ```
-skills/                     # 45 domain-specific skill folders
+skills/                     # 48 domain-specific skill folders
   <skill-name>/
     SKILL.md                # Main skill document (YAML frontmatter required) — keep ≤ 16 KB (v1.7.0 token-budget rule)
     references/             # Optional load-on-demand deep dives (Pattern X)
