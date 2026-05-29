@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot 4.x](https://img.shields.io/badge/Godot-4.3+-blue.svg)](https://godotengine.org)
-[![Skills: 45](https://img.shields.io/badge/Skills-45-green.svg)](#available-skills)
+[![Skills: 48](https://img.shields.io/badge/Skills-48-green.svg)](#available-skills)
 
 Agentic skills framework for Godot 4.x game development. Gives AI coding agents domain-specific expertise for GDScript and C# projects.
 
@@ -12,9 +12,11 @@ Inspired by and built on top of the [Superpowers](https://github.com/obra/superp
 
 GodotPrompter is a plugin that provides **skills** — structured domain knowledge that AI agents load on demand. When you ask your agent to "add a state machine" or "set up multiplayer", it loads the relevant GodotPrompter skill and follows Godot-specific best practices instead of relying on generic knowledge.
 
-**45 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, optimization, and GDScript / C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
+**48 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, native extensions, multithreading, mobile shipping, optimization, and GDScript / C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
 
 **v1.7.0 introduces a 16 KB token budget** for `SKILL.md` files (validator-enforced) and the new **`gdscript-advanced`** skill for production-grade GDScript depth (performance idioms, metaprogramming, `@tool` lifecycle, profiler-driven idioms).
+
+**v1.9.0 adds native power and mobile shipping** — the new **`gdextension`** (godot-cpp / Rust native extensions), **`multithreading`** (WorkerThreadPool, threads, threaded loading), and **`mobile-development`** (Android/iOS export, lifecycle, plugins, IAP) skills.
 
 ## Quick Start
 
@@ -219,7 +221,7 @@ GodotPrompter includes 9 specialized agents:
 | `shader-basics` | Godot shader language, visual shaders, common recipes, post-processing |
 | `particles-vfx` | GPUParticles2D/3D, process materials, subemitters, trails, attractors, collision |
 
-### Build & Deploy (4 skills)
+### Build & Deploy (5 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -227,14 +229,23 @@ GodotPrompter includes 9 specialized agents:
 | `godot-optimization` | Profiler, draw calls, physics tuning, object pooling, bottlenecks |
 | `addon-development` | EditorPlugin, @tool scripts, custom inspectors, dock panels |
 | `assets-pipeline` | Image compression, 3D scene import, audio formats, resource management |
+| `mobile-development` | Android/iOS export, signing, lifecycle, permissions, plugins, IAP, device features |
 
-### Scripting (3 skills)
+### Scripting (4 skills)
 
 | Skill | Description |
 |-------|-------------|
 | `gdscript-patterns` | Static typing, await/coroutines, lambdas, match, exports, common idioms |
+| `gdscript-advanced` | Performance idioms, metaprogramming, `@tool` lifecycle, profiler-driven depth |
 | `csharp-godot` | C# conventions, GodotSharp API, project setup, GDScript interop |
 | `csharp-signals` | [Signal] delegates, EmitSignal, async awaiting, event architecture |
+
+### Native & Performance (2 skills)
+
+| Skill | Description |
+|-------|-------------|
+| `gdextension` | godot-cpp (C++) / gdext (Rust) native extensions, class binding, building, interop |
+| `multithreading` | WorkerThreadPool, Thread/Mutex/Semaphore, call_deferred, threaded resource loading |
 
 ### Math & Data (1 skill)
 
@@ -274,7 +285,7 @@ Produces a per-skill / per-agent table (bytes, KB, estimated tokens, Claude / GP
 
 CI gate: `.github/workflows/release.yml` runs both `node scripts/validate-skills.mjs` and a tag-vs-manifest version-consistency check on every `v*.*.*` push. The release is blocked if the validator returns errors or any of `package.json` / `.claude-plugin/plugin.json` / `.claude-plugin/marketplace.json` drifts from the tag.
 
-**Current baseline (v1.7.3):** 0 errors, 17 warnings (8 deferred C# parity, 9 accepted GDScript-only, 0 token-budget). Every `SKILL.md` is at or below the 16 KB budget after the v1.7.x token-budget initiative.
+**Current baseline (v1.9.0):** 0 errors, 10 warnings (all `csharp-parity-accepted` GDScript-only; 0 token-budget). Every `SKILL.md` is at or below the 16 KB budget.
 
 A manual agent-integration test plan covering full workflows (skill discovery, cross-reference navigation, end-to-end feature implementation) lives in [`tests/agent-integration/TEST_PLAN.md`](tests/agent-integration/TEST_PLAN.md) for spot-checks against new agent versions or platforms.
 

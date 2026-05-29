@@ -37,9 +37,9 @@ Validator deferred-parity warning count: 23 → 19. Token-budget warning count: 
 | `shader-basics` | 7 Compositor Effects | references/ |
 | `state-machine` | 4 Resource-Based Approach | SKILL.md |
 
-Validator visible `csharp-parity-missing` count: 7 → **0**. Overall validator: 22 → 15 warnings (7 csharp-parity-missing closed; the remaining 15 are 10 `csharp-parity-accepted` intentional GDScript-only + 5 `token-budget-exceeded` pre-existing).
+Validator visible `csharp-parity-missing` count: 7 → **0**. Overall validator: 22 → 10 warnings (7 csharp-parity-missing closed; the remaining 10 are all `csharp-parity-accepted` intentional GDScript-only; 0 `token-budget-exceeded`).
 
-**The v1.5.0 C# parity initiative spanning v1.6.0–v1.8.0 is complete after this release** (33 → 0 deferred sections). Every skill in the repo now has matching C# code for every GDScript example, except the intentional `csharp-parity-accepted` category (the `gdscript-patterns` skill, which is GDScript-by-design).
+**The v1.5.0 C# parity initiative spanning v1.6.0–v1.8.0 is complete after this release** (33 → 0 deferred sections). Every skill in the repo now has matching C# code for every GDScript example, except the intentional `csharp-parity-accepted` category (the `gdscript-patterns` and `gdscript-advanced` skills, which are GDScript-by-design).
 
 Carry-over notes for follow-up polish:
 - 5 skills still trigger `token-budget-exceeded`: `3d-essentials`, `ai-navigation`, `animation-system`, `multiplayer-basics`, `physics-system`. All sit at 16.1–16.3 KB. Candidate for a future token-budget point release.
