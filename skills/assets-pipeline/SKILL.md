@@ -7,7 +7,7 @@ description: Use when importing and managing assets — image compression, 3D sc
 
 All examples target Godot 4.3+ with no deprecated APIs. GDScript is shown first, then C#.
 
-> **Related skills:** **audio-system** for audio playback and bus architecture, **3d-essentials** for 3D materials and lighting, **2d-essentials** for 2D rendering and sprites, **animation-system** for imported animations, **godot-optimization** for asset-related performance.
+> **Related skills:** **audio-system** for audio playback and bus architecture, **3d-essentials** for 3D materials and lighting, **2d-essentials** for 2D rendering and sprites, **animation-system** for imported animations, **godot-optimization** for asset-related performance, **multithreading** for threaded resource loading.
 
 ---
 

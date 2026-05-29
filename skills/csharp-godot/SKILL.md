@@ -7,7 +7,7 @@ description: Use when working with C# in Godot — conventions, GodotSharp API d
 
 This skill covers C#-specific conventions, API differences from GDScript, project setup, and interop patterns. All examples are C# only. Target Godot 4.3+ with the GodotSharp NuGet package.
 
-> **Related skills:** **csharp-signals** for C# signal patterns, **godot-project-setup** for C# project scaffolding, **godot-testing** for C# testing with gdUnit4.
+> **Related skills:** **csharp-signals** for C# signal patterns, **godot-project-setup** for C# project scaffolding, **godot-testing** for C# testing with gdUnit4, **gdextension** for native C++ when C# is not enough, **multithreading** for C# concurrency.
 
 ---
 
