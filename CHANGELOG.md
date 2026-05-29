@@ -4,6 +4,26 @@ All notable changes to GodotPrompter will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.9.0] - 2026-05-29
+
+### Added
+
+- **3 new skills** (45 → 48):
+  - `gdextension` — native extensions with godot-cpp (C++) and gdext (Rust): when to go native, project/build setup, `ClassDB` class binding, the `.gdextension` file, compatibility rules, and GDScript/C# interop. References: `rust-gdext`, `debugging-native`.
+  - `multithreading` — `WorkerThreadPool`, `Thread`/`Mutex`/`Semaphore`, `call_deferred` thread-safety, and threaded resource loading, with C# `System.Threading`/`Task` parity. Reference: `pitfalls`.
+  - `mobile-development` — Android/iOS export & signing, app lifecycle, permissions, `JavaClassWrapper`/`AndroidRuntime` (Godot 4.4+), device features & safe area, mobile renderer/perf, and C#-on-mobile caveats. References: `plugins`, `iap-and-ads`, `crash-debugging`.
+- New **Native & Performance** README category; `gdscript-advanced` added to the README catalog (was missing).
+
+### Changed
+
+- Wired the 3 new skills into the cross-reference graph (`export-pipeline`, `godot-optimization`, `assets-pipeline`, `csharp-godot`, `responsive-ui`, `input-handling`) and referenced them from the `godot-performance-profiler`, `godot-csharp-engineer`, and `godot-tools-engineer` agents.
+
+### Fixed
+
+- Corrected the v1.8.0 release notes: actual validator baseline was **0 errors, 10 warnings (0 token-budget)**, not 15/5; "down from 17 in v1.7.3" (not 22). Same correction applied to the C# parity-debt note (which now also names `gdscript-advanced` as accepted GDScript-only).
+
+> **Release notes:** All three new skills are grounded in the official Godot docs (signatures, macros, and `.gdextension` file format verified against a local godot-docs clone; see `docs/superpowers/notes/2026-05-29-*-research.md`). Validator baseline at release: 0 errors, 10 warnings (all `csharp-parity-accepted` intentional GDScript-only; 0 token-budget). 48 skills, every `SKILL.md` ≤ 16 KB. Repo-wide minimum stays at Godot 4.3+ (features requiring newer engines — e.g. `JavaClassWrapper` at 4.4+, C# Android export at .NET 9 — are labeled inline).
+
 ## [1.8.0] - 2026-05-17
 
 ### Added
