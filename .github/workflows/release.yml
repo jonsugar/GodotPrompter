@@ -91,6 +91,13 @@ jobs:
         with:
           node-version: '20'
 
+      # Check out godot-prompter at the release tag so the bump scripts can copy
+      # the canonical marketplace entry description (incl. the current skill count)
+      # into the marketplace repos — not just the version.
+      - name: Checkout godot-prompter (canonical marketplace entry)
+        if: steps.token-check.outputs.skip == 'false'
+        uses: actions/checkout@v4
+
       - name: Open PR against skillsmith
         if: steps.token-check.outputs.skip == 'false'
         continue-on-error: true
@@ -112,11 +119,13 @@ jobs:
           git checkout -b "$BRANCH"
           node -e "
             const fs=require('fs');
+            const desc=JSON.parse(fs.readFileSync(process.env.GITHUB_WORKSPACE+'/.claude-plugin/marketplace.json','utf8')).plugins[0].description;
             const p='.claude-plugin/marketplace.json';
             const j=JSON.parse(fs.readFileSync(p,'utf8'));
             const i=j.plugins.findIndex(x=>x.name==='godot-prompter');
             if(i<0){console.error('godot-prompter plugin not found in skillsmith marketplace');process.exit(1);}
             j.plugins[i].version='$V';
+            j.plugins[i].description=desc;
             fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n');
           "
           git add .claude-plugin/marketplace.json
@@ -143,11 +152,13 @@ jobs:
           git checkout -b "$BRANCH"
           node -e "
             const fs=require('fs');
+            const desc=JSON.parse(fs.readFileSync(process.env.GITHUB_WORKSPACE+'/.claude-plugin/marketplace.json','utf8')).plugins[0].description;
             const p='.claude-plugin/marketplace.json';
             const j=JSON.parse(fs.readFileSync(p,'utf8'));
             const i=j.plugins.findIndex(x=>x.name==='godot-prompter');
             if(i<0){console.error('godot-prompter plugin not found in legacy marketplace');process.exit(1);}
             j.plugins[i].version='$V';
+            j.plugins[i].description=desc;
             fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n');
           "
           git add .claude-plugin/marketplace.json
