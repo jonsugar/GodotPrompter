@@ -1,6 +1,6 @@
 # Debugging native code
 
-Native (C++/Rust) extensions can't be stepped through with Godot's script debugger — you debug them like any other shared library, with the engine as the host process.
+Native (C++/Rust) extensions can't be stepped through with Godot's script debugger — you debug them like any other shared library, with the engine as the host process. Back to [GDExtension](../SKILL.md).
 
 ## Hot reload
 

@@ -1,6 +1,6 @@
 # Rust alternative — godot-rust / gdext
 
-> **Community, not official.** [godot-rust/gdext](https://github.com/godot-rust/gdext) is a community-maintained Rust binding (MPL-2.0). Maintained releases require **Godot 4.2+** (4.1 support is frozen). The official native binding is godot-cpp (C++) — see the parent skill.
+> **Community, not official.** [godot-rust/gdext](https://github.com/godot-rust/gdext) is a community-maintained Rust binding (MPL-2.0). Maintained releases require **Godot 4.2+** (4.1 support is frozen). The official native binding is godot-cpp (C++) — see the parent [GDExtension](../SKILL.md) skill.
 
 ## Cargo.toml
 

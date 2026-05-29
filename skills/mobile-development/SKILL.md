@@ -118,7 +118,7 @@ func vibrate_ms(duration_ms: int) -> void:
 
 ### C# Equivalent
 
-The docs are GDScript-only here.
+The docs are GDScript-only here; the exact C# Variant-marshaling chain (`.AsGodotObject()` on each Java return) is untested against a device — verify on a real 4.4+ Android build.
 
 ```csharp
 // Godot 4.4+ — requires the VIBRATE permission in the export preset.

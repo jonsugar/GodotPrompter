@@ -1,6 +1,6 @@
 # Multithreading — Pitfalls & Deadlocks
 
-Deeper coverage for the **multithreading** skill: deadlocks, data races, the "don't await from a thread" trap, when threading hurts, and the separate-rendering-thread caveat.
+Deeper coverage for the **multithreading** skill: deadlocks, data races, the "don't await from a thread" trap, when threading hurts, and the separate-rendering-thread caveat. Back to [Multithreading](../SKILL.md).
 
 ---
 
