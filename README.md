@@ -46,6 +46,18 @@ Then start a new session and ask:
 
 The agent loads the `godot-project-setup` skill and provides a complete directory structure, autoload setup, and .gitignore — not generic advice.
 
+### Grok Build
+```bash
+grok plugin install jame581/GodotPrompter --trust
+grok plugin enable godot-prompter
+```
+
+Pin to a release:
+```bash
+grok plugin install jame581/GodotPrompter@v1.9.0 --trust
+grok plugin enable godot-prompter
+```
+
 ### Gemini CLI
 
 ```bash
