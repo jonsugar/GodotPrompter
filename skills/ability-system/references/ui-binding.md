@@ -71,7 +71,7 @@ func _process(delta: float) -> void:
         return
     _cooldown_remaining = maxf(0.0, _cooldown_remaining - delta)
     # value = 1 when on full cooldown, 0 when ready.
-    cooldown_sweep.value = _cooldown_remaining / _cooldown_total
+    cooldown_sweep.value = _cooldown_remaining / _cooldown_total if _cooldown_total > 0.0 else 0.0
 ```
 
 **Scene tree for one ability slot:**
@@ -199,6 +199,7 @@ public partial class ChargePips : HBoxContainer
     [Export] public Color EmptyColor { get; set; } = new Color(1, 1, 1, 0.3f);
 
     private readonly List<ColorRect> _pips = new();
+    private int _currentCharges;
 
     public override void _Ready()
     {
@@ -216,9 +217,9 @@ public partial class ChargePips : HBoxContainer
 
     public void SetCharges(int count)
     {
-        int clamped = Mathf.Clamp(count, 0, MaxCharges);
+        _currentCharges = Mathf.Clamp(count, 0, MaxCharges);
         for (int i = 0; i < _pips.Count; i++)
-            _pips[i].Color = i < clamped ? FilledColor : EmptyColor;
+            _pips[i].Color = i < _currentCharges ? FilledColor : EmptyColor;
     }
 }
 ```
