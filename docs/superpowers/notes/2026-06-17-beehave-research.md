@@ -54,7 +54,7 @@ func after_run(actor: Node, blackboard: Blackboard) -> void   # called after tic
 
 # Internal:
 func _safe_tick(actor: Node, blackboard: Blackboard) -> int  # validates tick() return type; returns FAILURE on bad type
-func can_send_message(blackboard: Blackboard) -> bool        # true when debugger tab is visible
+func can_send_message(blackboard: Blackboard) -> bool        # true when debugger tab is visible; blackboard value set per-tick by BeehaveTree
 func get_class_name() -> Array[StringName]                   # returns [&"BeehaveNode"]
 ```
 
@@ -63,6 +63,8 @@ All nodes are `@tool` — they run in the Godot editor for configuration warning
 ---
 
 ## 4. `BeehaveTree` — tree root
+
+**Important:** `BeehaveTree extends Node`, NOT `BeehaveNode`. An `is BeehaveNode` check on a tree instance returns `false`.
 
 File: `nodes/beehave_tree.gd`
 
@@ -568,7 +570,6 @@ checks will see: `AlwaysFailDecorator`, `AlwaysSucceedDecorator`.
 
 ```
 BeehaveNode (base)
-  ├── BeehaveTree            (tree root; not ticked by parent)
   ├── Composite
   │     ├── SequenceComposite
   │     ├── SequenceReactiveComposite
@@ -596,6 +597,8 @@ BeehaveNode (base)
         └── ConditionLeaf
               ├── BlackboardHasCondition
               └── BlackboardCompareCondition
+
+BeehaveTree (tree root; extends Node NOT BeehaveNode; not ticked by parent)
 ```
 
 ---
