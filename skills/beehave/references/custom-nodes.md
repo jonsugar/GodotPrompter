@@ -50,20 +50,26 @@ extends ActionLeaf
 const ARRIVE_DIST := 8.0
 
 func tick(actor: Node, blackboard: Blackboard) -> int:
+    # Beehave types `actor` as Node; cast to CharacterBody2D for the movement API.
+    var body := actor as CharacterBody2D
+    if body == null:
+        return FAILURE
     var target_pos: Vector2 = blackboard.get_value("target_pos", Vector2.ZERO)
-    if actor.global_position.distance_to(target_pos) <= ARRIVE_DIST:
+    if body.global_position.distance_to(target_pos) <= ARRIVE_DIST:
         _clear(blackboard)
         return SUCCESS
 
-    var dir := actor.global_position.direction_to(target_pos)
-    actor.velocity = dir * blackboard.get_value("move_speed", 150.0)
-    actor.move_and_slide()
+    var dir := body.global_position.direction_to(target_pos)
+    body.velocity = dir * blackboard.get_value("move_speed", 150.0)
+    body.move_and_slide()
     blackboard.set_value("is_moving", true)
     return RUNNING
 
 func interrupt(actor: Node, blackboard: Blackboard) -> void:
     _clear(blackboard)
-    actor.velocity = Vector2.ZERO
+    var body := actor as CharacterBody2D
+    if body != null:
+        body.velocity = Vector2.ZERO
 
 func after_run(actor: Node, blackboard: Blackboard) -> void:
     _clear(blackboard)

@@ -117,10 +117,12 @@ extends ConditionLeaf
 @export var detection_range: float = 150.0
 
 func tick(actor: Node, blackboard: Blackboard) -> int:
+    # Beehave types `actor` as Node; cast to your concrete type for 2D members.
+    var body := actor as Node2D
     var target: Node2D = blackboard.get_value("target")
-    if not is_instance_valid(target):
+    if body == null or not is_instance_valid(target):
         return FAILURE
-    var in_range := actor.global_position.distance_to(target.global_position) <= detection_range
+    var in_range := body.global_position.distance_to(target.global_position) <= detection_range
     return SUCCESS if in_range else FAILURE
 ```
 
@@ -137,7 +139,9 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 
     if elapsed >= attack_duration:
         blackboard.erase_value("attack_elapsed")
-        actor.play_attack_animation()
+        # `actor` is typed Node; guard game-specific methods (or cast to your actor type).
+        if actor.has_method("play_attack_animation"):
+            actor.call("play_attack_animation")
         return SUCCESS
 
     blackboard.set_value("attack_elapsed", elapsed)

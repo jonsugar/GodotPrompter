@@ -16,7 +16,7 @@ Connect `AbilityComponent` and `EffectHolder` signals to HUD widgets — no per-
 | `effect_applied(effect)` | `EffectHolder` | `Effect` resource |
 | `effect_expired(effect)` | `EffectHolder` | `Effect` resource |
 
-**Rule:** Bind the HUD to these signals in `_ready`. Never read `_cooldowns` or `_active` directly from the HUD.
+**Rule:** Bind the HUD to these signals via a dedicated `init(player)` call (see §5), not directly in `_ready` — the HUD may be instantiated before the player exists (loading screens, scene transitions). Never read `_cooldowns` or `_active` directly from the HUD.
 
 ---
 
@@ -41,6 +41,10 @@ var _cooldown_remaining: float = 0.0
 var _on_cooldown: bool = false
 
 func bind(ability_component: AbilityComponent) -> void:
+    # `value` is driven as a 0..1 fraction, so the bar's range must be 0..1
+    # (TextureProgressBar defaults to 0..100 — otherwise the sweep looks empty).
+    cooldown_sweep.min_value = 0.0
+    cooldown_sweep.max_value = 1.0
     ability_component.cooldown_started.connect(_on_cooldown_started)
     ability_component.cooldown_finished.connect(_on_cooldown_finished)
     ability_component.ability_activated.connect(_on_ability_activated)
@@ -82,6 +86,7 @@ AbilityIcon (TextureRect)
 ```
 
 Configure `TextureProgressBar`:
+- `min_value` = 0, `max_value` = 1 (the code drives `value` as a 0..1 fraction; set in `bind()`/`_Ready()` above so it works regardless of Inspector defaults)
 - `fill_mode` = `FILL_CLOCKWISE` (radial sweep)
 - `nine_patch_stretch` = off
 - modulate alpha ~0.65 for the tint overlay
@@ -107,6 +112,10 @@ public partial class AbilityIcon : TextureRect
     {
         _cooldownSweep = GetNode<TextureProgressBar>("CooldownSweep");
         _chargeCount = GetNode<Label>("ChargeCount");
+        // Value is driven as a 0..1 fraction, so the bar's range must be 0..1
+        // (TextureProgressBar defaults to 0..100 — otherwise the sweep looks empty).
+        _cooldownSweep.MinValue = 0.0;
+        _cooldownSweep.MaxValue = 1.0;
     }
 
     public void Bind(AbilityComponent component)
