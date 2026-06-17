@@ -301,7 +301,7 @@ public partial class EffectHolder : Node
             if (effect.Duration > 0f && elapsed >= effect.Duration)
                 toRemove.Add(effect);
             else
-                _active[effect] = (elapsed, tickAccum); // expiring — no need to write back
+                _active[effect] = (elapsed, tickAccum); // still active — write back updated elapsed and tick accumulator
         }
         foreach (var effect in toRemove)
         {
