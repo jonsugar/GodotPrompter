@@ -33,7 +33,7 @@ extends Resource
 enum Operation {
     ADD,       # final += value
     MULTIPLY,  # final *= (1.0 + value)  — e.g. value = 0.2 means +20%
-    OVERRIDE,  # replaces all other results; last applied wins
+    OVERRIDE,  # replaces all other results; highest value wins (last-added wins on ties)
 }
 
 @export var stat_name: String = ""
@@ -55,11 +55,11 @@ public partial class StatModifier : Resource
     {
         Add,       // final += Value
         Multiply,  // final *= (1.0f + Value)  — e.g. Value = 0.2f means +20%
-        Override,  // replaces all other results; last applied wins
+        Override,  // replaces all other results; highest value wins (last-added wins on ties)
     }
 
     [Export] public string StatName  { get; set; } = "";
-    [Export] public Operation Op     { get; set; } = Operation.Add;
+    [Export("operation")] public Operation Op { get; set; } = Operation.Add; // serialized as 'operation' to match the GDScript resource
     [Export] public float Value      { get; set; } = 0.0f;
     [Export] public StringName Source { get; set; } = new StringName("");
 }
