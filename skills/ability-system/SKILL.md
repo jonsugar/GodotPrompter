@@ -30,6 +30,155 @@ This separation means an `Ability` resource carries no Node references and can b
 
 ---
 
+## 2. Abilities (cost / cooldown / cast)
+
+### GDScript
+
+```gdscript
+# ability.gd
+class_name Ability
+extends Resource
+
+@export var ability_name: String
+@export var cost: float = 0.0
+@export var cooldown: float = 1.0
+@export var cast_time: float = 0.0
+
+# Override in subclasses or compose via exported effect resources.
+func can_activate(caster: Node) -> bool:
+    return true
+
+func activate(caster: Node) -> void:
+    pass
+```
+
+```gdscript
+# ability_component.gd
+class_name AbilityComponent
+extends Node
+
+signal ability_activated(ability: Ability)
+signal ability_failed(ability: Ability, reason: String)
+signal cooldown_started(ability: Ability, duration: float)
+signal cooldown_finished(ability: Ability)
+
+@export var resource_pool: float = 100.0
+
+var _granted: Dictionary = {}        # ability_name -> Ability
+var _cooldowns: Dictionary = {}      # ability_name -> seconds remaining
+
+func grant(ability: Ability) -> void:
+    _granted[ability.ability_name] = ability
+
+func _process(delta: float) -> void:
+    for name in _cooldowns.keys():
+        _cooldowns[name] -= delta
+        if _cooldowns[name] <= 0.0:
+            _cooldowns.erase(name)
+            cooldown_finished.emit(_granted[name])
+
+func try_activate(ability_name: String) -> bool:
+    var ability: Ability = _granted.get(ability_name)
+    if ability == null:
+        return false
+    if _cooldowns.has(ability_name):
+        ability_failed.emit(ability, "on_cooldown")
+        return false
+    if resource_pool < ability.cost:
+        ability_failed.emit(ability, "insufficient_resource")
+        return false
+    if not ability.can_activate(owner):
+        ability_failed.emit(ability, "conditions_unmet")
+        return false
+    resource_pool -= ability.cost
+    ability.activate(owner)
+    _cooldowns[ability_name] = ability.cooldown
+    cooldown_started.emit(ability, ability.cooldown)
+    ability_activated.emit(ability)
+    return true
+```
+
+### C#
+
+```csharp
+// Ability.cs
+using Godot;
+
+[GlobalClass]
+public partial class Ability : Resource
+{
+    [Export] public string AbilityName { get; set; } = "";
+    [Export] public float Cost { get; set; } = 0.0f;
+    [Export] public float Cooldown { get; set; } = 1.0f;
+    [Export] public float CastTime { get; set; } = 0.0f;
+
+    public virtual bool CanActivate(Node caster) => true;
+    public virtual void Activate(Node caster) { }
+}
+```
+
+```csharp
+// AbilityComponent.cs
+using Godot;
+using System.Collections.Generic;
+
+public partial class AbilityComponent : Node
+{
+    [Signal] public delegate void AbilityActivatedEventHandler(Ability ability);
+    [Signal] public delegate void AbilityFailedEventHandler(Ability ability, string reason);
+    [Signal] public delegate void CooldownStartedEventHandler(Ability ability, float duration);
+    [Signal] public delegate void CooldownFinishedEventHandler(Ability ability);
+
+    [Export] public float ResourcePool { get; set; } = 100.0f;
+
+    private readonly Dictionary<string, Ability> _granted = new();
+    private readonly Dictionary<string, float> _cooldowns = new();
+
+    public void Grant(Ability ability) => _granted[ability.AbilityName] = ability;
+
+    public override void _Process(double delta)
+    {
+        foreach (var name in new List<string>(_cooldowns.Keys))
+        {
+            _cooldowns[name] -= (float)delta;
+            if (_cooldowns[name] <= 0.0f)
+            {
+                _cooldowns.Remove(name);
+                EmitSignal(SignalName.CooldownFinished, _granted[name]);
+            }
+        }
+    }
+
+    public bool TryActivate(string abilityName)
+    {
+        if (!_granted.TryGetValue(abilityName, out var ability)) return false;
+        if (_cooldowns.ContainsKey(abilityName))
+        {
+            EmitSignal(SignalName.AbilityFailed, ability, "on_cooldown");
+            return false;
+        }
+        if (ResourcePool < ability.Cost)
+        {
+            EmitSignal(SignalName.AbilityFailed, ability, "insufficient_resource");
+            return false;
+        }
+        if (!ability.CanActivate(Owner))
+        {
+            EmitSignal(SignalName.AbilityFailed, ability, "conditions_unmet");
+            return false;
+        }
+        ResourcePool -= ability.Cost;
+        ability.Activate(Owner);
+        _cooldowns[abilityName] = ability.Cooldown;
+        EmitSignal(SignalName.CooldownStarted, ability, ability.Cooldown);
+        EmitSignal(SignalName.AbilityActivated, ability);
+        return true;
+    }
+}
+```
+
+---
+
 ## Implementation Checklist
 
 - [ ] `Ability` resource defined with `ability_name`, `cost`, `cooldown`, `cast_time`, `can_activate`, and `activate`
