@@ -267,3 +267,11 @@ git pull). The global clone is better for users who want GodotPrompter available
 - [agentpedia.codes: Antigravity CLI Deep Dive](https://agentpedia.codes/blog/antigravity-cli-deep-dive)
 - [TechCrunch: Google launches Antigravity 2.0 at IO 2026](https://techcrunch.com/2026/05/19/google-launches-antigravity-2-0-with-an-updated-desktop-app-and-cli-tool-at-io-2026/)
 - [MCP Directory: How to Use Antigravity Skills](https://mcpdirectory.app/blog/how-to-use-antigravity-skills-2026)
+
+## Verification result (2026-06-17) — Task 16
+
+**Status: FORMAT-VERIFIED, RUNTIME-PENDING.**
+
+- **Format verification (done):** Antigravity's documented Agent Skill format — a `SKILL.md` with `name` + `description` frontmatter plus a `references/` subfolder for load-on-demand material — is identical to GodotPrompter's existing skill structure. GodotPrompter skills therefore require no structural change to load in Antigravity. The tool-name mapping (`skills/using-godot-prompter/references/antigravity-tools.md`) and install paths are grounded in the sources above.
+- **Runtime verification (NOT done):** No Antigravity install exists on the v1.10.0 dev machine. Checked `~/.gemini` (absent), `%LOCALAPPDATA%\Programs\Antigravity`, `%LOCALAPPDATA%\Antigravity`, `C:\Program Files\Antigravity`, and `antigravity` on PATH — none present. Discovery + invocation in a live Antigravity install was therefore NOT exercised.
+- **Carried-forward open items for a future release** (do not claim as verified): (1) the exact file-edit / subagent-dispatch / content-search tool names (marked unconfirmed in `antigravity-tools.md`); (2) whether global skill discovery accepts nested clones or requires flat per-skill subdirectories (the clone-nesting caveat); (3) confirmation that `references/` subfolders resolve identically at runtime. Install docs (`antigravity-tools.md`, `using-godot-prompter/SKILL.md`) are labeled with these caveats rather than overclaiming.
