@@ -9,6 +9,8 @@ Build a data-driven ability system from Godot-native parts: abilities are `Resou
 
 > **Related skills:** **resource-pattern** for the `Resource` data containers, **component-system** for the component node pattern, **event-bus** for cross-system ability events, **state-machine** for caster states (e.g. casting/stunned), **hud-system** for cooldown UI.
 
+---
+
 ## 1. Architecture overview
 
 An ability system in Godot 4.x is built from three collaborating layers:
