@@ -19,7 +19,7 @@ description: Use when using the LimboAI addon — behavior trees and hierarchica
 | **Beehave** (GDScript addon) | Lightweight BT, GDScript-only projects |
 | **LimboAI** | BT **and** HSM together, visual editor, C++ performance, C# support (module build) |
 
-Choose LimboAI when you need a behavior tree with a polished visual debugger, want to combine it with a hierarchical state machine (`BTState` bridges them), or need C++ task execution speed. For a simpler GDScript-only behavior tree, Beehave is a lighter alternative. For plain state machines without a BT, use the built-in `state-machine` skill instead.
+Choose LimboAI when you need a behavior tree with a polished visual debugger, want to combine it with a hierarchical state machine (`BTState` bridges them), or need C++ task execution speed. Note: LimboAI requires **Godot 4.6+** and is not usable on 4.3–4.5. For a simpler GDScript-only behavior tree, Beehave is a lighter alternative. For plain state machines without a BT, use the built-in `state-machine` skill instead.
 
 ---
 
@@ -216,7 +216,7 @@ public partial class InRangeCondition : BTCondition
 
     public override Status _Tick(double delta)
     {
-        var target = Blackboard.GetVar(TargetVar, default(Variant)) as Node2D;
+        var target = Blackboard.GetVar(TargetVar, default(Variant)).As<Node2D>();
         if (!GodotObject.IsInstanceValid(target))
             return Status.Failure;
         var agent2D = (Node2D)Agent;

@@ -19,7 +19,7 @@ An ability system in Godot 4.x is built from three collaborating layers:
 
 - **Behaviour layer — `AbilityComponent` (Node):** A single node added to any entity that should use abilities. It holds the granted ability set, enforces cost/cooldown, and drives the `Ability.activate()` call. Four signals keep the rest of the game informed without coupling: `ability_activated(ability)`, `ability_failed(ability, reason)`, `cooldown_started(ability, duration)`, and `cooldown_finished(ability)`. Grant new abilities at runtime with `grant(ability)` and trigger them with `try_activate(ability_name)`.
 
-- **Effects layer — stat modifiers, buffs/debuffs, and gameplay tags:** Abilities can read from and write to a caster's `StatSet` (a Resource that owns a dictionary of named `StatModifier` entries) to apply temporary or permanent stat changes. A `GameplayTagContainer` attached to the caster gates activation — for example, a "stunned" tag can prevent any ability from firing. These three deep-dives are covered in the reference documents:
+- **Effects layer — stat modifiers, buffs/debuffs, and gameplay tags:** Abilities can read from and write to a caster's `StatSet` (a Resource that owns a dictionary of named `StatModifier` entries) to apply temporary or permanent stat changes. A `GameplayTagContainer` node (a child of the caster) gates activation — for example, a "stunned" tag can prevent any ability from firing. These three deep-dives are covered in the reference documents:
   - [Stat modifiers and StatSet](references/stat-modifiers.md)
   - [Gameplay tags and conditions](references/tags-and-conditions.md)
   - [HUD binding for cooldowns and resource bars](references/ui-binding.md)
