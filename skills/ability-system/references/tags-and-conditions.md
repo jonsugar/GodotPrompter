@@ -230,6 +230,7 @@ public partial class Ability : Resource
     {
         if (caster.GetNodeOrNull("GameplayTagContainer") is GameplayTagContainer child)
             return child;
+        // Fallback assumes a GDScript-style "tags" property; a C# caster should expose the container as a named child node.
         var prop = caster.Get("tags");
         return prop.As<GameplayTagContainer>();
     }
@@ -328,7 +329,7 @@ public partial class Effect : Resource
     [Export] public float  TickInterval  { get; set; } = 0.0f;
 
     /// <summary>If the target has this tag, the effect is blocked. Empty means never immune.</summary>
-    [Export] public StringName ImmunityTag { get; set; } = new StringName("");
+    [Export] public StringName ImmunityTag { get; set; } = StringName.Empty;
 
     public virtual void OnApply(Node target)  { }
     public virtual void OnTick(Node target)   { }
@@ -352,7 +353,7 @@ public partial class EffectHolder : Node
     public void ApplyEffect(Effect effect)
     {
         // --- Immunity check ---
-        if (effect.ImmunityTag != new StringName(""))
+        if (effect.ImmunityTag != StringName.Empty)
         {
             var tags = GetTags();
             if (tags != null && tags.HasTag(effect.ImmunityTag))
@@ -471,6 +472,7 @@ func _on_player_hit_by_stun() -> void:
     # 'status.stunned' is now on player's GameplayTagContainer.
 
     var result := player.get_node("AbilityComponent").try_activate("fireball")
+    # `AbilityComponent` (with `try_activate` and the `ability_failed` "conditions_unmet" reason) is defined in the main skill — see Section 2 of SKILL.md.
     # result == false; ability_failed emitted with reason "conditions_unmet".
     # After 2 s, StunEffect.on_expire removes 'status.stunned';
     # fireball activates normally again.
@@ -540,6 +542,7 @@ private void OnPlayerHitByStun()
     // "status.stunned" is now in the player's GameplayTagContainer.
 
     bool result = _player.GetNode<AbilityComponent>("AbilityComponent").TryActivate("fireball");
+    // `AbilityComponent` (with `TryActivate` and the `AbilityFailed` "conditions_unmet" reason) is defined in the main skill — see Section 2 of SKILL.md.
     // result == false; AbilityFailed emitted with reason "conditions_unmet".
     // After 2 s, StunEffect.OnExpire removes "status.stunned";
     // fireball activates normally again.
