@@ -9,8 +9,6 @@ Build a data-driven ability system from Godot-native parts: abilities are `Resou
 
 > **Related skills:** **resource-pattern** for the `Resource` data containers, **component-system** for the component node pattern, **event-bus** for cross-system ability events, **state-machine** for caster states (e.g. casting/stunned), **hud-system** for cooldown UI.
 
----
-
 ## 1. Architecture overview
 
 An ability system in Godot 4.x is built from three collaborating layers:
@@ -317,14 +315,12 @@ public partial class EffectHolder : Node
 
 ---
 
-## Implementation Checklist
+## Implementation checklist
 
-- [ ] `Ability` resource defined with `ability_name`, `cost`, `cooldown`, `cast_time`, `can_activate`, and `activate`
-- [ ] `AbilityComponent` node added to entity; signals connected to UI and game logic
-- [ ] Abilities granted via `grant(ability)` and triggered via `try_activate(ability_name)`
-- [ ] Stat modifiers applied through `StatSet` (see [references/stat-modifiers.md](references/stat-modifiers.md))
-- [ ] Gameplay tags gating activation via `GameplayTagContainer` (see [references/tags-and-conditions.md](references/tags-and-conditions.md))
-- [ ] Cooldown bars and resource meters bound to `AbilityComponent` signals (see [references/ui-binding.md](references/ui-binding.md))
-- [ ] `Effect` resource subclassed with `on_apply`/`on_tick`/`on_expire` overrides; `duration` and `tick_interval` exported
-- [ ] `EffectHolder` node added to entity; `apply_effect(effect)` called from ability `activate()`
-- [ ] Effect iteration uses a copy / removal list to avoid mutating `_active` mid-loop
+- [ ] Abilities are `Resource`s; behavior lives in `AbilityComponent`, not in the data.
+- [ ] Activation validates cost, cooldown, and `can_activate()` before spending resources.
+- [ ] Cooldowns tick in `_process`/`_Process` and emit start/finish signals.
+- [ ] Buffs/debuffs apply → tick → expire and emit signals; durations refresh or stack by source.
+- [ ] Stat modifiers recompute deterministically (ADD → MULTIPLY → OVERRIDE) and clamp.
+- [ ] Ability gating uses the gameplay-tag container; immunities block effects.
+- [ ] HUD binds to component signals — no per-frame polling of cooldown state.
