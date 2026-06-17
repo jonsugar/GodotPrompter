@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Cross-ref wiring: `ability-system` linked from `state-machine`, `hud-system`, `inventory-system`, `component-system`, `event-bus`; `limboai` and `beehave` linked from `ai-navigation`, `state-machine`, `godot-brainstorming`; `ability-system` linked from `limboai`.
+- Cross-ref wiring: `ability-system` back-linked from `component-system`, `event-bus`, `hud-system`, `resource-pattern`, `state-machine`; `limboai` and `beehave` linked from `ai-navigation` and `state-machine` (and cross-linked to each other); `ability-system` linked from `limboai`.
 - Light agent edits: `godot-game-architect` and `godot-game-dev` routing notes extended to cover the new ability-system and third-party addon skills.
 
 > **Release notes:** 3 new skills (48 → 51); first Third-Party Addons category in the repo. All addon content grounded against official LimboAI and Beehave repositories (cloned, version-pinned); see `docs/superpowers/notes/2026-06-17-limboai-research.md` and `docs/superpowers/notes/2026-06-17-beehave-research.md`. Validator baseline at release: 0 errors, 13 warnings (10 pre-existing `csharp-parity-accepted` + 3 new `csharp-parity-accepted` from `beehave` being GDScript-only, now allowlisted; 0 token-budget). Every SKILL.md ≤ 16 KB. 51 skills. Repo-wide minimum stays at Godot 4.3+.

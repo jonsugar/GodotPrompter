@@ -51,7 +51,7 @@ using Godot;
 [GlobalClass]
 public partial class StatModifier : Resource
 {
-    public enum Operation
+    public enum ModOp
     {
         Add,       // final += Value
         Multiply,  // final *= (1.0f + Value)  — e.g. Value = 0.2f means +20%
@@ -59,7 +59,7 @@ public partial class StatModifier : Resource
     }
 
     [Export] public string StatName  { get; set; } = "";
-    [Export("operation")] public Operation Op { get; set; } = Operation.Add; // serialized as 'operation' to match the GDScript resource
+    [Export] public ModOp Operation  { get; set; } = ModOp.Add; // property name 'Operation' serializes as 'operation', matching the GDScript field
     [Export] public float Value      { get; set; } = 0.0f;
     [Export] public StringName Source { get; set; } = new StringName("");
 }
@@ -259,13 +259,13 @@ public partial class StatSet : Resource
         float running = baseVal;
         if (bySource != null)
             foreach (var mod in bySource.Values)
-                if (mod.Op == StatModifier.Operation.Add)
+                if (mod.Operation == StatModifier.ModOp.Add)
                     running += mod.Value;
 
         // --- Pass 2: MULTIPLY ---
         if (bySource != null)
             foreach (var mod in bySource.Values)
-                if (mod.Op == StatModifier.Operation.Multiply)
+                if (mod.Operation == StatModifier.ModOp.Multiply)
                     running *= (1.0f + mod.Value);
 
         // --- Pass 3: OVERRIDE (highest value wins) ---
@@ -274,7 +274,7 @@ public partial class StatSet : Resource
             float overrideVal  = float.NegativeInfinity;
             bool  hasOverride  = false;
             foreach (var mod in bySource.Values)
-                if (mod.Op == StatModifier.Operation.Override && mod.Value >= overrideVal)
+                if (mod.Operation == StatModifier.ModOp.Override && mod.Value >= overrideVal)
                 {
                     overrideVal = mod.Value;
                     hasOverride = true;
@@ -344,7 +344,7 @@ stat_set.add_modifier(boots_mod)
 // Refresh: re-applying "sprint" replaces the old entry.
 var sprintMod = new StatModifier {
     StatName  = "speed",
-    Op        = StatModifier.Operation.Add,
+    Operation = StatModifier.ModOp.Add,
     Value     = 100f,
     Source    = new StringName("ability:sprint"),
 };
@@ -354,7 +354,7 @@ statSet.AddModifier(sprintMod);  // refresh — one modifier, not two
 // Stack: boots and sprint are separate sources.
 var bootsMod = new StatModifier {
     StatName  = "speed",
-    Op        = StatModifier.Operation.Add,
+    Operation = StatModifier.ModOp.Add,
     Value     = 50f,
     Source    = new StringName("item:boots_of_speed"),
 };

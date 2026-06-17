@@ -19,14 +19,14 @@ Tags are `StringName`s so comparisons are O(1) hash lookups. Store them in a `Di
 
 ## 1. GameplayTagContainer
 
-`GameplayTagContainer` is a `Resource` so it can be exported on any node and filled in the Godot Inspector.
+`GameplayTagContainer` is a `Node` added as a direct child of any entity that needs tags. It can be added in the scene tree and named `"GameplayTagContainer"` for consistent lookup.
 
 ### GDScript
 
 ```gdscript
 # gameplay_tag_container.gd
 class_name GameplayTagContainer
-extends Resource
+extends Node
 
 signal tag_added(tag: StringName)
 signal tag_removed(tag: StringName)
@@ -87,7 +87,7 @@ using Godot;
 using System.Collections.Generic;
 
 [GlobalClass]
-public partial class GameplayTagContainer : Resource
+public partial class GameplayTagContainer : Node
 {
     [Signal] public delegate void TagAddedEventHandler(StringName tag);
     [Signal] public delegate void TagRemovedEventHandler(StringName tag);
@@ -142,7 +142,7 @@ public partial class GameplayTagContainer : Resource
 
 ## 2. Gating Abilities with Required and Blocked Tags
 
-Add two exported arrays to `Ability` and override `can_activate` to query the caster's `GameplayTagContainer`. The container is expected to live as a direct child node *or* be exported on the caster — a helper `_get_tags(caster)` handles both patterns.
+Add two exported arrays to `Ability` and override `can_activate` to query the caster's `GameplayTagContainer`. The container is expected to live as a direct child node named `"GameplayTagContainer"` — a helper `_get_tags(caster)` locates it.
 
 ### GDScript
 
@@ -179,13 +179,11 @@ func activate(caster: Node) -> void:
 
 
 # Retrieve the GameplayTagContainer from the caster.
-# Checks for a direct-child node first, then an exported property named "tags".
+# Looks for a direct child node named "GameplayTagContainer"; returns null if not found.
 static func _get_tags(caster: Node) -> GameplayTagContainer:
     var child := caster.get_node_or_null("GameplayTagContainer")
     if child is GameplayTagContainer:
         return child
-    if caster.get("tags") is GameplayTagContainer:
-        return caster.get("tags")
     return null
 ```
 
@@ -223,21 +221,14 @@ public partial class Ability : Resource
 
     /// <summary>
     /// Locate the <see cref="GameplayTagContainer"/> on the caster.
-    /// Checks for a child node named "GameplayTagContainer" first, then
-    /// falls back to a property named "Tags" on the caster itself.
+    /// Looks for a direct child node named "GameplayTagContainer"; returns null if not found.
     /// </summary>
     protected static GameplayTagContainer? GetTags(Node caster)
-    {
-        if (caster.GetNodeOrNull("GameplayTagContainer") is GameplayTagContainer child)
-            return child;
-        // Fallback assumes a GDScript-style "tags" property; a C# caster should expose the container as a named child node.
-        var prop = caster.Get("tags");
-        return prop.As<GameplayTagContainer>();
-    }
+        => caster.GetNodeOrNull("GameplayTagContainer") as GameplayTagContainer;
 }
 ```
 
-> **Design note:** `_get_tags` / `GetTags` is a static helper so subclasses can call it without boilerplate. If all casters in your project use the same convention (e.g. always a child node), inline it directly and delete the fallback branch.
+> **Design note:** `_get_tags` / `GetTags` is a static helper so subclasses can call it without boilerplate. If you always name the container node `"GameplayTagContainer"`, you can also inline the lookup directly in `can_activate` without the helper.
 
 ---
 
@@ -555,7 +546,7 @@ private void OnPlayerHitByStun()
 
 ## Implementation Checklist
 
-- [ ] `GameplayTagContainer` Resource added as a child node (name `"GameplayTagContainer"`) or exported property `tags` on the entity
+- [ ] `GameplayTagContainer` Node added as a direct child node named `"GameplayTagContainer"` on the entity
 - [ ] `Ability.required_tags` and `Ability.blocked_tags` exported and set in the Inspector
 - [ ] `Ability.can_activate` calls `_get_tags(caster)` / `GetTags(caster)` and checks both arrays
 - [ ] `Effect.immunity_tag` set for effects that should be resistible; leave empty for always-applicable effects
