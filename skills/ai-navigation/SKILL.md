@@ -7,7 +7,7 @@ description: Use when implementing AI movement — NavigationAgent2D/3D, steerin
 
 Cover NavigationAgent2D/3D, steering behaviors, behavior trees, and patrol patterns. All examples target Godot 4.3+ with no deprecated APIs.
 
-> **Related skills:** **state-machine** for AI state management, **component-system** for modular AI behaviors, **player-controller** for movement physics patterns, **math-essentials** for pathfinding vectors and steering math.
+> **Related skills:** **state-machine** for AI state management, **component-system** for modular AI behaviors, **player-controller** for movement physics patterns, **math-essentials** for pathfinding vectors and steering math, **limboai** for BT + HSM with a visual editor, **beehave** for lightweight GDScript behavior trees. For a structured behavior tree (rather than steering/navigation), see the comparison tables in **limboai** and **beehave**.
 
 ---
 

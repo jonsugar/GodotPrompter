@@ -19,7 +19,8 @@ const TOKEN_BUDGET_BYTES = 16 * 1024;
 // Skills that are intentionally GDScript-only by design. Their sections still emit
 // a `csharp-parity-accepted` warning (so the count is visible) but do NOT count as
 // deferred parity debt.
-const GDSCRIPT_ONLY_BY_DESIGN = new Set(['gdscript-patterns', 'gdscript-advanced']);
+// 'beehave' is a GDScript-only addon (no official C# API), so its sections are accepted, not debt.
+const GDSCRIPT_ONLY_BY_DESIGN = new Set(['gdscript-patterns', 'gdscript-advanced', 'beehave']);
 
 const errors = [];
 const warnings = [];

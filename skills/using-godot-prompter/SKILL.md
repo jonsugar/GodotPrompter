@@ -19,6 +19,43 @@ GodotPrompter provides Godot 4.x domain-specific skills for AI coding agents. Sk
 
 **In Cursor:** Skills are loaded via custom instructions / rules system.
 
+**In Codex:** Skills load natively via the AGENTS.md re-export. Follow skill instructions directly; see `references/codex-tools.md` for tool mapping.
+
+**In OpenCode:** Skills are discovered from the installed plugin. Use the `/skills` command to browse or invoke skills directly. See `.opencode/INSTALL.md` for setup.
+
+**In Antigravity (2.0, IDE, CLI):** Skills activate automatically when your prompt matches a skill's `description` frontmatter — no tool call needed. Install skills into `.agents/skills/` (workspace) or `~/.gemini/config/skills/` (global). See `references/antigravity-tools.md` for tool mapping and full install instructions.
+
+### Installing GodotPrompter for Antigravity
+
+**Workspace (project-scoped) — recommended for active development:**
+
+```bash
+# Linux / macOS — from your Godot project root:
+mkdir -p .agents
+ln -s /path/to/GodotPrompter/skills .agents/skills
+
+# Windows (PowerShell, Developer Mode or run as admin):
+New-Item -ItemType Directory -Force .agents | Out-Null   # junction won't create the parent
+New-Item -ItemType Junction -Path .agents\skills -Target D:\Godot\GodotPrompter\skills
+```
+
+> **Legacy path note:** `.agent/skills/` (singular) was the early CLI convention; `.agents/skills/` (plural) is the current standard for all Antigravity products.
+
+**Global (cross-project):**
+
+```bash
+# Official path (Google Codelabs): ~/.gemini/config/skills/
+# Symlink individual skill folders so each is a direct child (recommended):
+mkdir -p ~/.gemini/config/skills/
+ln -s /path/to/GodotPrompter/skills/* ~/.gemini/config/skills/
+```
+
+> `~/.gemini/skills/` is a community-verified alias but not the path the official Codelabs docs name. Prefer `~/.gemini/config/skills/` for new installs.
+
+> **Nesting caveat:** Prefer `ln -s skills/*` over cloning the repo directly into the skills dir, so each skill is an immediate child (`<skills-dir>/<skill-name>/SKILL.md`). Confirm nested discovery works before relying on the clone approach.
+
+See `references/antigravity-tools.md` for the full tool mapping and SKILL.md frontmatter details.
+
 ## Coexistence with Other Plugins (e.g., Superpowers)
 
 When another plugin (like Superpowers) is handling workflow (brainstorming, planning, execution), GodotPrompter skills STILL APPLY during implementation. They are not replaced — they are domain-specific guidance that workflow plugins cannot provide.
@@ -97,6 +134,7 @@ Skills use Claude Code tool names as the canonical reference. Non-Claude platfor
 - [`references/codex-tools.md`](references/codex-tools.md) — Codex
 - [`references/cursor-tools.md`](references/cursor-tools.md) — Cursor
 - [`references/gemini-tools.md`](references/gemini-tools.md) — Gemini CLI (Gemini also auto-loads this via `GEMINI.md`)
+- [`references/antigravity-tools.md`](references/antigravity-tools.md) — Antigravity (2.0 desktop, IDE, CLI)
 
 ## Available Skill Categories
 
