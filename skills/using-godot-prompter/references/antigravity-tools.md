@@ -42,6 +42,7 @@ mkdir -p .agents
 ln -s /path/to/GodotPrompter/skills .agents/skills
 
 # Windows (PowerShell, Developer Mode or run as admin):
+New-Item -ItemType Directory -Force .agents | Out-Null   # junction won't create the parent
 New-Item -ItemType Junction -Path .agents\skills -Target D:\Godot\GodotPrompter\skills
 ```
 
@@ -57,6 +58,7 @@ Official path (Google Codelabs): `~/.gemini/config/skills/`
 
 ```bash
 # Symlink individual skill folders (recommended — each skill is a direct child):
+mkdir -p ~/.gemini/config/skills/
 ln -s /path/to/GodotPrompter/skills/* ~/.gemini/config/skills/
 # Result: ~/.gemini/config/skills/player-controller/SKILL.md  etc.
 
