@@ -75,7 +75,8 @@ func _process(delta: float) -> void:
         _cooldowns[name] -= delta
         if _cooldowns[name] <= 0.0:
             _cooldowns.erase(name)
-            cooldown_finished.emit(_granted[name])
+            if _granted.has(name):
+                cooldown_finished.emit(_granted[name])
 
 func try_activate(ability_name: String) -> bool:
     var ability: Ability = _granted.get(ability_name)
@@ -144,7 +145,8 @@ public partial class AbilityComponent : Node
             if (_cooldowns[name] <= 0.0f)
             {
                 _cooldowns.Remove(name);
-                EmitSignal(SignalName.CooldownFinished, _granted[name]);
+                if (_granted.TryGetValue(name, out var finished))
+                    EmitSignal(SignalName.CooldownFinished, finished);
             }
         }
     }
