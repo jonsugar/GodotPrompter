@@ -4,6 +4,24 @@ All notable changes to GodotPrompter will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.10.0] - 2026-06-17
+
+### Added
+
+- **3 new skills** (48 → 51):
+  - `ability-system` — core gameplay systems: ability definition/cost/cooldown/cast lifecycle, buff/debuff stacks, stat-modifier pipeline, gameplay tags and conditions, HUD binding patterns. Pattern X with 3 references (`stat-modifiers`, `tags-and-conditions`, `ui-binding`); full C# parity throughout.
+  - `limboai` *(Third-Party Addons)* — LimboAI v1.7.1 behavior tree + hierarchical state machine: `BTTask` authoring, BT runner setup, HSM state definitions and transitions, C++ GDExtension install, C# via module build. Reference: `hsm.md`.
+  - `beehave` *(Third-Party Addons)* — Beehave v2.9.2 pure-GDScript behavior tree: `BeehaveTree` setup, action/condition node authoring, composite nodes, selector/sequence semantics, custom node extension. Reference: `custom-nodes.md`. GDScript-only by design (Beehave ships no C# API).
+- New **Third-Party Addons** README category — first community-addon coverage in the repository; addon skills pin the addon version and install source.
+- **Antigravity** added as a 6th supported platform: `references/antigravity-tools.md` tool mapping added to `using-godot-prompter`; bootstrap wiring in README and CLAUDE.md. Format verified; runtime install pending (no live Antigravity binary on the release machine).
+
+### Changed
+
+- Cross-ref wiring: `ability-system` linked from `state-machine`, `hud-system`, `inventory-system`, `component-system`, `event-bus`; `limboai` and `beehave` linked from `ai-navigation`, `state-machine`, `godot-brainstorming`; `ability-system` linked from `limboai`.
+- Light agent edits: `godot-game-architect` and `godot-game-dev` routing notes extended to cover the new ability-system and third-party addon skills.
+
+> **Release notes:** 3 new skills (48 → 51); first Third-Party Addons category in the repo. All addon content grounded against official LimboAI and Beehave repositories (cloned, version-pinned); see `docs/superpowers/notes/2026-06-17-limboai-research.md` and `docs/superpowers/notes/2026-06-17-beehave-research.md`. Validator baseline at release: 0 errors, 13 warnings (10 pre-existing `csharp-parity-accepted` + 3 new `csharp-parity-accepted` from `beehave` being GDScript-only, now allowlisted; 0 token-budget). Every SKILL.md ≤ 16 KB. 51 skills. Repo-wide minimum stays at Godot 4.3+.
+
 ## [1.9.0] - 2026-05-29
 
 ### Added
