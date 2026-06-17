@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot 4.x](https://img.shields.io/badge/Godot-4.3+-blue.svg)](https://godotengine.org)
-[![Skills: 48](https://img.shields.io/badge/Skills-48-green.svg)](#available-skills)
+[![Skills: 51](https://img.shields.io/badge/Skills-51-green.svg)](#available-skills)
 
 Agentic skills framework for Godot 4.x game development. Gives AI coding agents domain-specific expertise for GDScript and C# projects.
 
@@ -12,7 +12,7 @@ Inspired by and built on top of the [Superpowers](https://github.com/obra/superp
 
 GodotPrompter is a plugin that provides **skills** — structured domain knowledge that AI agents load on demand. When you ask your agent to "add a state machine" or "set up multiplayer", it loads the relevant GodotPrompter skill and follows Godot-specific best practices instead of relying on generic knowledge.
 
-**48 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, native extensions, multithreading, mobile shipping, optimization, and GDScript / C# patterns. All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
+**51 skills** covering project setup, architecture, gameplay systems, input handling, physics, 2D/3D systems, animation, shaders, audio, UI, multiplayer, localization, procedural generation, XR/VR, native extensions, multithreading, mobile shipping, optimization, GDScript / C# patterns, and third-party addons (LimboAI, Beehave). All targeting Godot 4.3+ with both GDScript and C# examples — newer features from Godot 4.5 and 4.6 (variadic functions, abstract classes, stencil buffers, SoftBody3D forces, FoldableContainer, OpenXR Spatial Entities, and more) are included as annotated additive sections.
 
 **v1.7.0 introduces a 16 KB token budget** for `SKILL.md` files (validator-enforced) and the new **`gdscript-advanced`** skill for production-grade GDScript depth (performance idioms, metaprogramming, `@tool` lifecycle, profiler-driven idioms).
 
@@ -160,6 +160,7 @@ GodotPrompter includes 9 specialized agents:
 | Cursor | Supported | `/add-plugin godot-prompter` or clone with `.cursor-plugin/` |
 | Codex | Supported | Clone + symlink (see `.codex/INSTALL.md`) |
 | OpenCode | Supported | Add to `opencode.json` (see `.opencode/INSTALL.md`) |
+| Antigravity | Supported | Install via the Antigravity plugin marketplace |
 
 > **Legacy marketplace:** The [`godot-prompter-marketplace`](https://github.com/jame581/godot-prompter-marketplace) repo remains online so existing installs keep receiving updates, but new users should install from [`skillsmith`](https://github.com/jame581/skillsmith).
 
@@ -196,7 +197,7 @@ GodotPrompter includes 9 specialized agents:
 | `3d-essentials` | Materials, lighting, shadows, environment, GI, fog, LOD, occlusion, decals |
 | `xr-development` | OpenXR, XROrigin3D, hand tracking, controllers, passthrough, Meta Quest |
 
-### Gameplay Systems (12 skills)
+### Gameplay Systems (13 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -209,6 +210,7 @@ GodotPrompter includes 9 specialized agents:
 | `dialogue-system` | Branching dialogue trees, conditions, UI presentation |
 | `save-load` | ConfigFile, JSON, Resource serialization, version migration |
 | `ai-navigation` | NavigationAgent2D/3D, steering behaviors, patrol patterns, async baking |
+| `ability-system` | Resource-based abilities, cost/cooldown/cast, buffs/debuffs, stat modifiers, gameplay tags, HUD binding |
 | `camera-system` | Smooth follow, screen shake, camera zones, transitions |
 | `localization` | TranslationServer, CSV/PO files, locale switching, RTL support, pluralization |
 | `procedural-generation` | Noise, BSP dungeons, cellular automata, WFC, seeded randomness |
@@ -268,6 +270,15 @@ GodotPrompter includes 9 specialized agents:
 |-------|-------------|
 | `math-essentials` | Vectors, transforms, interpolation, curves, paths, RNG, game math recipes |
 
+### Third-Party Addons (2 skills)
+
+These skills cover community addons with pinned versions — LimboAI v1.7.1 and Beehave v2.9.2. They require the corresponding addon to be installed in your project.
+
+| Skill | Description |
+|-------|-------------|
+| `limboai` | LimboAI addon — behavior trees + hierarchical state machines, visual editor, blackboard, BTTask subclassing (Godot 4.6+, C++ GDExtension) |
+| `beehave` | Beehave addon — pure-GDScript behavior trees, composites/decorators/leaves, blackboard, visual runtime debugger (GDScript-only) |
+
 ## Validation
 
 Quality is enforced by an automated validator that runs on every release tag. Human-readable run:
@@ -300,7 +311,7 @@ Produces a per-skill / per-agent table (bytes, KB, estimated tokens, Claude / GP
 
 CI gate: `.github/workflows/release.yml` runs both `node scripts/validate-skills.mjs` and a tag-vs-manifest version-consistency check on every `v*.*.*` push. The release is blocked if the validator returns errors or any of `package.json` / `.claude-plugin/plugin.json` / `.claude-plugin/marketplace.json` drifts from the tag.
 
-**Current baseline (v1.9.0):** 0 errors, 10 warnings (all `csharp-parity-accepted` GDScript-only; 0 token-budget). Every `SKILL.md` is at or below the 16 KB budget.
+**Current baseline (v1.10.0):** 0 errors, 13 warnings (all `csharp-parity-accepted` GDScript-only; 0 token-budget). Every `SKILL.md` is at or below the 16 KB budget.
 
 A manual agent-integration test plan covering full workflows (skill discovery, cross-reference navigation, end-to-end feature implementation) lives in [`tests/agent-integration/TEST_PLAN.md`](tests/agent-integration/TEST_PLAN.md) for spot-checks against new agent versions or platforms.
 
