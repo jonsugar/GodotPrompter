@@ -97,6 +97,7 @@ Skills use Claude Code tool names as the canonical reference. Non-Claude platfor
 - [`references/codex-tools.md`](references/codex-tools.md) — Codex
 - [`references/cursor-tools.md`](references/cursor-tools.md) — Cursor
 - [`references/gemini-tools.md`](references/gemini-tools.md) — Gemini CLI (Gemini also auto-loads this via `GEMINI.md`)
+- [`references/antigravity-tools.md`](references/antigravity-tools.md) — Antigravity (2.0 desktop, IDE, CLI)
 
 ## Available Skill Categories
 
