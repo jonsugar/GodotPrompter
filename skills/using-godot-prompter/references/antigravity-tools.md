@@ -49,6 +49,8 @@ New-Item -ItemType Junction -Path .agents\skills -Target D:\Godot\GodotPrompter\
 > work for backward compatibility, but `.agents/skills/` (plural) is the current standard for all
 > Antigravity products (2.0 desktop, IDE, CLI). Use the plural form for new setups.
 
+> **Note:** `.antigravity/skills/` appears in some community write-ups but is not a recognized Antigravity skills path — do not use it.
+
 ### Global (cross-project) skills
 
 Official path (Google Codelabs): `~/.gemini/config/skills/`
