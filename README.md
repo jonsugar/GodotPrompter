@@ -47,12 +47,14 @@ Then start a new session and ask:
 The agent loads the `godot-project-setup` skill and provides a complete directory structure, autoload setup, and .gitignore — not generic advice.
 
 ### Grok Build
+
 ```bash
 grok plugin install jame581/GodotPrompter --trust
 grok plugin enable godot-prompter
 ```
 
 Pin to a release:
+
 ```bash
 grok plugin install jame581/GodotPrompter@v1.9.0 --trust
 grok plugin enable godot-prompter
@@ -152,6 +154,7 @@ GodotPrompter includes 9 specialized agents:
 | Platform | Status | Install |
 |----------|--------|---------|
 | Claude Code | Primary | `claude plugins marketplace add jame581/skillsmith` |
+| Grok Build | Supported | `grok plugin install jame581/GodotPrompter --trust` |
 | Gemini CLI | Supported | `gemini extensions install https://github.com/jame581/GodotPrompter` |
 | GitHub Copilot CLI | Supported | `copilot plugin marketplace add jame581/skillsmith` |
 | Cursor | Supported | `/add-plugin godot-prompter` or clone with `.cursor-plugin/` |
