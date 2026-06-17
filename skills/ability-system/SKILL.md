@@ -88,11 +88,11 @@ func try_activate(ability_name: String) -> bool:
     if resource_pool < ability.cost:
         ability_failed.emit(ability, "insufficient_resource")
         return false
-    if not ability.can_activate(owner):
+    if not ability.can_activate(get_parent()):
         ability_failed.emit(ability, "conditions_unmet")
         return false
     resource_pool -= ability.cost
-    ability.activate(owner)
+    ability.activate(get_parent())
     _cooldowns[ability_name] = ability.cooldown
     cooldown_started.emit(ability, ability.cooldown)
     ability_activated.emit(ability)
@@ -164,13 +164,13 @@ public partial class AbilityComponent : Node
             EmitSignal(SignalName.AbilityFailed, ability, "insufficient_resource");
             return false;
         }
-        if (!ability.CanActivate(Owner))
+        if (!ability.CanActivate(GetParent()))
         {
             EmitSignal(SignalName.AbilityFailed, ability, "conditions_unmet");
             return false;
         }
         ResourcePool -= ability.Cost;
-        ability.Activate(Owner);
+        ability.Activate(GetParent());
         _cooldowns[abilityName] = ability.Cooldown;
         EmitSignal(SignalName.CooldownStarted, ability, ability.Cooldown);
         EmitSignal(SignalName.AbilityActivated, ability);
@@ -213,9 +213,13 @@ signal effect_expired(effect: Effect)
 var _active: Dictionary = {}
 
 func apply_effect(effect: Effect) -> void:
-    _active[effect] = [0.0, 0.0]
-    effect.on_apply(owner)
+    effect.on_apply(get_parent())
     effect_applied.emit(effect)
+    if effect.duration <= 0.0:
+        effect.on_expire(get_parent())
+        effect_expired.emit(effect)
+        return
+    _active[effect] = [0.0, 0.0]
 
 func _process(delta: float) -> void:
     var to_remove: Array = []
@@ -225,12 +229,12 @@ func _process(delta: float) -> void:
             _active[effect][1] += delta
             if _active[effect][1] >= effect.tick_interval:
                 _active[effect][1] -= effect.tick_interval
-                effect.on_tick(owner)
+                effect.on_tick(get_parent())
         if effect.duration > 0.0 and _active[effect][0] >= effect.duration:
             to_remove.append(effect)
     for effect in to_remove:
         _active.erase(effect)
-        effect.on_expire(owner)
+        effect.on_expire(get_parent())
         effect_expired.emit(effect)
 ```
 
@@ -267,9 +271,15 @@ public partial class EffectHolder : Node
 
     public void ApplyEffect(Effect effect)
     {
-        _active[effect] = (0f, 0f);
-        effect.OnApply(Owner);
+        effect.OnApply(GetParent());
         EmitSignal(SignalName.EffectApplied, effect);
+        if (effect.Duration <= 0f)
+        {
+            effect.OnExpire(GetParent());
+            EmitSignal(SignalName.EffectExpired, effect);
+            return;
+        }
+        _active[effect] = (0f, 0f);
     }
 
     public override void _Process(double delta)
@@ -285,18 +295,18 @@ public partial class EffectHolder : Node
                 if (tickAccum >= effect.TickInterval)
                 {
                     tickAccum -= effect.TickInterval;
-                    effect.OnTick(Owner);
+                    effect.OnTick(GetParent());
                 }
             }
             if (effect.Duration > 0f && elapsed >= effect.Duration)
                 toRemove.Add(effect);
             else
-                _active[effect] = (elapsed, tickAccum);
+                _active[effect] = (elapsed, tickAccum); // expiring — no need to write back
         }
         foreach (var effect in toRemove)
         {
             _active.Remove(effect);
-            effect.OnExpire(Owner);
+            effect.OnExpire(GetParent());
             EmitSignal(SignalName.EffectExpired, effect);
         }
     }
