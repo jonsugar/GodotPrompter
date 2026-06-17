@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Bumps version across in-repo files and (if present) sibling marketplace repos.
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -16,13 +16,25 @@ if (!newVersion || !/^\d+\.\d+\.\d+$/.test(newVersion)) {
 // instead of relying on array position — sibling marketplaces may add other plugins.
 const PLUGIN_NAME = 'godot-prompter';
 
+const SKILLS_DIR = resolve(ROOT, 'skills');
+
+// Count skill folders (subdirectories of skills/ that contain a SKILL.md) so the manifest
+// description strings ("N domain-specific skills") stay in sync with reality. This mirrors how
+// validate-skills.mjs enumerates skills. Without this, descriptions drift (e.g. stuck at "48").
+function countSkills() {
+  return readdirSync(SKILLS_DIR, { withFileTypes: true })
+    .filter(d => d.isDirectory() && existsSync(resolve(SKILLS_DIR, d.name, 'SKILL.md')))
+    .length;
+}
+
+// `descKey` (optional) points at a description string carrying a skill count to keep current.
 const inRepoTargets = [
   { path: resolve(ROOT, 'package.json'), key: 'version' },
-  { path: resolve(ROOT, '.claude-plugin/plugin.json'), key: 'version' },
-  { path: resolve(ROOT, '.claude-plugin/marketplace.json'), key: `plugins[name=${PLUGIN_NAME}].version` },
+  { path: resolve(ROOT, '.claude-plugin/plugin.json'), key: 'version', descKey: 'description' },
+  { path: resolve(ROOT, '.claude-plugin/marketplace.json'), key: `plugins[name=${PLUGIN_NAME}].version`, descKey: `plugins[name=${PLUGIN_NAME}].description` },
   // Platform-specific manifests — easily missed before v1.7.1 because they live outside .claude-plugin/.
-  { path: resolve(ROOT, '.cursor-plugin/plugin.json'), key: 'version' },
-  { path: resolve(ROOT, 'gemini-extension.json'), key: 'version' },
+  { path: resolve(ROOT, '.cursor-plugin/plugin.json'), key: 'version', descKey: 'description' },
+  { path: resolve(ROOT, 'gemini-extension.json'), key: 'version', descKey: 'description' },
 ];
 
 // Sibling marketplaces. Tries each candidate path in order; first existing one wins per label.
@@ -43,7 +55,21 @@ const siblingTargets = [
     ],
     key: `plugins[name=${PLUGIN_NAME}].version`,
   },
-];
+].map(t => ({ ...t, descKey: `plugins[name=${PLUGIN_NAME}].description` }));
+
+const SKILL_COUNT = countSkills();
+
+// Replace the leading number in "<n> [domain-specific ]skill(s)" with the current skill count.
+// Returns the new count if the description changed, else null.
+function updateDescriptionCount(json, descKey) {
+  if (!descKey) return null;
+  const desc = getByPath(json, descKey);
+  if (typeof desc !== 'string') return null;
+  const updated = desc.replace(/\b\d+(\s+(?:domain-specific\s+)?skills?\b)/i, `${SKILL_COUNT}$1`);
+  if (updated === desc) return null;
+  setByPath(json, descKey, updated);
+  return SKILL_COUNT;
+}
 
 // Path syntax: "a.b.c" walks objects; "a[name=X].b" finds the array element where .name === X.
 // The matchKey accepts hyphens and underscores so keys like "display-name" or "plugin_id" work.
@@ -82,8 +108,9 @@ function bump(target) {
   const current = getByPath(json, target.key);
   if (!current) throw new Error(`No version at ${target.key} in ${target.path}`);
   setByPath(json, target.key, newVersion);
+  const descUpdated = updateDescriptionCount(json, target.descKey);
   writeFileSync(target.path, JSON.stringify(json, null, 2) + '\n');
-  return current;
+  return { current, descUpdated };
 }
 
 // Verify in-repo versions are in sync before bumping
@@ -96,18 +123,18 @@ if (distinct.length > 1) {
   process.exit(1);
 }
 
-console.log(`Bumping ${distinct[0]} -> ${newVersion}`);
+console.log(`Bumping ${distinct[0]} -> ${newVersion} (skill count: ${SKILL_COUNT})`);
 
 for (const t of inRepoTargets) {
-  const prev = bump(t);
-  console.log(`  ${t.path}: ${prev} -> ${newVersion}`);
+  const { current: prev, descUpdated } = bump(t);
+  console.log(`  ${t.path}: ${prev} -> ${newVersion}${descUpdated ? ` (description synced to ${descUpdated} skills)` : ''}`);
 }
 
 for (const t of siblingTargets) {
   const found = t.paths.find(p => existsSync(p));
   if (found) {
-    const prev = bump({ path: found, key: t.key });
-    console.log(`  [${t.label}] ${found}: ${prev} -> ${newVersion}`);
+    const { current: prev, descUpdated } = bump({ path: found, key: t.key, descKey: t.descKey });
+    console.log(`  [${t.label}] ${found}: ${prev} -> ${newVersion}${descUpdated ? ` (description synced to ${descUpdated} skills)` : ''}`);
   } else {
     console.log(`  [${t.label}] not found at any of: ${t.paths.join(', ')} — bump manually after the release tag`);
   }
