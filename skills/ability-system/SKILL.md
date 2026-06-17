@@ -181,6 +181,132 @@ public partial class AbilityComponent : Node
 
 ---
 
+## 3. Buffs & debuffs (timed effects)
+
+Effects are `Resource` subclasses — designers create them in the editor and abilities apply them. An `EffectHolder` node owns the runtime: it tracks elapsed time, calls periodic ticks, and removes effects when they expire.
+
+### GDScript
+
+```gdscript
+# effect.gd
+class_name Effect
+extends Resource
+
+@export var effect_name: String
+@export var duration: float = 5.0       # seconds; <= 0 means instant
+@export var tick_interval: float = 0.0  # 0 = no periodic tick
+
+func on_apply(target: Node) -> void: pass
+func on_tick(target: Node) -> void: pass
+func on_expire(target: Node) -> void: pass
+```
+
+```gdscript
+# effect_holder.gd
+class_name EffectHolder
+extends Node
+
+signal effect_applied(effect: Effect)
+signal effect_expired(effect: Effect)
+
+# effect -> [elapsed, tick_accum]
+var _active: Dictionary = {}
+
+func apply_effect(effect: Effect) -> void:
+    _active[effect] = [0.0, 0.0]
+    effect.on_apply(owner)
+    effect_applied.emit(effect)
+
+func _process(delta: float) -> void:
+    var to_remove: Array = []
+    for effect in _active:
+        _active[effect][0] += delta
+        if effect.tick_interval > 0.0:
+            _active[effect][1] += delta
+            if _active[effect][1] >= effect.tick_interval:
+                _active[effect][1] -= effect.tick_interval
+                effect.on_tick(owner)
+        if effect.duration > 0.0 and _active[effect][0] >= effect.duration:
+            to_remove.append(effect)
+    for effect in to_remove:
+        _active.erase(effect)
+        effect.on_expire(owner)
+        effect_expired.emit(effect)
+```
+
+### C#
+
+```csharp
+// Effect.cs
+using Godot;
+
+[GlobalClass]
+public partial class Effect : Resource
+{
+    [Export] public string EffectName { get; set; } = "";
+    [Export] public float Duration { get; set; } = 5.0f;     // <= 0 = instant
+    [Export] public float TickInterval { get; set; } = 0.0f; // 0 = no tick
+
+    public virtual void OnApply(Node target) { }
+    public virtual void OnTick(Node target) { }
+    public virtual void OnExpire(Node target) { }
+}
+```
+
+```csharp
+// EffectHolder.cs
+using Godot;
+using System.Collections.Generic;
+
+public partial class EffectHolder : Node
+{
+    [Signal] public delegate void EffectAppliedEventHandler(Effect effect);
+    [Signal] public delegate void EffectExpiredEventHandler(Effect effect);
+
+    private readonly Dictionary<Effect, (float Elapsed, float TickAccum)> _active = new();
+
+    public void ApplyEffect(Effect effect)
+    {
+        _active[effect] = (0f, 0f);
+        effect.OnApply(Owner);
+        EmitSignal(SignalName.EffectApplied, effect);
+    }
+
+    public override void _Process(double delta)
+    {
+        var toRemove = new List<Effect>();
+        foreach (var effect in new List<Effect>(_active.Keys))
+        {
+            var (elapsed, tickAccum) = _active[effect];
+            elapsed += (float)delta;
+            if (effect.TickInterval > 0f)
+            {
+                tickAccum += (float)delta;
+                if (tickAccum >= effect.TickInterval)
+                {
+                    tickAccum -= effect.TickInterval;
+                    effect.OnTick(Owner);
+                }
+            }
+            if (effect.Duration > 0f && elapsed >= effect.Duration)
+                toRemove.Add(effect);
+            else
+                _active[effect] = (elapsed, tickAccum);
+        }
+        foreach (var effect in toRemove)
+        {
+            _active.Remove(effect);
+            effect.OnExpire(Owner);
+            EmitSignal(SignalName.EffectExpired, effect);
+        }
+    }
+}
+```
+
+> **Footgun:** Never iterate `_active` directly while removing entries. GDScript builds a `to_remove` list and erases after the loop; C# iterates `new List<Effect>(_active.Keys)` for the same reason.
+
+---
+
 ## Implementation Checklist
 
 - [ ] `Ability` resource defined with `ability_name`, `cost`, `cooldown`, `cast_time`, `can_activate`, and `activate`
@@ -189,3 +315,6 @@ public partial class AbilityComponent : Node
 - [ ] Stat modifiers applied through `StatSet` (see [references/stat-modifiers.md](references/stat-modifiers.md))
 - [ ] Gameplay tags gating activation via `GameplayTagContainer` (see [references/tags-and-conditions.md](references/tags-and-conditions.md))
 - [ ] Cooldown bars and resource meters bound to `AbilityComponent` signals (see [references/ui-binding.md](references/ui-binding.md))
+- [ ] `Effect` resource subclassed with `on_apply`/`on_tick`/`on_expire` overrides; `duration` and `tick_interval` exported
+- [ ] `EffectHolder` node added to entity; `apply_effect(effect)` called from ability `activate()`
+- [ ] Effect iteration uses a copy / removal list to avoid mutating `_active` mid-loop
