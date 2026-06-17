@@ -44,6 +44,7 @@ linux.debug.x86_64     = "res://addons/limboai/bin/liblimboai.linux.editor.x86_6
 linux.release.x86_64   = "res://addons/limboai/bin/liblimboai.linux.template_release.x86_64.so"
 macos.debug            = "res://addons/limboai/bin/liblimboai.macos.editor.framework"
 macos.release          = "res://addons/limboai/bin/liblimboai.macos.template_release.framework"
+# ... (additional platform entries for linux arm64/rv64, android, iOS, web)
 ```
 
 **GDExtension limitations:** no in-editor documentation tooltips; `BBParam` property editor not available in the inspector.
@@ -98,7 +99,7 @@ public partial class EnemyAI : CharacterBody2D
 
     private void OnBtUpdated(int status)
     {
-        if (status == (int)BT.StatusEnum.Success)
+        if (status == (int)BT.Status.Success)
             _btPlayer.Restart();
     }
 }
@@ -383,7 +384,7 @@ public partial class IdleState : LimboState
 - [ ] Custom tasks annotated with `@tool` (GDScript) or `[Tool]` (C#) for editor display
 - [ ] Every `_tick` returns `SUCCESS`, `FAILURE`, or `RUNNING` — never `void`/`null`
 - [ ] Blackboard keys documented as exported `StringName` properties (suffix `_var`)
-- [ ] C# Blackboard reads cast the `Variant` explicitly (`(float)blackboard.GetVar(...)`)
+- [ ] C# Blackboard reads cast the `Variant` explicitly (`(float)Blackboard.GetVar(...)`)
 - [ ] C# uses module build (not GDExtension) for C# support
 - [ ] `BTPlayer.updated` signal used (not deprecated `behavior_tree_finished`)
 - [ ] HSM: all `LimboState` nodes wired with `add_transition` before `initialize()`
