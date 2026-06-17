@@ -70,17 +70,19 @@ explicitly tested all of them:
 
 **Resolution:**
 
-- `~/.gemini/skills/` is the **recommended global path** for skills shared across all Antigravity tools.
-  Confirmed by both George Mao (Google Cloud Community) and Dazbo's live test.
-- `~/.gemini/config/skills/` is cited in an official codelab — functionally equivalent to
-  `~/.gemini/skills/` or a valid alternative config sub-path. Treat as a valid alias until confirmed
-  otherwise.
+- `~/.gemini/config/skills/` is the **official-documented global path**, specified explicitly in the
+  Google Codelabs "Getting Started with Google Antigravity" codelab: "Global Scope
+  (`~/.gemini/config/skills/`): Available across all Antigravity products (Antigravity, Antigravity IDE,
+  Antigravity CLI) and projects."
+- `~/.gemini/skills/` is a **community-verified alias** — confirmed working by both George Mao (Google
+  Cloud Community) and Dazbo's live test. Reported to work in practice, but not the path the official
+  codelab names.
 - `~/.gemini/antigravity-cli/skills/` is CLI-specific only.
 - `~/.gemini/antigravity/skills/` is **confirmed incorrect** by Dazbo's live testing — skills placed
   there are not picked up.
 
-**Confidence: HIGH** that `~/.gemini/skills/` is the right shared global path.
-**Confidence: MEDIUM** on `~/.gemini/config/skills/` being an equivalent alias.
+**Confidence: HIGH** that `~/.gemini/config/skills/` is the correct shared global path (official Codelab source).
+**Confidence: MEDIUM** that `~/.gemini/skills/` works as an alias (community-verified, Dazbo live test).
 
 ## 4. SKILL.md frontmatter fields
 
@@ -209,13 +211,23 @@ ln -s /path/to/GodotPrompter/skills .agents/skills
 New-Item -ItemType Junction -Path .agents\skills -Target D:\Godot\GodotPrompter\skills
 ```
 
-Or global clone:
+Or global install:
 
 ```
-# Clone into global shared skills directory:
-git clone https://github.com/jame581/GodotPrompter ~/.gemini/skills/godot-prompter
-# Each skill folder becomes:  ~/.gemini/skills/godot-prompter/player-controller/SKILL.md
+# Symlink individual skill folders so each is a direct child of the skills dir (recommended):
+ln -s /path/to/GodotPrompter/skills/* ~/.gemini/config/skills/
+# Each skill folder becomes:  ~/.gemini/config/skills/player-controller/SKILL.md
+
+# Alternative — clone the whole repo (but see nesting caveat below):
+git clone https://github.com/jame581/GodotPrompter ~/.gemini/config/skills/godot-prompter
+# Each skill folder becomes:  ~/.gemini/config/skills/godot-prompter/player-controller/SKILL.md
 ```
+
+> **Nesting caveat (open verify-item):** If Antigravity discovers skills as immediate subdirectories of
+> the skills dir (`<skills-dir>/<skill-name>/SKILL.md`), the clone approach nests skills one level too
+> deep and they may not be picked up. Prefer the `ln -s skills/*` form so each skill is a direct child,
+> or confirm that nested discovery (`<skills-dir>/<repo>/skills/<skill>/SKILL.md`) actually works before
+> recommending the clone path.
 
 **No loader/manifest directory is needed.** Skills load directly from the skills directory by
 subdirectory-name + SKILL.md discovery. There is no `plugin.json` or index file required.
@@ -233,8 +245,9 @@ git pull). The global clone is better for users who want GodotPrompter available
    tool-mapping file.
 2. **Subagent tool name**: capability confirmed, API name not found in public docs.
 3. **Grep equivalent**: no dedicated tool found — likely `Bash("grep ...")`. Mark as such.
-4. **`~/.gemini/config/skills/` vs `~/.gemini/skills/`**: both cited; may be aliases. Safe to document
-   `~/.gemini/skills/` as primary.
+4. **`~/.gemini/config/skills/` vs `~/.gemini/skills/`**: codelab names `~/.gemini/config/skills/` as
+   official; `~/.gemini/skills/` is a community-verified alias. Document `~/.gemini/config/skills/` as
+   primary in Task 13 tool-mapping file.
 5. **GEMINI.md / project instructions**: GodotPrompter's `AGENTS.md` is not read by Antigravity. A note
    for Antigravity users should be added to the `using-godot-prompter` skill (or a `.gemini/GEMINI.md`
    should be added to the repo that re-exports the skill). Not blocking for Task 13 but worth flagging.
