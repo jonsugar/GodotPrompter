@@ -72,7 +72,7 @@ In task scripts, use the shorthand constants `SUCCESS`, `FAILURE`, `RUNNING` (av
 |---|---|---|
 | `get_root_task()` | `-> BTTask` | Returns root task of the resource |
 | `set_root_task(task)` | `(BTTask)` | Assigns a new root task |
-| `instantiate(agent, blackboard, instance_owner, custom_scene_root=null)` | `-> BTInstance` | Creates a runtime BTInstance; `instance_owner` is typically the BTPlayer/BTState node; `custom_scene_root` overrides `instance_owner.owner` |
+| `instantiate(agent, blackboard, instance_owner, custom_scene_root=null)` | `-> BTInstance` | Creates a runtime BTInstance; `instance_owner` is typically the BTPlayer/BTState node; if `custom_scene_root` is non-null it is used as the scene root, otherwise the scene root defaults to `instance_owner.owner` |
 | `clone()` | `-> BehaviorTree` | Makes a copy of the resource |
 | `copy_other(other)` | `(BehaviorTree)` | Become a copy of another BT |
 
@@ -582,7 +582,7 @@ get_root_task() -> BTTask
 get_last_status() -> BT.Status
 get_owner_node() -> Node
 get_source_bt_path() -> String
-is_instance_valid() -> bool
+is_instance_valid() -> bool                 # instance method (distinct from GDScript's global is_instance_valid())
 update(delta: float) -> BT.Status   # manually tick the instance
 register_with_debugger() -> void
 monitor_performance: bool
@@ -687,7 +687,7 @@ public partial class IdleState : LimboState
 
 ## 13. Gaps / author ourselves
 
-1. **C# examples for Blackboard access** — the docs only show GDScript snippets; the C# equivalents (`blackboard.GetVar<float>(varName, 0f)` equivalent, or `(float)blackboard.GetVar(varName, 0f)`) are not in the official docs. Need to author C# Blackboard examples ourselves.
+1. **C# examples for Blackboard access** — the docs only show GDScript snippets; C# has no generic overload for `GetVar`, so must cast the Variant result: `(float)blackboard.GetVar(varName, 0f)`. The official docs do not show this pattern; need to author C# Blackboard examples ourselves.
 
 2. **C# HSM initialization** — the `_init_state_machine()` HSM setup in GDScript uses fluent `.named().call_on_enter()` chaining. The C# equivalents require property assignment (`.Name = "Idle"`) and `Connect(LimboState.SignalName.Entered, ...)` — this is unexampled in the official docs and should be authored.
 
