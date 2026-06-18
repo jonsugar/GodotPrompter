@@ -90,9 +90,9 @@ Agent system prompt goes here.
 
 ## Releasing a New Version
 
-When publishing a new version (e.g., v1.4.1):
+When publishing a new version (e.g., v1.8.1):
 
-1. **Make changes** in the GodotPrompter repo, commit, push
+1. **Make changes** in the GodotPrompter repo.
 2. **Regenerate the token-budget docs page** (added in v1.7.0):
    ```bash
    npm install                                                # one-time, installs optional tokenizer deps
@@ -101,44 +101,38 @@ When publishing a new version (e.g., v1.4.1):
    Replace the contents between the `<!-- BEGIN-TOKEN-TABLE -->` / `<!-- END-TOKEN-TABLE -->` markers in `docs/token-budget.md` with the new output. Commit alongside the version bump.
 3. **Bump version across all manifests** using the helper script:
    ```bash
-   node scripts/bump-version.mjs 1.4.1
+   node scripts/bump-version.mjs 1.8.1
    ```
-   This updates all five in-repo manifests in one shot, plus the two sibling marketplaces (`skillsmith` and `godot-prompter-marketplace`) when present:
-   - `package.json` → `"version": "1.4.1"`
-   - `.claude-plugin/plugin.json` → `"version": "1.4.1"`
-   - `.claude-plugin/marketplace.json` → `"version": "1.4.1"`
-   - `.cursor-plugin/plugin.json` → `"version": "1.4.1"`
-   - `gemini-extension.json` → `"version": "1.4.1"`
-   - `D:/AI/skillsmith/.claude-plugin/marketplace.json` (sibling, primary)
-   - `D:/Godot/godot-prompter-marketplace/.claude-plugin/marketplace.json` (sibling, legacy)
+   This updates five in-repo manifests in one shot:
+   - `package.json`
+   - `.claude-plugin/plugin.json`
+   - `.claude-plugin/marketplace.json` (the `godot-prompter` plugin entry)
+   - `.cursor-plugin/plugin.json`
+   - `gemini-extension.json`
 
-   Then add the `## [1.4.1]` section to `CHANGELOG.md` by hand.
-4. **Commit and tag:**
+   It also attempts to bump sibling marketplaces when present at known relative paths:
+   - `../skillsmith/.claude-plugin/marketplace.json` (or `../../AI/skillsmith/.claude-plugin/marketplace.json`)
+   - `../godot-prompter-marketplace/.claude-plugin/marketplace.json`
+4. **Update `CHANGELOG.md`** by adding a `## [1.8.1]` section.
+5. **Validate skills**:
+   ```bash
+   node scripts/validate-skills.mjs
+   ```
+6. **Commit and tag:**
    ```bash
    git add -A
-   git commit -m "chore: bump version to 1.4.1"
-   git tag -a v1.4.1 -m "v1.4.1 — description of changes"
+   git commit -m "chore: bump version to 1.8.1"
+   git tag -a v1.8.1 -m "v1.8.1 — description of changes"
    git push origin master --tags
    ```
-4. **Create GitHub release:**
-   ```bash
-   gh release create v1.4.1 --title "v1.4.1 — GodotPrompter" --notes "Release notes here"
-   ```
-5. **Update the Skillsmith marketplace** (`skillsmith` — primary distribution):
-   - Update `.claude-plugin/marketplace.json` → the `godot-prompter` plugin entry's `"version": "1.4.1"`
-   - Commit and push
-   ```bash
-   cd ../skillsmith
-   # edit .claude-plugin/marketplace.json version
-   git add -A && git commit -m "bump godot-prompter to v1.4.1" && git push
-   ```
-6. **Also update the legacy marketplace** (`godot-prompter-marketplace` — for existing installs only, do not advertise):
-   - Update `.claude-plugin/marketplace.json` → `"version": "1.4.1"`
-   ```bash
-   cd ../godot-prompter-marketplace
-   # edit .claude-plugin/marketplace.json version
-   git add -A && git commit -m "bump to v1.4.1" && git push
-   ```
+7. **Let GitHub Actions publish the release** (`.github/workflows/release.yml`):
+   - Verifies tag and manifest versions are consistent
+   - Runs `scripts/validate-skills.mjs`
+   - Creates the GitHub Release from the matching `CHANGELOG.md` section
+   - Opens marketplace bump PRs when `MARKETPLACE_TOKEN` is configured
+8. **If marketplace PRs are skipped** (missing `MARKETPLACE_TOKEN`), manually bump:
+   - `skillsmith/.claude-plugin/marketplace.json` (primary distribution)
+   - `godot-prompter-marketplace/.claude-plugin/marketplace.json` (legacy)
 
 Users update with:
 ```bash
