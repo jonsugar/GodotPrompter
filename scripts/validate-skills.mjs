@@ -1,19 +1,19 @@
 #!/usr/bin/env node
-// Validates skills/*/SKILL.md and agents/*.md for structure and resolvable cross-references.
+// Validates skills/*/SKILL.md and Codex persona TOML files for structure and resolvable cross-references.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const SKILLS_DIR = join(ROOT, 'skills');
-const AGENTS_DIR = join(ROOT, 'agents');
+const CODEX_PERSONAS_DIR = join(ROOT, '.codex', 'agents', 'codex-for-godot');
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const includeFixtures = args.includes('--include-fixtures');
 
 // Token-budget rule: skills should keep SKILL.md <= 16 KB. References (skills/<name>/references/*.md)
-// are unrestricted because they only load when an agent explicitly opens them.
+// are unrestricted because Codex only reads them when a skill points to them.
 const TOKEN_BUDGET_BYTES = 16 * 1024;
 
 // Skills that are intentionally GDScript-only by design. Their sections still emit
@@ -152,20 +152,35 @@ function validateSkill({ name, path }) {
   }
 }
 
-function validateAgent(path) {
-  const content = readFileSync(path, 'utf8');
-  const { data, body } = parseFrontmatter(content);
-  if (!data) {
-    record(errors, path, 'agent-frontmatter-missing', 'No YAML frontmatter found');
-    return;
-  }
-  if (!data.name) record(errors, path, 'agent-frontmatter-name-missing', 'Frontmatter missing required key: name');
-  if (!data.description) record(errors, path, 'agent-frontmatter-description-missing', 'Frontmatter missing required key: description');
+// Minimal TOML string parser for Codex persona files. It supports the flat keys
+// used here, including triple-quoted strings.
+function parseTomlStrings(content) {
+  const data = {};
+  const triple = /^([A-Za-z0-9_-]+)\s*=\s*"""([\s\S]*?)"""/gm;
+  for (const m of content.matchAll(triple)) data[m[1]] = m[2];
 
-  // Cross-references in agents (look for `skills/<name>/SKILL.md` paths and **name** mentions in skill lists)
-  for (const m of body.matchAll(/skills\/([a-z][a-z0-9-]+)\/SKILL\.md/g)) {
+  const withoutTriple = content.replace(triple, '');
+  const flat = /^([A-Za-z0-9_-]+)\s*=\s*"([^"]*)"/gm;
+  for (const m of withoutTriple.matchAll(flat)) data[m[1]] = m[2];
+  return data;
+}
+
+function validateCodexPersona(path) {
+  const content = readFileSync(path, 'utf8');
+  const data = parseTomlStrings(content);
+
+  if (!data.name) record(errors, path, 'persona-name-missing', 'Codex persona missing required key: name');
+  if (!data.description) record(errors, path, 'persona-description-missing', 'Codex persona missing required key: description');
+  if (!data.developer_instructions) record(errors, path, 'persona-instructions-missing', 'Codex persona missing required key: developer_instructions');
+
+  const expectedName = path.split(/[\\/]/).pop().replace(/\.toml$/, '');
+  if (data.name && data.name !== expectedName) {
+    record(errors, path, 'persona-name-mismatch', `Persona name "${data.name}" does not match file name "${expectedName}"`);
+  }
+
+  for (const m of content.matchAll(/skills\/([a-z][a-z0-9-]+)\/SKILL\.md/g)) {
     if (!skillNames.has(m[1])) {
-      record(errors, path, 'agent-skill-path-broken', `Agent references skills/${m[1]}/SKILL.md but no such skill exists`);
+      record(errors, path, 'persona-skill-path-broken', `Persona references skills/${m[1]}/SKILL.md but no such skill exists`);
     }
   }
 }
@@ -202,9 +217,9 @@ function validateOrphanReferences() {
 }
 validateOrphanReferences();
 
-if (existsSync(AGENTS_DIR)) {
-  for (const name of readdirSync(AGENTS_DIR).filter(n => n.endsWith('.md'))) {
-    validateAgent(join(AGENTS_DIR, name));
+if (existsSync(CODEX_PERSONAS_DIR)) {
+  for (const name of readdirSync(CODEX_PERSONAS_DIR).filter(n => n.endsWith('.toml'))) {
+    validateCodexPersona(join(CODEX_PERSONAS_DIR, name));
   }
 }
 
@@ -212,7 +227,7 @@ if (jsonMode) {
   console.log(JSON.stringify({ errors, warnings, summary: { errors: errors.length, warnings: warnings.length } }, null, 2));
 } else {
   if (errors.length === 0 && warnings.length === 0) {
-    console.log(`OK — ${targets.length} skills + agents/, no issues.`);
+    console.log(`OK — ${targets.length} skills + Codex personas, no issues.`);
   } else {
     if (errors.length) {
       console.log(`\nERRORS (${errors.length}):`);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // PostToolUse hook: runs scripts/validate-skills.mjs after Edit/Write of a
-// skills/*/SKILL.md or agents/*.md file. Non-blocking — surfaces validator
+// skills/*/SKILL.md or .codex/agents/codex-for-godot/*.toml file. Non-blocking — surfaces validator
 // errors to the model via hookSpecificOutput.additionalContext. Warnings are
 // not surfaced (token-budget warnings are noisy by design).
 import { readFileSync } from 'node:fs';
@@ -24,8 +24,8 @@ if (!input) process.exit(0);
 const filePath = input?.tool_input?.file_path ?? input?.tool_response?.filePath ?? '';
 const norm = filePath.replace(/\\/g, '/');
 const isSkill = /(^|\/)skills\/[^/]+\/SKILL\.md$/.test(norm);
-const isAgent = /(^|\/)agents\/[^/]+\.md$/.test(norm);
-if (!isSkill && !isAgent) process.exit(0);
+const isPersona = /(^|\/)\.codex\/agents\/codex-for-godot\/[^/]+\.toml$/.test(norm);
+if (!isSkill && !isPersona) process.exit(0);
 
 const result = spawnSync('node', ['scripts/validate-skills.mjs', '--json'], {
   cwd: REPO_ROOT,
