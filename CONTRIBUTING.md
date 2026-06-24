@@ -1,155 +1,66 @@
-# Contributing to GodotPrompter
+# Contributing To Codex For Godot
 
-Thanks for your interest in contributing! GodotPrompter is an open-source skills framework for Godot 4.x. Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before participating. Here's how to add skills and improve existing ones.
+Codex for Godot is a Codex-only skill repository for Godot 4.x development. Contributions should improve the quality, accuracy, installability, or maintainability of the skill pack for Codex users.
 
-## Adding a New Skill
+Please review [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before participating.
 
-### 1. Create the skill folder
+## Adding A Skill
 
-```
+Create one folder per skill:
+
+```text
 skills/<skill-name>/
-  SKILL.md          # Required — main skill document
-  *.md              # Optional — supporting references
+  SKILL.md
+  references/
 ```
 
-Use **kebab-case** for folder names (e.g., `my-new-skill`).
-
-### 2. Write SKILL.md with frontmatter
-
-Every `SKILL.md` must start with YAML frontmatter:
+Use kebab-case folder names. Every `SKILL.md` must start with YAML frontmatter:
 
 ```yaml
 ---
 name: my-new-skill
-description: Use when [specific trigger] — [brief scope]
+description: Use when [specific trigger] - [brief scope]
 ---
 ```
 
-- `name` must match the folder name
-- `description` should start with "Use when" to help agents decide when to load it
+The `name` must match the folder. The `description` should make it clear when Codex should load the skill.
 
-### 3. Structure your content
+## Skill Structure
 
-Follow this general structure:
+Use this shape unless the topic calls for a tighter one:
 
-1. **Title and intro** — What this skill covers, when to use it
-2. **Related skills** — `> **Related skills:** **skill-a** for X, **skill-b** for Y.`
-3. **Numbered sections** — Each major concept or pattern
-4. **Code examples** — GDScript first, then C# equivalent
-5. **Checklist** — Implementation checklist at the end
+1. Title and short scope.
+2. Related skills line.
+3. Numbered sections with patterns and examples.
+4. GDScript first, then C# where applicable.
+5. Implementation checklist at the end.
 
-### 4. Code examples
+Use `gdscript` and `csharp` fenced code language tags. Target Godot 4.3+ APIs unless a section explicitly notes a newer version.
 
-- Include **both GDScript and C#** where applicable
-- GDScript comes first, C# follows
-- Use ` ```gdscript ` and ` ```csharp ` language tags (never `gd` or `cs`)
-- Target **Godot 4.3+** APIs only — no deprecated methods
-- Follow Godot style: snake_case for GDScript, PascalCase for C#
+## Codex Personas
 
-### 5. Cross-references
+Codex persona definitions live in `.codex/agents/codex-for-godot/`. Add or update them only when a specialist workflow needs distinct routing or instructions beyond a normal skill.
 
-Add a related skills line after the intro paragraph:
+Root-level `agents/*.md` files are not used in this Codex-only repository.
 
-```markdown
-> **Related skills:** **event-bus** for decoupled communication, **component-system** for composition patterns.
-```
+## Validation
 
-Keep to 3-5 references max. Only link genuinely related skills.
+Run:
 
-## Improving Existing Skills
-
-- Fix incorrect API references or deprecated methods
-- Add missing C# examples where GDScript-only
-- Add cross-references to related skills
-- Expand checklist items
-- Fix typos or unclear wording
-
-## Testing Skills
-
-Before submitting:
-
-1. **Read through** — Does the skill make sense for someone new to Godot?
-2. **Try the code** — Open Godot 4.3+ and verify examples compile and run
-3. **Check C# parity** — Every GDScript example should have a C# equivalent (unless language-specific)
-4. **Verify cross-refs** — Referenced skills must exist
-
-## Adding Agents
-
-Agent definitions go in `agents/<agent-name>.md` with YAML frontmatter:
-
-```yaml
----
-name: my-agent
-description: |
-  When to use this agent, with examples.
-model: inherit
----
-
-Agent system prompt goes here.
-```
-
-## Releasing a New Version
-
-When publishing a new version (e.g., v1.8.1):
-
-1. **Make changes** in the GodotPrompter repo.
-2. **Regenerate the token-budget docs page** (added in v1.7.0):
-   ```bash
-   npm install                                                # one-time, installs optional tokenizer deps
-   node scripts/count-tokens.mjs --tokenizer --markdown
-   ```
-   Replace the contents between the `<!-- BEGIN-TOKEN-TABLE -->` / `<!-- END-TOKEN-TABLE -->` markers in `docs/token-budget.md` with the new output. Commit alongside the version bump.
-3. **Bump version across all manifests** using the helper script:
-   ```bash
-   node scripts/bump-version.mjs 1.8.1
-   ```
-   This updates five in-repo manifests in one shot:
-   - `package.json`
-   - `.claude-plugin/plugin.json`
-   - `.claude-plugin/marketplace.json` (the `godot-prompter` plugin entry)
-   - `.cursor-plugin/plugin.json`
-   - `gemini-extension.json`
-
-   It also attempts to bump sibling marketplaces when present at known relative paths:
-   - `../skillsmith/.claude-plugin/marketplace.json` (or `../../AI/skillsmith/.claude-plugin/marketplace.json`)
-   - `../godot-prompter-marketplace/.claude-plugin/marketplace.json`
-4. **Update `CHANGELOG.md`** by adding a `## [1.8.1]` section.
-5. **Validate skills**:
-   ```bash
-   node scripts/validate-skills.mjs
-   ```
-6. **Commit and tag:**
-   ```bash
-   git add -A
-   git commit -m "chore: bump version to 1.8.1"
-   git tag -a v1.8.1 -m "v1.8.1 — description of changes"
-   git push origin master --tags
-   ```
-7. **Let GitHub Actions publish the release** (`.github/workflows/release.yml`):
-   - Verifies tag and manifest versions are consistent
-   - Runs `scripts/validate-skills.mjs`
-   - Creates the GitHub Release from the matching `CHANGELOG.md` section
-   - Opens marketplace bump PRs when `MARKETPLACE_TOKEN` is configured
-8. **If marketplace PRs are skipped** (missing `MARKETPLACE_TOKEN`), manually bump:
-   - `skillsmith/.claude-plugin/marketplace.json` (primary distribution)
-   - `godot-prompter-marketplace/.claude-plugin/marketplace.json` (legacy)
-
-Users update with:
 ```bash
-claude plugins update godot-prompter          # Claude Code
-copilot plugin update godot-prompter          # Copilot CLI
-gemini extensions update godot-prompter       # Gemini CLI
+node scripts/validate-skills.mjs
 ```
+
+For substantial changes, also manually exercise the affected skill in a Codex session against a real or sample Godot project.
+
+## Release Notes
+
+Use `CHANGELOG.md` for release notes. Keep entries focused on user-visible skill, install, validation, and Codex persona changes.
 
 ## Conventions
 
-- Skills must be self-contained and independently useful
-- One skill per folder under `skills/`
-- GDScript follows [Godot style guide](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html)
-- C# follows [Godot C# conventions](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_style_guide.html)
-- Target Godot 4.3+ minimum
-- YAML frontmatter is required on every SKILL.md
-
-## Questions?
-
-Open an issue on GitHub or check existing skills for examples of the expected format.
+- Skills must be self-contained and independently useful.
+- Keep cross-references to real skill folders.
+- Keep examples compile-ready where possible.
+- Preserve GDScript and C# parity unless a skill is intentionally language-specific.
+- Avoid non-Codex platform instructions, manifests, or compatibility notes.

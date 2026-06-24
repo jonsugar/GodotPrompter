@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a bug in a skill, agent, plugin integration, or repository workflow.
+description: Report a bug in a skill, Codex persona, install flow, or repository workflow.
 title: "[Bug]: "
 labels:
   - bug
@@ -16,8 +16,8 @@ body:
       description: What part of the project is affected?
       options:
         - Skill content
-        - Agent definition
-        - Plugin packaging or installation
+        - Codex persona
+        - Installation
         - Documentation
         - Test suite or validation
         - Other
@@ -26,24 +26,9 @@ body:
   - type: input
     id: skill_name
     attributes:
-      label: Skill or agent name
-      description: If relevant, name the skill or agent involved.
+      label: Skill or persona name
+      description: If relevant, name the skill or Codex persona involved.
       placeholder: e.g. state-machine, godot-game-dev
-  - type: dropdown
-    id: platform
-    attributes:
-      label: AI platform
-      description: Where did you hit the issue?
-      options:
-        - Claude Code
-        - GitHub Copilot CLI
-        - Gemini CLI
-        - Cursor
-        - Codex
-        - OpenCode
-        - Other
-    validations:
-      required: true
   - type: input
     id: godot_version
     attributes:
@@ -56,8 +41,8 @@ body:
       label: Steps to reproduce
       description: List the exact steps needed to reproduce the issue.
       placeholder: |
-        1. Install the plugin or open the repo
-        2. Ask the agent to...
+        1. Install Codex for Godot or open the repo
+        2. Ask Codex to...
         3. Observe...
     validations:
       required: true

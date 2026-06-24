@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an improvement to the repository, plugin, documentation, or contributor workflow.
+description: Suggest an improvement to the repository, Codex setup, documentation, or contributor workflow.
 title: "[Feature]: "
 labels:
   - enhancement
@@ -37,7 +37,7 @@ body:
       label: Primary impact area
       options:
         - Skill authoring
-        - Agent behavior
+        - Codex persona behavior
         - Installation or packaging
         - Documentation
         - Testing or validation

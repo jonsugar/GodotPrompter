@@ -1,63 +1,73 @@
-# Installing GodotPrompter for Codex
+# Installing Codex For Godot
 
-Enable GodotPrompter skills in Codex via native skill discovery. Just clone and symlink.
+Codex for Godot is installed from your GitHub clone by symlinking its skills and optional Codex personas into Codex's discovery folders.
 
 ## Prerequisites
 
 - Git
+- Codex
 
 ## Installation
 
-1. **Clone the GodotPrompter repository:**
+1. Clone the repository:
+
    ```bash
-   git clone https://github.com/jame581/GodotPrompter.git ~/.codex/godot-prompter
+   git clone https://github.com/YOUR-ACCOUNT/codex-for-godot.git ~/.codex/codex-for-godot
    ```
 
-2. **Create the skills symlink:**
+2. Create the skills symlink:
+
    ```bash
-   mkdir -p ~/.agents/skills
-   ln -s ~/.codex/godot-prompter/skills ~/.agents/skills/godot-prompter
+   mkdir -p ~/.codex/skills
+   ln -s ~/.codex/codex-for-godot/skills ~/.codex/skills/codex-for-godot
    ```
 
-   **Windows (PowerShell):**
+   Windows PowerShell:
+
    ```powershell
-   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
-   cmd /c mklink /J "$env:USERPROFILE\.agents\skills\godot-prompter" "$env:USERPROFILE\.codex\godot-prompter\skills"
+   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\skills"
+   cmd /c mklink /J "$env:USERPROFILE\.codex\skills\codex-for-godot" "$env:USERPROFILE\.codex\codex-for-godot\skills"
    ```
-3. **Create the subagents symlink (Optional)**
+
+3. Optionally create the Codex persona symlink:
+
    ```bash
    mkdir -p ~/.codex/agents
-   ln -s ~/.codex/godot-prompter/.codex/agents/godot-prompter ~/.codex/agents/godot-prompter
+   ln -s ~/.codex/codex-for-godot/.codex/agents/codex-for-godot ~/.codex/agents/codex-for-godot
    ```
 
-   **Windows (PowerShell):**
+   Windows PowerShell:
+
    ```powershell
    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\agents"
-   cmd /c mklink /J "$env:USERPROFILE\.codex\agents\godot-prompter" "$env:USERPROFILE\.codex\godot-prompter\.codex\agents\godot-prompter"
+   cmd /c mklink /J "$env:USERPROFILE\.codex\agents\codex-for-godot" "$env:USERPROFILE\.codex\codex-for-godot\.codex\agents\codex-for-godot"
    ```
 
-4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
+4. Restart Codex.
 
 ## Verify
 
 ```bash
-ls -la ~/.agents/skills/godot-prompter
+ls -la ~/.codex/skills/codex-for-godot
+ls -la ~/.codex/agents/codex-for-godot
 ```
-
-You should see a symlink (or junction on Windows) pointing to your GodotPrompter skills directory.
 
 ## Updating
 
 ```bash
-cd ~/.codex/godot-prompter && git pull
+cd ~/.codex/codex-for-godot
+git pull
 ```
-
-Skills update instantly through the symlink.
 
 ## Uninstalling
 
 ```bash
-rm ~/.agents/skills/godot-prompter
+rm ~/.codex/skills/codex-for-godot
+rm ~/.codex/agents/codex-for-godot
 ```
 
-Optionally delete the clone: `rm -rf ~/.codex/godot-prompter`.
+Optionally delete the clone:
+
+```bash
+rm -rf ~/.codex/codex-for-godot
+```

@@ -1,5 +1,5 @@
 name: Skill request
-description: Propose a new GodotPrompter skill or a major expansion of an existing one.
+description: Propose a new Codex for Godot skill or a major expansion of an existing one.
 title: "[Skill]: "
 labels:
   - enhancement
@@ -54,7 +54,7 @@ body:
     id: use_case
     attributes:
       label: Use case
-      description: What should an agent be able to help with after this skill exists?
+      description: What should Codex be able to help with after this skill exists?
       placeholder: Describe the developer task, trigger, and expected outcome.
     validations:
       required: true

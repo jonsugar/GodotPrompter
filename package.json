@@ -1,28 +1,23 @@
 {
-  "name": "godot-prompter",
+  "name": "codex-for-godot",
   "version": "1.10.0",
   "type": "module",
-  "main": ".opencode/plugins/godot-prompter.js",
-  "description": "Agentic skills framework for Godot 4.x game development — GDScript & C#",
+  "description": "Codex-only skill pack for Godot 4.x game development - GDScript and C#",
   "author": "jame581",
   "license": "MIT",
   "keywords": [
+    "codex",
     "godot",
     "gamedev",
     "gdscript",
     "csharp",
-    "skills",
-    "claude-code",
-    "copilot",
-    "gemini",
-    "cursor"
+    "skills"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jame581/GodotPrompter.git"
+    "url": "https://github.com/YOUR-ACCOUNT/codex-for-godot.git"
   },
   "optionalDependencies": {
-    "@anthropic-ai/tokenizer": "^0.0.4",
     "js-tiktoken": "^1.0.20"
   }
 }
