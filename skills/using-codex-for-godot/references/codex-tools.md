@@ -42,7 +42,7 @@ Each persona is a Codex TOML file with a role description and developer instruct
 Recommended local install:
 
 ```bash
-git clone https://github.com/YOUR-ACCOUNT/codex-for-godot.git ~/.codex/codex-for-godot
+git clone https://github.com/jonsugar/codex-for-godot.git ~/.codex/codex-for-godot
 mkdir -p ~/.codex/skills ~/.codex/agents
 ln -s ~/.codex/codex-for-godot/skills ~/.codex/skills/codex-for-godot
 ln -s ~/.codex/codex-for-godot/.codex/agents/codex-for-godot ~/.codex/agents/codex-for-godot

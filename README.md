@@ -11,7 +11,7 @@ Codex for Godot is a Codex-only skill pack for Godot 4.x game development. It gi
 Clone the repository somewhere stable:
 
 ```bash
-git clone https://github.com/YOUR-ACCOUNT/codex-for-godot.git ~/.codex/codex-for-godot
+git clone https://github.com/jonsugar/codex-for-godot.git ~/.codex/codex-for-godot
 ```
 
 Expose the skills to Codex:

@@ -1,0 +1,22 @@
+# VCS and host metadata
+.git/
+.github/
+
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local installs and generated artifacts
+node_modules/
+package-lock.json
+*.tgz
+
+# Repository validation fixtures are not needed in the installed skill pack.
+tests/
+scripts/fixtures/

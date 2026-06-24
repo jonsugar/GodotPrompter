@@ -3,7 +3,7 @@
   "version": "1.10.0",
   "type": "module",
   "description": "Codex-only skill pack for Godot 4.x game development - GDScript and C#",
-  "author": "jame581",
+  "author": "jonsugar",
   "license": "MIT",
   "keywords": [
     "codex",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR-ACCOUNT/codex-for-godot.git"
+    "url": "https://github.com/jonsugar/codex-for-godot.git"
   },
   "optionalDependencies": {
     "js-tiktoken": "^1.0.20"

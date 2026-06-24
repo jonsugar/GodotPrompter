@@ -12,7 +12,7 @@ Codex for Godot is installed from your GitHub clone by symlinking its skills and
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/YOUR-ACCOUNT/codex-for-godot.git ~/.codex/codex-for-godot
+   git clone https://github.com/jonsugar/codex-for-godot.git ~/.codex/codex-for-godot
    ```
 
 2. Create the skills symlink:

@@ -11,7 +11,7 @@ Link any related issues, discussions, or previous PRs.
 - [ ] Documentation
 - [ ] New skill
 - [ ] Skill update
-- [ ] Agent update
+- [ ] Codex persona update
 - [ ] Tooling / packaging
 - [ ] Tests
 - [ ] Other
