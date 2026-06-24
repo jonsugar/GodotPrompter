@@ -1,122 +1,108 @@
-# GodotPrompter Agent Integration Test Plan
+# Codex For Godot Session Integration Test Plan
 
-Run these tests in a **fresh Claude Code session** with GodotPrompter installed.
-Record results in `RESULTS.md` after each test.
+Run these tests in a fresh Codex session with Codex for Godot installed or symlinked. Record results in [RESULTS.md](RESULTS.md) after each test.
 
----
+## Category 1: Cold Start
 
-## Category 1: Cold Start (Installation & Discovery)
+### Test 1.1: Bootstrap Skill Loads
 
-### Test 1.1: Plugin loads
+**Setup:** Fresh Codex session from a Godot project or this repository.
 
-**Setup:** Fresh Claude Code session with GodotPrompter installed.
-
-**Prompt:** "What Godot skills are available from GodotPrompter?"
+**Prompt:** "What Godot skills are available from Codex for Godot?"
 
 **Expected:**
-- Agent loads `using-godot-prompter` skill (or reads it)
-- Lists skill categories: Core/Process, Architecture, Gameplay, UI, Multiplayer, Build, C#
-- Mentions at least 10 specific skill names
 
-**Pass criteria:** Agent shows awareness of the skill catalog, not generic Godot advice.
+- Codex loads or summarizes `using-codex-for-godot`.
+- The response mentions the catalog shape: Core/Process, Architecture, Gameplay, UI/HUD, Multiplayer, Build/Deploy, C#, and GDScript.
+- The response names at least 10 specific skill ids.
 
----
+**Pass criteria:** Codex shows awareness of the repo skill catalog, not generic Godot advice.
 
-### Test 1.2: Skill content access
+### Test 1.2: Skill Content Access
 
 **Prompt:** "What does the state-machine skill cover? Show me the approaches."
 
 **Expected:**
-- Agent reads `skills/state-machine/SKILL.md`
-- Describes 3 approaches: enum-based, node-based, resource-based
-- Shows the comparison table from the skill
 
-**Pass criteria:** Response matches skill content, not generic FSM knowledge.
+- Codex reads `skills/state-machine/SKILL.md`.
+- The response describes enum-based, node-based, and resource-based approaches.
+- The comparison matches the skill content.
 
----
+**Pass criteria:** Response is grounded in `state-machine`, not a generic FSM tutorial.
 
-### Test 1.3: Cross-reference navigation
+### Test 1.3: Cross-Reference Navigation
 
 **Prompt:** "The state-machine skill mentions related skills. What are they?"
 
 **Expected:**
-- Agent finds the Related Skills line: player-controller, ai-navigation, resource-pattern
-- Can describe what each related skill covers
 
-**Pass criteria:** Agent navigates cross-references correctly.
+- Codex finds the related skills in `state-machine`.
+- Codex briefly explains why each related skill might matter.
 
----
+**Pass criteria:** Codex navigates local cross-references correctly.
 
-## Category 2: Skill Discovery (Open-Ended Prompts)
+## Category 2: Skill Discovery
 
-### Test 2.1: State machine request
+### Test 2.1: State Machine Request
 
 **Prompt:** "I need to add a state machine to my player character in Godot 4."
 
 **Expected skill:** `state-machine`
 
 **Expected behavior:**
-- Loads the skill (not generic advice)
-- Asks about complexity to recommend enum vs node vs resource approach
-- Shows GDScript example from the skill
-- Mentions C# equivalent
 
-**Pass criteria:** Uses skill content, not generic FSM tutorial.
+- Codex reads `state-machine`.
+- Codex asks about complexity when that affects enum vs node vs resource choice.
+- Codex includes GDScript and C# guidance when code examples are useful.
 
----
+**Pass criteria:** Uses skill content and explains a Godot-appropriate FSM choice.
 
-### Test 2.2: Project setup request
+### Test 2.2: Project Setup Request
 
 **Prompt:** "I'm starting a new Godot 4.3 project. How should I organize it?"
 
 **Expected skill:** `godot-project-setup`
 
 **Expected behavior:**
-- Shows the split layout directory structure from the skill
-- Recommends autoloads (GameManager, EventBus)
-- Shows .gitignore template
 
-**Pass criteria:** Directory structure matches skill exactly.
+- Codex reads `godot-project-setup`.
+- Codex recommends the repo layout, autoload conventions, and `.gitignore` pattern from the skill.
 
----
+**Pass criteria:** Directory guidance matches the skill rather than a generic project tree.
 
-### Test 2.3: Enemy AI request
+### Test 2.3: Enemy AI Request
 
 **Prompt:** "I want enemies that patrol waypoints and chase the player when they get close."
 
 **Expected skill:** `ai-navigation`
 
 **Expected behavior:**
-- Shows NavigationAgent2D setup
-- Provides patrol pattern with waypoints
-- Shows chase behavior with state transitions
-- References state-machine skill for FSM integration
 
-**Pass criteria:** Uses NavigationAgent2D (not custom pathfinding), shows patrol code from skill.
+- Codex reads `ai-navigation`.
+- Codex uses `NavigationAgent2D` or `NavigationAgent3D` as appropriate.
+- Codex references `state-machine` for behavior transitions.
 
----
+**Pass criteria:** Navigation-based patrol and chase plan grounded in the skill.
 
-### Test 2.4: Save/load request
+### Test 2.4: Save/Load Request
 
 **Prompt:** "Help me set up a save/load system for my Godot game."
 
 **Expected skill:** `save-load`
 
 **Expected behavior:**
-- Shows strategy comparison table (ConfigFile, JSON, Resource)
-- Recommends JSON for game saves
-- Shows SaveManager autoload pattern
-- Mentions version migration
 
-**Pass criteria:** Shows the comparison table, recommends JSON with reasoning.
+- Codex reads `save-load`.
+- Codex compares `ConfigFile`, JSON, and Resource serialization.
+- Codex recommends a save manager pattern with version migration.
 
----
+**Pass criteria:** Recommendation and code shape match the skill.
 
-### Test 2.5: Code review request
+### Test 2.5: Code Review Request
 
 **Prompt:** "Review this GDScript for common Godot issues."
 
-**Sample script to paste with the prompt:**
+Paste this sample script:
 
 ```gdscript
 extends CharacterBody2D
@@ -140,102 +126,81 @@ func take_damage(amount):
 **Expected skill:** `godot-code-review`
 
 **Expected behavior:**
-- Flags: untyped variables, using `_process` instead of `_physics_process` for movement
-- Flags: hardcoded node path `/root/Main/Player` (use groups instead)
-- Flags: `position +=` instead of `move_and_slide()` on CharacterBody2D
-- Flags: `remove_child` before `queue_free` (unnecessary)
-- Uses the checklist structure from the skill
 
-**Pass criteria:** Finds at least 3 of the 4 issues, uses skill checklist format.
+- Codex reads `godot-code-review`.
+- Codex flags untyped variables, `_process` movement, hardcoded node path, direct `position` movement on `CharacterBody2D`, and unnecessary `remove_child`.
+- Codex uses the review stance/checklist from the skill.
 
----
+**Pass criteria:** Finds at least 3 of the listed issues and explains Godot-specific impact.
 
-## Category 3: Full Workflow (End-to-End Build)
+## Category 3: Persona Routing
 
-### Test 3.1: Project + Player
+### Test 3.1: Architecture Persona
 
-**Setup:** Empty directory, no existing Godot project.
+**Prompt:** "Design an enemy AI system with patrol, chase, attack, and alert states before we implement it."
 
-**Prompt:** "Create a new Godot 4.3 project with a player that can move with WASD and attack with Space."
-
-**Expected skills:** `godot-project-setup`, `player-controller`, `state-machine`
+**Expected persona:** `godot-game-architect`
 
 **Expected behavior:**
-- Scaffolds project with directory structure from godot-project-setup
-- Creates player with CharacterBody2D top-down movement from player-controller
-- Adds FSM (idle/move/attack) from state-machine
-- Sets up input actions
 
-**Pass criteria:** All 3 skills used, project structure matches skill patterns.
+- Codex uses the architect persona only if persona routing is available in the session.
+- Codex reads `ai-navigation` and `state-machine`.
+- Codex returns a scene tree, state map, signal map, and implementation steps.
 
----
+**Pass criteria:** Planning is structured and grounded in local skills.
 
-### Test 3.2: Add Enemy
+### Test 3.2: Implementation Persona
 
-**Prompt:** "Add an enemy with patrol AI that chases the player and attacks."
+**Prompt:** "Implement a top-down player controller with WASD movement and an attack action."
 
-**Expected skills:** `ai-navigation`, `state-machine`, `component-system`
+**Expected persona:** `godot-game-dev`
 
-**Expected behavior:**
-- Creates enemy with NavigationAgent2D
-- Uses patrol pattern from ai-navigation
-- Adds FSM (idle/patrol/chase/attack) from state-machine
-- Uses HitboxComponent/HurtboxComponent/HealthComponent from component-system
-
-**Pass criteria:** Navigation-based patrol, component-based damage.
-
----
-
-### Test 3.3: Add HUD
-
-**Prompt:** "Add a health bar HUD that shows the player's health."
-
-**Expected skills:** `hud-system`, `event-bus`
+**Expected skills:** `player-controller`, `input-handling`, `state-machine`
 
 **Expected behavior:**
-- Creates CanvasLayer HUD from hud-system
-- Uses EventBus pattern from event-bus for health updates
-- Health bar uses tween animation from hud-system
 
-**Pass criteria:** CanvasLayer HUD, EventBus-driven updates.
+- Codex reads the relevant skills before editing.
+- Codex creates or modifies focused Godot files.
+- Codex runs the smallest useful validation command available in the test project.
 
----
+**Pass criteria:** Implementation follows skill patterns and reports changed files plus validation.
 
-### Test 3.4: Code Review
+### Test 3.3: UI Persona
+
+**Prompt:** "Build a responsive health HUD that updates when the player's health changes."
+
+**Expected persona:** `godot-ui-designer`
+
+**Expected skills:** `hud-system`, `godot-ui`, `event-bus`, `responsive-ui`
+
+**Expected behavior:**
+
+- Codex uses Control nodes and a CanvasLayer HUD.
+- Codex routes health changes through a signal or event-bus pattern.
+- Layout is container-driven and responsive.
+
+**Pass criteria:** UI structure is Godot-native and skill-grounded.
+
+### Test 3.4: Review Persona
 
 **Prompt:** "Review all the code we just wrote for Godot best practices."
+
+**Expected persona:** `godot-code-reviewer`
 
 **Expected skill:** `godot-code-review`
 
 **Expected behavior:**
-- Works through the skill's checklist sections
-- Checks node architecture, style, performance, input, signals, resources
-- Produces structured review output
 
-**Pass criteria:** Uses checklist format from skill, not ad-hoc review.
+- Codex reviews changed files first.
+- Codex prioritizes bugs, regressions, Godot misuse, and missing tests.
+- Findings include file and line references where possible.
 
----
+**Pass criteria:** Review follows code-review stance rather than a general summary.
 
-### Test 3.5: Save/Load
+## How To Run
 
-**Prompt:** "Set up save/load for player position and health. F5 to save, F9 to load."
-
-**Expected skill:** `save-load`
-
-**Expected behavior:**
-- Creates SaveManager autoload with JSON serialization
-- Implements save_game/load_game functions
-- Wires to input actions
-- Includes version migration pattern
-
-**Pass criteria:** JSON save with version field, matches skill's SaveManager pattern.
-
----
-
-## How to Run
-
-1. Start a fresh Claude Code session
-2. Install GodotPrompter: `claude plugins add ./GodotPrompter`
-3. Navigate to an empty test directory
-4. Run each test sequentially, recording results in RESULTS.md
-5. For Category 3, keep the same session (tests build on each other)
+1. Start a fresh Codex session.
+2. Make Codex for Godot available through the repository `AGENTS.md` bootstrap or local Codex skill symlinks.
+3. Navigate to an empty Godot test project for implementation tests.
+4. Run each test sequentially and record outcomes in [RESULTS.md](RESULTS.md).
+5. Keep Category 3 in one session if you want to test continuity across planning, implementation, UI, and review.
