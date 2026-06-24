@@ -78,14 +78,14 @@ Codex personas live under [.codex/agents/codex-for-godot](.codex/agents/codex-fo
 | `audio-system` | Audio buses, music management, SFX pooling, spatial audio |
 | `inventory-system` | Resource-based inventory, slots, stacking, UI binding |
 | `dialogue-system` | Branching dialogue trees, conditions, UI presentation |
-| `save-load` | ConfigFile, JSON, Resource serialization, migrations |
+| `save-load` | ConfigFile, JSON, Resource serialization, save versioning |
 | `ai-navigation` | NavigationAgent2D/3D, steering, patrols, behavior trees |
 | `ability-system` | Resource-based abilities, cost/cooldown/cast, buffs, tags |
 | `camera-system` | Smooth follow, screen shake, zones, transitions |
 | `localization` | TranslationServer, CSV/PO files, RTL, pluralization |
 | `procedural-generation` | Noise, BSP dungeons, cellular automata, WFC |
 
-### UI, Rendering, Physics, And Platforms
+### UI, Rendering, Physics, And Deployment
 
 | Skill | Description |
 |-------|-------------|
@@ -129,7 +129,7 @@ Run the skill validator before merging changes:
 node scripts/validate-skills.mjs
 ```
 
-Phase one of the Codex-only migration updates the project identity and removes obsolete platform packaging. Later phases will rewrite every skill/reference file, Codex persona, script, workflow, and test plan to remove the remaining legacy wording.
+The validator checks skill metadata, cross-references, and repository structure expected by Codex for Godot. Keep it passing alongside any manual review for changed skills or personas.
 
 ## Contributing
 
