@@ -145,7 +145,7 @@ Select the imported `.glb`/`.gltf` in FileSystem, then in the Import dock:
 
 ```gdscript
 # Preload at compile time (known path)
-const ENEMY_SCENE: PackedScene = preload("res://models/enemy.glb")
+const ENEMY_SCENE: PackedScene = preload("res://game/characters/non_playable/enemy/scenes/enemy.glb")
 
 # Load at runtime (path from data)
 func spawn_model(path: String) -> Node3D:
@@ -156,7 +156,7 @@ func spawn_model(path: String) -> Node3D:
 ```
 
 ```csharp
-private static readonly PackedScene EnemyScene = GD.Load<PackedScene>("res://models/enemy.glb");
+private static readonly PackedScene EnemyScene = GD.Load<PackedScene>("res://game/characters/non_playable/enemy/scenes/enemy.glb");
 
 public Node3D SpawnModel(string path)
 {
@@ -238,19 +238,19 @@ Share animations between characters with different skeletons:
 
 ```gdscript
 # Save as text resource
-ResourceSaver.save(my_resource, "res://data/item.tres")
+ResourceSaver.save(my_resource, "res://game/global/items/item.tres")
 
 # Save as binary resource
-ResourceSaver.save(my_resource, "res://data/item.res")
+ResourceSaver.save(my_resource, "res://game/global/items/item.res")
 
 # Load (either format)
-var resource: Resource = load("res://data/item.tres")
+var resource: Resource = load("res://game/global/items/item.tres")
 ```
 
 ```csharp
-ResourceSaver.Save(myResource, "res://data/item.tres");
-ResourceSaver.Save(myResource, "res://data/item.res");
-var resource = GD.Load<Resource>("res://data/item.tres");
+ResourceSaver.Save(myResource, "res://game/global/items/item.tres");
+ResourceSaver.Save(myResource, "res://game/global/items/item.res");
+var resource = GD.Load<Resource>("res://game/global/items/item.tres");
 ```
 
 ### When to Use Each

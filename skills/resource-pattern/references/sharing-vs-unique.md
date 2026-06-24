@@ -7,12 +7,12 @@ Reference for `skills/resource-pattern/SKILL.md` — when Resources share state 
 ---
 ## 8. Sharing vs Unique
 
-Resources loaded from the same path are **shared**. Every node that loads `res://data/enemies/goblin.tres` gets the exact same object in memory.
+Resources loaded from the same path are **shared**. Every node that loads `res://game/characters/non_playable/slime/resources/slime_stats.tres` gets the exact same object in memory.
 
 ```gdscript
 # Both variables point to the same object — modifying one modifies the other.
-var a: EnemyStats = load("res://data/enemies/goblin.tres")
-var b: EnemyStats = load("res://data/enemies/goblin.tres")
+var a: EnemyStats = load("res://game/characters/non_playable/slime/resources/slime_stats.tres")
+var b: EnemyStats = load("res://game/characters/non_playable/slime/resources/slime_stats.tres")
 print(a == b)  # true
 ```
 
@@ -55,4 +55,3 @@ public partial class Enemy : CharacterBody3D
 - Mutable runtime state (current health, active buffs) — always `duplicate()` in `_ready()`.
 
 ---
-

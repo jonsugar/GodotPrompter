@@ -17,8 +17,8 @@ Plays a sequence of audio streams in order. Use for level music with intro → l
 # Create a playlist with intro and loop
 var playlist := AudioStreamPlaylist.new()
 playlist.stream_count = 2
-playlist.set_list_stream(0, preload("res://audio/music/boss_intro.ogg"))
-playlist.set_list_stream(1, preload("res://audio/music/boss_loop.ogg"))
+playlist.set_list_stream(0, preload("res://game/global/audio/music/boss_intro.ogg"))
+playlist.set_list_stream(1, preload("res://game/global/audio/music/boss_loop.ogg"))
 # BPM sync ensures transitions land on beat boundaries
 playlist.bpm = 120.0
 playlist.shuffle = false
@@ -31,8 +31,8 @@ $MusicPlayer.play()
 ```csharp
 var playlist = new AudioStreamPlaylist();
 playlist.StreamCount = 2;
-playlist.SetListStream(0, GD.Load<AudioStream>("res://audio/music/boss_intro.ogg"));
-playlist.SetListStream(1, GD.Load<AudioStream>("res://audio/music/boss_loop.ogg"));
+playlist.SetListStream(0, GD.Load<AudioStream>("res://game/global/audio/music/boss_intro.ogg"));
+playlist.SetListStream(1, GD.Load<AudioStream>("res://game/global/audio/music/boss_loop.ogg"));
 playlist.Shuffle = false;
 playlist.Loop = true;
 
@@ -48,9 +48,9 @@ Plays multiple streams in perfect sync, allowing you to blend layers. Use for ad
 # Three synchronized layers: base, drums, intensity
 var sync := AudioStreamSynchronized.new()
 sync.stream_count = 3
-sync.set_sync_stream(0, preload("res://audio/music/ambient_base.ogg"))
-sync.set_sync_stream(1, preload("res://audio/music/ambient_drums.ogg"))
-sync.set_sync_stream(2, preload("res://audio/music/ambient_intense.ogg"))
+sync.set_sync_stream(0, preload("res://game/global/audio/music/ambient_base.ogg"))
+sync.set_sync_stream(1, preload("res://game/global/audio/music/ambient_drums.ogg"))
+sync.set_sync_stream(2, preload("res://game/global/audio/music/ambient_intense.ogg"))
 
 # Set initial volumes — layer 0 full, others silent
 sync.set_sync_stream_volume(0, 0.0)   # 0 dB
@@ -74,9 +74,9 @@ func _on_combat_started() -> void:
 ```csharp
 var sync = new AudioStreamSynchronized();
 sync.StreamCount = 3;
-sync.SetSyncStream(0, GD.Load<AudioStream>("res://audio/music/ambient_base.ogg"));
-sync.SetSyncStream(1, GD.Load<AudioStream>("res://audio/music/ambient_drums.ogg"));
-sync.SetSyncStream(2, GD.Load<AudioStream>("res://audio/music/ambient_intense.ogg"));
+sync.SetSyncStream(0, GD.Load<AudioStream>("res://game/global/audio/music/ambient_base.ogg"));
+sync.SetSyncStream(1, GD.Load<AudioStream>("res://game/global/audio/music/ambient_drums.ogg"));
+sync.SetSyncStream(2, GD.Load<AudioStream>("res://game/global/audio/music/ambient_intense.ogg"));
 sync.SetSyncStreamVolume(0, 0.0f);
 sync.SetSyncStreamVolume(1, -80.0f);
 sync.SetSyncStreamVolume(2, -80.0f);
@@ -140,4 +140,3 @@ func load_wav_from_path(path: String) -> AudioStreamWAV:
 > **Warning:** Runtime-loaded audio bypasses Godot's import system. You must set `format`, `mix_rate`, and `stereo` manually to match the actual file. Incorrect values produce garbled audio.
 
 ---
-

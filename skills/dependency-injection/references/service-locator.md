@@ -14,7 +14,7 @@ Useful for:
 - Swapping real implementations for stubs in tests
 - Optional systems (e.g., analytics) that may or may not be present
 
-### GDScript (`autoloads/service_locator.gd`)
+### GDScript (`global/autoloads/service_locator.gd`)
 
 ```gdscript
 extends Node
@@ -79,7 +79,7 @@ func _ready() -> void:
         audio.play_sfx("pickup")
 ```
 
-### C# (`Autoloads/ServiceLocator.cs`)
+### C# (`global/autoloads/service_locator.cs`)
 
 ```csharp
 using Godot;
@@ -159,4 +159,3 @@ public partial class Pickup : Area2D
 ```
 
 ---
-

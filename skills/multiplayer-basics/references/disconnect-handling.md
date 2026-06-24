@@ -44,7 +44,7 @@ func _on_server_disconnected() -> void:
 	# Server dropped — return to main menu.
 	print("Lost connection to server — returning to main menu")
 	multiplayer.multiplayer_peer = null
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	get_tree().change_scene_to_file("res://game_menu/main_menu/scenes/main_menu.tscn")
 
 
 # Reconnection: simply call NetworkManager.join_game() again.
@@ -93,7 +93,7 @@ public partial class DisconnectHandler : Node
     {
         GD.Print("Lost connection to server — returning to main menu");
         Multiplayer.MultiplayerPeer = null;
-        GetTree().ChangeSceneToFile("res://scenes/main_menu.tscn");
+        GetTree().ChangeSceneToFile("res://game_menu/main_menu/scenes/main_menu.tscn");
     }
 }
 ```
@@ -101,4 +101,3 @@ public partial class DisconnectHandler : Node
 > **Always check `is_instance_valid(node)`** before accessing a node reference that may have been freed. `peer_disconnected` and `queue_free` can race in the same frame.
 
 ---
-

@@ -88,10 +88,10 @@ public partial class SfxPool : Node
 
 ```gdscript
 # Slightly randomize pitch to avoid repetitive sound
-SFXPool.play_random_pitch(preload("res://audio/sfx/footstep.wav"))
+SFXPool.play_random_pitch(preload("res://game/characters/playable/player/assets/audio/sfx/footstep.wav"))
 
 # Fixed pitch and volume
-SFXPool.play(preload("res://audio/sfx/explosion.wav"), -3.0, 1.0)
+SFXPool.play(preload("res://game/global/audio/sfx/explosion.wav"), -3.0, 1.0)
 ```
 
 > **Why pool?** Creating new AudioStreamPlayer nodes every frame is wasteful. A pool recycles a fixed number of players in round-robin order. If pool_size players are already playing, the oldest one gets interrupted — this is usually fine for SFX.
@@ -175,11 +175,10 @@ public partial class SfxPool2D : Node
 ```gdscript
 # Play an explosion sound at the enemy's position
 SFXPool2D.play_at(
-    preload("res://audio/sfx/explosion.wav"),
+    preload("res://game/global/audio/sfx/explosion.wav"),
     enemy.global_position,
     -3.0
 )
 ```
 
 ---
-

@@ -394,7 +394,7 @@ public override void _Ready()
 
 ```gdscript
 # Compile-time — path is validated by the editor
-const BULLET_SCENE: PackedScene = preload("res://scenes/bullet.tscn")
+const BULLET_SCENE: PackedScene = preload("res://game/entities/projectiles/projectile_bullet/scenes/projectile_bullet.tscn")
 
 # Runtime — path comes from data
 func _load_level(path: String) -> void:
@@ -413,7 +413,7 @@ func _on_enemy_died() -> void:
 ```csharp
 // Compile-time equivalent — load once in a static field or _Ready()
 private static readonly PackedScene BulletScene =
-    GD.Load<PackedScene>("res://scenes/bullet.tscn");
+    GD.Load<PackedScene>("res://game/entities/projectiles/projectile_bullet/scenes/projectile_bullet.tscn");
 
 // Runtime — path comes from data
 private void LoadLevel(string path)

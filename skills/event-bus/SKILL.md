@@ -59,9 +59,9 @@ NodeA emits the signal. NodeB and NodeC each connected to EventBus independently
 
 ## 3. Basic EventBus
 
-Create `res://autoloads/event_bus.gd` (or `EventBus.cs`), then register it in **Project → Project Settings → Autoload** with the name `EventBus`.
+Create `res://global/autoloads/event_bus.gd` (or `event_bus.cs`), then register it in **Project → Project Settings → Autoload** with the name `EventBus`.
 
-### GDScript (`autoloads/event_bus.gd`)
+### GDScript (`global/autoloads/event_bus.gd`)
 
 ```gdscript
 extends Node
@@ -82,7 +82,7 @@ signal item_collected(item_name: String)
 signal health_changed(current: int, maximum: int)
 ```
 
-### C# (`Autoloads/EventBus.cs`)
+### C# (`global/autoloads/event_bus.cs`)
 
 ```csharp
 using Godot;

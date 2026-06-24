@@ -163,7 +163,7 @@ Add a **Call Method** track to trigger game logic at exact animation frames (spa
 
 ```gdscript
 func spawn_projectile() -> void:
-    var bullet := preload("res://scenes/bullet.tscn").instantiate()
+    var bullet := preload("res://game/entities/projectiles/projectile_bullet/scenes/projectile_bullet.tscn").instantiate()
     get_parent().add_child(bullet)
     bullet.global_position = $Muzzle.global_position
 

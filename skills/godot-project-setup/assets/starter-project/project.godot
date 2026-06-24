@@ -1,0 +1,23 @@
+; Engine configuration file.
+; Edit from the Godot editor when possible.
+
+config_version=5
+
+[application]
+
+config/name="Starter Project"
+run/main_scene="res://game_menu/main_menu/scenes/main_menu.tscn"
+config/features=PackedStringArray("4.3")
+
+[autoload]
+
+GameManager="*res://global/autoloads/game_manager.gd"
+EventBus="*res://global/autoloads/event_bus.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+

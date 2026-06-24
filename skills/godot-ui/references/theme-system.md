@@ -61,7 +61,7 @@ GetNode<PanelContainer>("DialogPanel").AddThemeStyleboxOverride("panel", stylebo
 
 ```gdscript
 # Load a font and apply it to a single Label
-var font := preload("res://assets/fonts/Roboto-Regular.ttf") as FontFile
+var font := preload("res://game_menu/global/assets/fonts/roboto_regular.ttf") as FontFile
 $TitleLabel.add_theme_font_override("font", font)
 $TitleLabel.add_theme_font_size_override("font_size", 32)
 ```
@@ -69,7 +69,7 @@ $TitleLabel.add_theme_font_size_override("font_size", 32)
 **C#:**
 
 ```csharp
-var font = GD.Load<FontFile>("res://assets/fonts/Roboto-Regular.ttf");
+var font = GD.Load<FontFile>("res://game_menu/global/assets/fonts/roboto_regular.ttf");
 var label = GetNode<Label>("TitleLabel");
 label.AddThemeFontOverride("font", font);
 label.AddThemeFontSizeOverride("font_size", 32);
@@ -108,4 +108,3 @@ GetNode<Button>("Button").RemoveThemeStyleboxOverride("normal");
 ```
 
 ---
-

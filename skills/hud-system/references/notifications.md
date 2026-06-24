@@ -151,7 +151,7 @@ ToastNotification (PanelContainer)
 **EventBus signal needed:**
 
 ```gdscript
-# autoloads/event_bus.gd
+# global/autoloads/event_bus.gd
 signal notification_requested(message: String)
 ```
 
@@ -161,4 +161,3 @@ signal notification_requested(message: String)
 ```
 
 ---
-

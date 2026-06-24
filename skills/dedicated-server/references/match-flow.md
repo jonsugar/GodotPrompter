@@ -77,7 +77,7 @@ func _transition_to(new_state: MatchState) -> void:
 
         MatchState.GAMEPLAY:
             _notify_state_changed.rpc(new_state)
-            get_tree().change_scene_to_file("res://scenes/game.tscn")
+            get_tree().change_scene_to_file("res://game/levels/main_level/scenes/main_level.tscn")
 
         MatchState.RESULTS:
             _results_timer = RESULTS_DURATION
@@ -180,7 +180,7 @@ public partial class MatchManager : Node
 
             case MatchState.Gameplay:
                 Rpc(MethodName.NotifyStateChanged, (int)newState);
-                GetTree().ChangeSceneToFile("res://scenes/game.tscn");
+                GetTree().ChangeSceneToFile("res://game/levels/main_level/scenes/main_level.tscn");
                 break;
 
             case MatchState.Results:
@@ -216,4 +216,3 @@ public partial class MatchManager : Node
 ```
 
 ---
-

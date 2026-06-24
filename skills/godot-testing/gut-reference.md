@@ -88,7 +88,7 @@ Adds the node to the scene tree AND queues it for freeing after the test ends.
 var _player: Player
 
 func before_each() -> void:
-    var scene := preload("res://scenes/player.tscn")
+    var scene := preload("res://game/characters/playable/player/scenes/player.tscn")
     _player = add_child_autofree(scene.instantiate())
     # _player is now in the tree and will be freed automatically
 

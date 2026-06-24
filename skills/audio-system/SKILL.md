@@ -55,7 +55,7 @@ func _ready() -> void:
     music_player.play()
 
 func play_jump_sound() -> void:
-    sfx_player.stream = preload("res://audio/sfx/jump.wav")
+    sfx_player.stream = preload("res://game/characters/playable/player/assets/audio/sfx/jump.wav")
     sfx_player.play()
 ```
 
@@ -78,7 +78,7 @@ public partial class AudioExample : Node2D
 
     public void PlayJumpSound()
     {
-        _sfxPlayer.Stream = GD.Load<AudioStream>("res://audio/sfx/jump.wav");
+        _sfxPlayer.Stream = GD.Load<AudioStream>("res://game/characters/playable/player/assets/audio/sfx/jump.wav");
         _sfxPlayer.Play();
     }
 }
@@ -270,7 +270,7 @@ public partial class FollowCamListener : AudioListener3D
 
 ## 5. Music Manager (Autoload)
 
-Crossfade between background tracks via a singleton autoload that manages two `AudioStreamPlayer` nodes and tweens their volume_db. Wire a `Music` audio bus so the settings menu can adjust music separately.
+Crossfade between background tracks via a singleton autoload that manages two `AudioStreamPlayer` nodes and tweens their volume_db. If music spans game and menus, place the autoload under `res://global/autoloads/`; keep game-only audio resources under `res://game/global/audio/`. Wire a `Music` audio bus so the settings menu can adjust music separately.
 
 > See [references/music-manager.md](references/music-manager.md) for the full GDScript and C# autoload (crossfade, push/pop stack, current-track query).
 

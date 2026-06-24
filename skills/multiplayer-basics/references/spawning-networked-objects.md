@@ -30,7 +30,7 @@ extends Node
 
 func _ready() -> void:
 	# Register scenes the spawner is allowed to replicate.
-	spawner.add_spawnable_scene("res://scenes/player.tscn")
+	spawner.add_spawnable_scene("res://game/characters/playable/player/scenes/player.tscn")
 
 	# Optional: custom spawn function lets you pass extra data
 	# (e.g. initial position, skin) along with the spawn event.
@@ -39,7 +39,7 @@ func _ready() -> void:
 
 func _custom_spawn(data: Variant) -> Node:
 	# data is whatever you passed to spawner.spawn(data).
-	var scene: PackedScene = load("res://scenes/player.tscn")
+	var scene: PackedScene = load("res://game/characters/playable/player/scenes/player.tscn")
 	var player: Node = scene.instantiate()
 	player.name = str(data["peer_id"])
 	player.global_position = data["position"]
@@ -68,14 +68,14 @@ public partial class World : Node
 
     public override void _Ready()
     {
-        _spawner.AddSpawnableScene("res://scenes/player.tscn");
+        _spawner.AddSpawnableScene("res://game/characters/playable/player/scenes/player.tscn");
         _spawner.SpawnFunction = new Callable(this, MethodName.CustomSpawn);
     }
 
     private Node CustomSpawn(Variant data)
     {
         var dict   = data.AsGodotDictionary();
-        var scene  = GD.Load<PackedScene>("res://scenes/player.tscn");
+        var scene  = GD.Load<PackedScene>("res://game/characters/playable/player/scenes/player.tscn");
         var player = scene.Instantiate<Node2D>();
         player.Name              = dict["peer_id"].As<int>().ToString();
         player.GlobalPosition    = dict["position"].As<Vector2>();
@@ -99,4 +99,3 @@ public partial class World : Node
 > **Note:** `spawner.spawn()` must be called on the server. `spawn_path` must point to the container node using a NodePath relative to the MultiplayerSpawner's parent. Every scene passed to `add_spawnable_scene` must be in the project — packed-scene paths are sent over the network.
 
 ---
-

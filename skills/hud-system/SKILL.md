@@ -260,7 +260,7 @@ public partial class ScoreDisplay : Label
 **EventBus signals needed:**
 
 ```gdscript
-# autoloads/event_bus.gd
+# global/autoloads/event_bus.gd
 signal score_changed(new_score: int)
 ```
 

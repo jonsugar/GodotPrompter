@@ -77,7 +77,7 @@ enum ItemType {
 @export var item_type: ItemType = ItemType.MATERIAL
 ```
 
-Create item assets: **res://items/potion_health.tres**, set `id = "potion_health"`, etc.
+Create shared gameplay item assets under **res://game/global/items/potion_health.tres**, set `id = "potion_health"`, etc. Entity-specific item assets should live with that entity instead.
 
 ### C#
 
@@ -376,7 +376,7 @@ public partial class InventorySlot : RefCounted
 ## 8. Implementation Checklist
 
 - [ ] `ItemData` extends `Resource` with a stable `id` string set in the Inspector
-- [ ] `ItemData` files live under `res://items/` and are committed to version control
+- [ ] Shared `ItemData` files live under `res://game/global/items/` and are committed to version control
 - [ ] `Inventory.add_item()` returns leftover count; callers handle a full inventory
 - [ ] `inventory_changed` signal drives all UI updates — UI never polls per-frame
 - [ ] `InventorySlot.remove_from_stack()` clears `item` to `null` when quantity reaches 0
@@ -406,7 +406,7 @@ Slot-grid UI: a `GridContainer` of `Panel` slot widgets, each rendering one `Inv
 
 ## 7. Serialization
 
-Persist Inventory + Equipment as a Dictionary keyed by item resource path (since ItemData lives at `res://items/<name>.tres`). Reload by `load(path)` and reconstructing the slot list. Version field gates migration on load.
+Persist Inventory + Equipment as a Dictionary keyed by stable item IDs, not resource paths. Reload through an `ItemRegistry` backed by shared item resources in `res://game/global/items/`, then reconstruct the slot list. Version field gates migration on load.
 
 > See [references/serialization.md](references/serialization.md) for the GDScript and C# save/load implementation with `version` field and ConfigFile / JSON variants.
 

@@ -14,12 +14,15 @@ Codex for Godot provides Godot 4.x domain skills for Codex. Skills cover project
 Codex loads this bootstrap through the repository [AGENTS.md](../../AGENTS.md) file. When a Godot request matches one of the skills below, Codex should read the matching `SKILL.md` before planning or editing code.
 
 Use [references/codex-tools.md](references/codex-tools.md) for Codex-specific workflow guidance.
+Use [references/project-structure.md](references/project-structure.md) before creating, recommending, or reviewing Godot file paths so new work follows the standard GodotPrompter project layout.
 
 The bootstrap skill id is `using-codex-for-godot`.
 
 ## 2. Core Rule
 
 Before implementing, debugging, reviewing, or planning any Godot system, identify the closest matching skill and read it first.
+
+Before creating or recommending any `res://` path, also read [references/project-structure.md](references/project-structure.md). Keep new files in the correct project domain, co-locate entity-specific files with the entity, and use Godot naming conventions: snake_case folders/files and PascalCase only for C# class names.
 
 | Task area | Read first |
 |-----------|------------|
@@ -171,6 +174,7 @@ Use a persona when the request benefits from a specialist role. Otherwise, work 
 
 - [ ] Identified the closest matching Codex for Godot skill before acting
 - [ ] Read the selected skill's `SKILL.md`
+- [ ] Read `references/project-structure.md` before creating or recommending Godot file paths
 - [ ] Read only the relevant `references/*.md` files linked by that skill
 - [ ] Used a Codex persona only when specialist routing added value
 - [ ] Ran `godot-code-review` after significant implementation work

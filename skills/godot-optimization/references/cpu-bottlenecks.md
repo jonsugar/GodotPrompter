@@ -230,8 +230,8 @@ Type inference with `:=` is equivalent to explicit types — use whichever is mo
 
 ```gdscript
 # preload — resolved at compile time; safe to use at class scope
-const BulletScene: PackedScene = preload("res://scenes/bullet.tscn")
-const HitSound: AudioStream = preload("res://audio/hit.ogg")
+const BulletScene: PackedScene = preload("res://game/entities/projectiles/projectile_bullet/scenes/projectile_bullet.tscn")
+const HitSound: AudioStream = preload("res://game/entities/projectiles/projectile_bullet/assets/audio/sfx/hit.ogg")
 
 # load — resolved at runtime; use for dynamic paths or optional resources
 func _load_skin(skin_name: String) -> Texture2D:

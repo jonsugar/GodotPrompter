@@ -12,7 +12,7 @@ Save inventories as `item_id + quantity` pairs. Never serialize the full `ItemDa
 ### GDScript
 
 ```gdscript
-# item_registry.gd — add as autoload named ItemRegistry
+# item_registry.gd — add as autoload named ItemRegistry from res://global/autoloads/item_registry.gd
 extends Node
 
 # Populate by scanning a folder, or assign manually in _ready().
@@ -20,7 +20,7 @@ var _items: Dictionary = {}  # id → ItemData
 
 
 func _ready() -> void:
-    _load_all("res://items/")
+    _load_all("res://game/global/items/")
 
 
 func _load_all(folder: String) -> void:
@@ -86,7 +86,7 @@ ItemRegistry.deserialize_inventory(player.inventory, data["inventory"])
 ### C#
 
 ```csharp
-// ItemRegistry.cs — add as autoload named ItemRegistry
+// item_registry.cs — add as autoload named ItemRegistry from res://global/autoloads/item_registry.cs
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
@@ -95,7 +95,7 @@ public partial class ItemRegistry : Node
 {
     private readonly Dictionary<string, ItemData> _items = new();
 
-    public override void _Ready() => LoadAll("res://items/");
+    public override void _Ready() => LoadAll("res://game/global/items/");
 
     private void LoadAll(string folder)
     {
@@ -172,4 +172,3 @@ public partial class ItemRegistry : Node
 ```
 
 ---
-

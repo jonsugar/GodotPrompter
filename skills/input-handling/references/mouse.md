@@ -134,7 +134,7 @@ public override void _UnhandledInput(InputEvent @event)
 ```gdscript
 # Set in code
 func _ready() -> void:
-    var cursor := load("res://assets/ui/crosshair.png")
+    var cursor := load("res://game/characters/playable/player/assets/textures/crosshair.png")
     Input.set_custom_mouse_cursor(cursor, Input.CURSOR_ARROW, Vector2(16, 16))  # hotspot at center
 
 # Or set in Project Settings:
@@ -145,10 +145,9 @@ func _ready() -> void:
 ```csharp
 public override void _Ready()
 {
-    var cursor = GD.Load<Resource>("res://assets/ui/crosshair.png");
+    var cursor = GD.Load<Resource>("res://game/characters/playable/player/assets/textures/crosshair.png");
     Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(16, 16));
 }
 ```
 
 ---
-

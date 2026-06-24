@@ -23,18 +23,18 @@ MainMenu (Control — LayoutPreset: Full Rect)
 **GDScript:**
 
 ```gdscript
-# scenes/screens/main_menu.gd
+# game_menu/main_menu/scripts/main_menu.gd
 extends Control
 
 func _ready() -> void:
     $CenterContainer/VBoxContainer/StartButton.grab_focus()
 
 func _on_start_button_pressed() -> void:
-    GameManager.change_scene("res://scenes/levels/level_01.tscn")
+    GameManager.change_scene("res://game/levels/level_01/scenes/level_01.tscn")
 
 func _on_options_button_pressed() -> void:
     # Replace with your options screen path or overlay
-    GameManager.change_scene("res://scenes/screens/options.tscn")
+    GameManager.change_scene("res://game_menu/options/scenes/options.tscn")
 
 func _on_quit_button_pressed() -> void:
     get_tree().quit()
@@ -43,7 +43,7 @@ func _on_quit_button_pressed() -> void:
 **C#:**
 
 ```csharp
-// scenes/screens/MainMenu.cs
+// game_menu/main_menu/scripts/MainMenu.cs
 using Godot;
 
 public partial class MainMenu : Control
@@ -54,10 +54,10 @@ public partial class MainMenu : Control
     }
 
     private void OnStartButtonPressed() =>
-        GameManager.Instance.ChangeScene("res://scenes/levels/level_01.tscn");
+        GameManager.Instance.ChangeScene("res://game/levels/level_01/scenes/level_01.tscn");
 
     private void OnOptionsButtonPressed() =>
-        GameManager.Instance.ChangeScene("res://scenes/screens/options.tscn");
+        GameManager.Instance.ChangeScene("res://game_menu/options/scenes/options.tscn");
 
     private void OnQuitButtonPressed() =>
         GetTree().Quit();
@@ -193,18 +193,18 @@ func _on_resume_button_pressed() -> void:
     queue_free()
 
 func _on_options_button_pressed() -> void:
-    var options := preload("res://scenes/screens/options_screen.tscn").instantiate()
+    var options := preload("res://game_menu/options/scenes/options_screen.tscn").instantiate()
     add_child(options)
 
 func _on_quit_to_menu_button_pressed() -> void:
     get_tree().paused = false
-    GameManager.change_scene("res://scenes/screens/main_menu.tscn")
+    GameManager.change_scene("res://game_menu/main_menu/scenes/main_menu.tscn")
 ```
 
 **C#:**
 
 ```csharp
-// scenes/ui/PauseMenu.cs
+// game_menu/pause_menu/scripts/PauseMenu.cs
 using Godot;
 
 public partial class PauseMenu : Control
@@ -230,14 +230,14 @@ public partial class PauseMenu : Control
 
     private void OnOptionsButtonPressed()
     {
-        var options = GD.Load<PackedScene>("res://scenes/screens/options_screen.tscn").Instantiate();
+        var options = GD.Load<PackedScene>("res://game_menu/options/scenes/options_screen.tscn").Instantiate();
         AddChild(options);
     }
 
     private void OnQuitToMenuButtonPressed()
     {
         GetTree().Paused = false;
-        GameManager.Instance.ChangeScene("res://scenes/screens/main_menu.tscn");
+        GameManager.Instance.ChangeScene("res://game_menu/main_menu/scenes/main_menu.tscn");
     }
 }
 ```
@@ -246,7 +246,7 @@ public partial class PauseMenu : Control
 
 ```gdscript
 # In your GameManager or a player HUD script
-var _pause_menu_scene := preload("res://scenes/ui/pause_menu.tscn")
+var _pause_menu_scene := preload("res://game_menu/pause_menu/scenes/pause_menu.tscn")
 var _pause_menu: Control = null
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -259,4 +259,3 @@ func _unhandled_input(event: InputEvent) -> void:
 ```
 
 ---
-

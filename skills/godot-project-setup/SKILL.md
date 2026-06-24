@@ -1,20 +1,51 @@
 ---
 name: godot-project-setup
-description: Use when creating a new Godot 4.x project — scaffolds recommended directory structure, project settings, autoloads, and .gitignore
+description: Use when creating a new Godot 4.x project — scaffolds a minimal starter project with the GodotPrompter entity co-location structure, project settings, autoloads, and version control files
 ---
 
 # Godot Project Setup
 
-This skill scaffolds a new Godot 4.3+ project with recommended directory structure, project settings, autoloads, and version control configuration.
+This skill scaffolds a new Godot 4.3+ project with the GodotPrompter entity co-location structure, starter scenes, project settings, autoloads, and version control configuration.
 
 > **Related skills:** **scene-organization** for structuring scene trees, **event-bus** for the EventBus autoload pattern, **save-load** for the SaveManager autoload pattern.
 
-## Recommended Directory Structure (Split Layout)
+## Starter Project Asset
 
-The split layout separates assets, scenes, and scripts into distinct top-level directories. This scales well for medium-to-large projects and makes it easy to find resources by type.
+Start new projects by copying the bundled starter tree:
+
+```text
+skills/godot-project-setup/assets/starter-project/
+```
+
+Copy the contents into the Godot project root so the top-level folders land directly under `res://`. After copying, rename the project in `project.godot`, adjust the viewport/input settings, then open the project in Godot so `.godot/` import/editor data is generated locally.
+
+## Recommended Directory Structure
+
+Use entity co-location as the default project structure. Keep truly global services in `res://global/`, gameplay files in `res://game/`, menu files in `res://game_menu/`, and third-party addons in `res://addons/`.
 
 ```
 res://
+├── addons/
+├── global/
+│   └── autoloads/
+├── game/
+│   ├── characters/
+│   │   ├── non_playable/
+│   │   └── playable/
+│   ├── entities/
+│   ├── environments/
+│   ├── global/
+│   └── levels/
+└── game_menu/
+    └── global/
+```
+
+Create entity folders under the closest domain directory. For example, a player character belongs under `res://game/characters/playable/<entity_name>/`, a reusable projectile belongs under `res://game/entities/projectiles/<entity_name>/`, a world biome belongs under `res://game/environments/<entity_name>/`, a level belongs under `res://game/levels/<entity_name>/`, and a menu belongs under `res://game_menu/<entity_name>/`.
+
+Each entity owns only the folders it needs:
+
+```text
+<entity_name>/
 ├── assets/
 │   ├── audio/
 │   │   ├── music/
@@ -22,68 +53,21 @@ res://
 │   ├── fonts/
 │   ├── shaders/
 │   ├── sprites/
-│   │   ├── characters/
-│   │   ├── environment/
-│   │   └── ui/
 │   └── textures/
 ├── scenes/
-│   ├── autoloads/
-│   ├── characters/
-│   ├── environment/
-│   ├── levels/
-│   ├── screens/
-│   └── ui/
 ├── scripts/
-│   ├── autoloads/
-│   ├── characters/
-│   ├── components/
-│   ├── resources/
-│   └── ui/
-├── resources/
-│   ├── items/
-│   ├── levels/
-│   └── themes/
-└── addons/
+├── themes/
+└── resources/
 ```
 
-**Why split layout?**
-- Assets managed by artists can be updated without touching script directories.
-- Glob patterns in export presets are simpler (`assets/**` stays separate from `scripts/**`).
-- Easier to configure `.gitattributes` binary rules per directory.
-- Scales to teams where artists and programmers work in different areas.
+Use Godot naming conventions: snake_case for folders, scenes, scripts, resources, and assets; PascalCase only where C# class names require it.
 
-## Alternative: Co-Located Structure
-
-For solo projects or small teams, keep scenes and scripts together by feature. Easier to move a feature wholesale; harder to apply binary `gitattributes` rules.
-
-```
-res://
-├── assets/
-│   ├── audio/
-│   ├── fonts/
-│   └── textures/
-├── entities/
-│   ├── player/
-│   │   ├── player.tscn
-│   │   ├── player.gd          # or Player.cs
-│   │   └── player_state.gd
-│   └── enemy/
-│       ├── enemy.tscn
-│       └── enemy.gd
-├── levels/
-│   ├── level_01/
-│   │   ├── level_01.tscn
-│   │   └── level_01.gd
-│   └── main_menu/
-│       ├── main_menu.tscn
-│       └── main_menu.gd
-├── systems/
-│   ├── inventory/
-│   └── dialogue/
-├── autoloads/
-├── resources/
-└── addons/
-```
+**Why entity co-location?**
+- Entity assets, scenes, scripts, resources, and themes move together.
+- Feature work stays inside the entity or domain that owns it.
+- Reusable gameplay entities live under `game/entities/<plural_category>/`; owner-specific sub-entities live under the owning entity's `entities/<plural_category>/` folder.
+- Global paths stay explicit: truly global, game-global, and game-menu-global code are different scopes.
+- Godot addons keep their conventional `res://addons/` location.
 
 ## .gitignore
 
@@ -282,21 +266,23 @@ public void LoadBindings()
 
 Register autoloads in `Project > Project Settings > Autoload`. Autoloads are singleton nodes available globally via their registered name.
 
+Put truly global autoloads in `res://global/autoloads/`. Put game-global systems under `res://game/global/`, menu-global systems under `res://game_menu/global/`, and entity-scoped scripts inside the owning entity folder.
+
 ### Common Autoloads
 
 | Name | Path | Purpose |
 |---|---|---|
-| `GameManager` | `autoloads/game_manager.gd` | Game state, scene transitions, pause |
-| `EventBus` | `autoloads/event_bus.gd` | Decoupled signal relay |
-| `AudioManager` | `autoloads/audio_manager.gd` | Music, SFX, volume control |
-| `SaveManager` | `autoloads/save_manager.gd` | Save/load game data |
+| `GameManager` | `global/autoloads/game_manager.gd` | Game state, scene transitions, pause |
+| `EventBus` | `global/autoloads/event_bus.gd` | Decoupled signal relay |
+| `AudioManager` | `global/autoloads/audio_manager.gd` | Music, SFX, volume control |
+| `SaveManager` | `global/autoloads/save_manager.gd` | Save/load game data |
 
 Keep autoloads small. Move logic into standalone classes and call them from the autoload.
 
 ### Minimal GameManager — GDScript
 
 ```gdscript
-# autoloads/game_manager.gd
+# global/autoloads/game_manager.gd
 extends Node
 
 signal scene_changed(scene_path: String)
@@ -325,7 +311,7 @@ func quit_game() -> void:
 ### Minimal GameManager — C#
 
 ```csharp
-// autoloads/GameManager.cs
+// global/autoloads/GameManager.cs
 using Godot;
 
 public partial class GameManager : Node
@@ -360,7 +346,7 @@ public partial class GameManager : Node
 ### Minimal EventBus — GDScript
 
 ```gdscript
-# autoloads/event_bus.gd
+# global/autoloads/event_bus.gd
 extends Node
 
 # Declare all cross-system signals here.
@@ -444,14 +430,19 @@ someNode.HealthChanged -= OnHealthChanged;
 
 Use this checklist after scaffolding a new project to verify everything is in place.
 
-- [ ] Directory structure created (`assets/`, `scenes/`, `scripts/` or co-located layout)
+- [ ] Bundled starter project copied from `skills/godot-project-setup/assets/starter-project/`
+- [ ] Top-level structure created: `addons/`, `global/`, `game/`, `game_menu/`
+- [ ] True global autoloads live under `global/autoloads/`
+- [ ] Gameplay domains created: `game/characters/playable/`, `game/characters/non_playable/`, `game/entities/`, `game/environments/`, `game/global/`, `game/levels/`
+- [ ] Menu domain created: `game_menu/global/`
+- [ ] Starter scenes exist under `game/levels/main_level/scenes/` and `game_menu/main_menu/scenes/`
 - [ ] `.gitignore` created and includes `.godot/`, `.mono/`, `bin/`, `obj/`
 - [ ] `.gitattributes` created with LF normalization and binary asset rules
 - [ ] `project.godot` — viewport resolution set (1920x1080 or project target)
 - [ ] `project.godot` — stretch mode configured (`canvas_items` or `viewport`)
 - [ ] Input Map actions defined for all player inputs (no hard-coded key constants)
 - [ ] Autoloads registered: `GameManager`, `EventBus`, `AudioManager`, `SaveManager`
-- [ ] Autoload scripts created under `autoloads/` (or `scripts/autoloads/`)
+- [ ] Autoload scripts created under `global/autoloads/`
 - [ ] Autoloads are process mode `Always` if they must run while paused
 - [ ] For C# projects: `.csproj` targets `net8.0`, `RootNamespace` set, `Nullable` enabled
 - [ ] For C# projects: all node scripts use `partial class`

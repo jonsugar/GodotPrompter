@@ -115,7 +115,7 @@ func _kick_peer(reason: String) -> void:
 @rpc("authority", "reliable", "call_local")
 func _start_game() -> void:
     # Transition to gameplay scene on all peers.
-    get_tree().change_scene_to_file("res://scenes/game.tscn")
+    get_tree().change_scene_to_file("res://game/levels/main_level/scenes/main_level.tscn")
 ```
 
 ### C#
@@ -227,7 +227,7 @@ public partial class LobbyManager : Node
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
          TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGame()
-        => GetTree().ChangeSceneToFile("res://scenes/game.tscn");
+        => GetTree().ChangeSceneToFile("res://game/levels/main_level/scenes/main_level.tscn");
 
     private Godot.Collections.Dictionary BuildLobbyStateDict()
     {
@@ -246,4 +246,3 @@ public partial class LobbyManager : Node
 ```
 
 ---
-

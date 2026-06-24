@@ -20,7 +20,7 @@ Autoloads are appropriate for services that are **genuinely global** and have **
 - Autoload ordering bugs — A depends on B, but B isn't ready yet
 - Test difficulty — autoloads must be fully operational during unit tests
 
-### GDScript (`autoloads/audio_manager.gd`)
+### GDScript (`global/autoloads/audio_manager.gd`)
 
 ```gdscript
 extends Node
@@ -55,7 +55,7 @@ func _load_sfx_library() -> void:
     pass
 ```
 
-### C# (`Autoloads/AudioManager.cs`)
+### C# (`global/autoloads/audio_manager.cs`)
 
 ```csharp
 using Godot;
@@ -96,4 +96,3 @@ public partial class AudioManager : Node
 ```
 
 ---
-

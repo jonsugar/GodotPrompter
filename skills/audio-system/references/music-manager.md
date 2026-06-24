@@ -126,9 +126,8 @@ public partial class MusicManager : Node
 
 ```gdscript
 # From any script:
-MusicManager.play_music(preload("res://audio/music/boss_theme.ogg"))
+MusicManager.play_music(preload("res://game/global/audio/music/boss_theme.ogg"))
 MusicManager.stop_music(2.0)
 ```
 
 ---
-

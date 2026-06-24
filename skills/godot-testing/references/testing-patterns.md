@@ -16,7 +16,7 @@ Always use `add_child_autofree` (GUT) or `auto_free` (gdUnit4) so nodes are free
 ```gdscript
 func before_each() -> void:
     # add_child_autofree: adds to scene tree AND frees after test
-    var scene := preload("res://scenes/player.tscn")
+    var scene := preload("res://game/characters/playable/player/scenes/player.tscn")
     _player = add_child_autofree(scene.instantiate())
 
     # autofree: frees after test but does NOT add to scene tree
@@ -27,7 +27,7 @@ func before_each() -> void:
 
 ```gdscript
 func before_test() -> void:
-    var scene := preload("res://scenes/player.tscn")
+    var scene := preload("res://game/characters/playable/player/scenes/player.tscn")
     _player = auto_free(scene.instantiate())
     add_child(_player)
 ```
@@ -38,7 +38,7 @@ func before_test() -> void:
 [BeforeTest]
 public void BeforeTest()
 {
-    var scene = GD.Load<PackedScene>("res://scenes/player.tscn");
+    var scene = GD.Load<PackedScene>("res://game/characters/playable/player/scenes/player.tscn");
     _player = AutoFree(scene.Instantiate<Player>());
     AddChild(_player);
 }
@@ -180,4 +180,3 @@ public async GdUnitAwaiter TweenCompletes()
 ```
 
 ---
-

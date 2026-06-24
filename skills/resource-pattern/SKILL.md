@@ -59,12 +59,12 @@ enum ItemType { WEAPON, ARMOUR, CONSUMABLE, QUEST }
 @export var item_type:   ItemType = ItemType.CONSUMABLE
 ```
 
-Create an instance in the editor: **right-click** the FileSystem panel → **New Resource** → choose `ItemData`. Fill in the Inspector fields and save as `res://data/items/health_potion.tres`.
+Create an instance in the editor: **right-click** the FileSystem panel → **New Resource** → choose `ItemData`. Fill in the Inspector fields and save shared gameplay item data as `res://game/global/items/health_potion.tres`.
 
 Load it at runtime:
 
 ```gdscript
-var potion: ItemData = load("res://data/items/health_potion.tres")
+var potion: ItemData = load("res://game/global/items/health_potion.tres")
 print(potion.name)        # "Health Potion"
 print(potion.value)       # 50
 ```
@@ -91,7 +91,7 @@ public partial class ItemData : Resource
 > `[GlobalClass]` is required in C# so the editor recognizes the class and shows it in **New Resource**.
 
 ```csharp
-var potion = GD.Load<ItemData>("res://data/items/health_potion.tres");
+var potion = GD.Load<ItemData>("res://game/global/items/health_potion.tres");
 GD.Print(potion.Name);   // "Health Potion"
 GD.Print(potion.Value);  // 50
 ```
@@ -141,7 +141,7 @@ The strongest use case: data-driven game content. Loot tables, enemy stats, abil
 
 ## 8. Sharing vs Unique
 
-By default, Resources are shared by reference. Two scenes referencing `res://items/sword.tres` see the SAME instance — mutating one mutates both. Use `.duplicate()` (shallow) or `.duplicate(true)` (deep) for instance-local state.
+By default, Resources are shared by reference. Two scenes referencing `res://game/global/items/sword.tres` see the SAME instance — mutating one mutates both. Use `.duplicate()` (shallow) or `.duplicate(true)` (deep) for instance-local state.
 
 > See [references/sharing-vs-unique.md](references/sharing-vs-unique.md) for the full pattern (v1.6.0 C# parity preserved).
 
