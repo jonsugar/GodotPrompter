@@ -83,7 +83,7 @@ Read `godot-debugging` for runtime failures, scene-tree confusion, signal issues
 
 ## 4. Codex Personas
 
-Codex for Godot includes optional specialist personas under `.codex/agents/codex-for-godot/`.
+Codex for Godot includes specialist personas under `.codex/agents/codex-for-godot/`. A complete installation must expose these personas to Codex alongside the skills.
 
 | Persona | Use for |
 |---------|---------|

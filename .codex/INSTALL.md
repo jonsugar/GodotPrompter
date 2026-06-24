@@ -1,6 +1,6 @@
 # Installing Codex For Godot
 
-Codex for Godot is installed from your GitHub clone by symlinking its skills and optional Codex personas into Codex's discovery folders.
+Codex for Godot is installed from your GitHub clone by symlinking both its skills and Codex personas into Codex's discovery folders.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ Codex for Godot is installed from your GitHub clone by symlinking its skills and
    cmd /c mklink /J "$env:USERPROFILE\.codex\skills\codex-for-godot" "$env:USERPROFILE\.codex\codex-for-godot\skills"
    ```
 
-3. Optionally create the Codex persona symlink:
+3. Create the Codex persona symlink:
 
    ```bash
    mkdir -p ~/.codex/agents

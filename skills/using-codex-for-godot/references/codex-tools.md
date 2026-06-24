@@ -35,7 +35,7 @@ Codex personas live in:
 .codex/agents/codex-for-godot/
 ```
 
-Each persona is a Codex TOML file with a role description and developer instructions. Personas are optional. Prefer direct skill use for small tasks, and use a persona when the work clearly benefits from a specialist lens such as architecture, code review, UI, animation, C#, shaders, performance, or editor tooling.
+Each persona is a Codex TOML file with a role description and developer instructions. A complete Codex for Godot installation includes these personas alongside the skills. Prefer direct skill use for small tasks, and use a persona when the work clearly benefits from a specialist lens such as architecture, code review, UI, animation, C#, shaders, performance, or editor tooling.
 
 ## Repository Install Shape
 

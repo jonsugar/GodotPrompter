@@ -14,17 +14,11 @@ Clone the repository somewhere stable:
 git clone https://github.com/jonsugar/codex-for-godot.git ~/.codex/codex-for-godot
 ```
 
-Expose the skills to Codex:
+Expose the skills and personas to Codex:
 
 ```bash
-mkdir -p ~/.codex/skills
+mkdir -p ~/.codex/skills ~/.codex/agents
 ln -s ~/.codex/codex-for-godot/skills ~/.codex/skills/codex-for-godot
-```
-
-Expose the optional Codex personas:
-
-```bash
-mkdir -p ~/.codex/agents
 ln -s ~/.codex/codex-for-godot/.codex/agents/codex-for-godot ~/.codex/agents/codex-for-godot
 ```
 
