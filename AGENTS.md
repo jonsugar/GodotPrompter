@@ -1,2 +1,2 @@
-@./skills/using-godot-prompter/SKILL.md
-@./skills/using-godot-prompter/references/codex-tools.md
+@./skills/using-codex-for-godot/SKILL.md
+@./skills/using-codex-for-godot/references/codex-tools.md

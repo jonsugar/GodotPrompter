@@ -35,16 +35,16 @@ Present the design section by section (scene tree, signal map, data flow). Ask "
 
 After the design is approved:
 
-1. **Inject CLAUDE.md** — Add the GodotPrompter integration section to the project's CLAUDE.md (see CLAUDE.md Injection section below). This ensures all subagents and future sessions know to use GodotPrompter skills. Skip if the `## GodotPrompter` section already exists.
+1. **Update AGENTS.md** — Add the Codex for Godot integration section to the project's AGENTS.md (see AGENTS.md Injection section below). This ensures future Codex sessions know to use Codex for Godot skills. Skip if the `## Codex for Godot` section already exists.
 
-2. **Create implementation plan** — If a planning skill is available (e.g., `superpowers:writing-plans`), use it. If not, break the design into ordered tasks yourself and save to `docs/godot-prompter/plans/` in the user's project.
+2. **Create implementation plan** — Break the design into ordered tasks and save larger plans to `docs/codex-for-godot/plans/` in the user's project.
 
-3. **Annotate each task with skills** — Every task in the plan that involves a Godot system MUST list which `godot-prompter:*` skill(s) to invoke during implementation. Example:
+3. **Annotate each task with skills** — Every task in the plan that involves a Godot system MUST list which Codex for Godot skill(s) to read during implementation. Example:
 
    - [ ] **Task 3: Player movement** — Create CharacterBody3D with walk, sprint, jump.
-     Skills: `godot-prompter:player-controller`, `godot-prompter:input-handling`
+     Skills: `player-controller`, `input-handling`
 
-   This ensures that even when another plugin executes the plan, the implementing agent knows which GodotPrompter skills to load.
+   This ensures the implementation pass knows which Godot-specific guidance to load before editing code.
 
 ---
 
@@ -237,16 +237,16 @@ See [references/example-chest.md](references/example-chest.md) for a fully worke
 
 ---
 
-## CLAUDE.md Injection
+## AGENTS.md Injection
 
-When preparing for implementation (Step 4), add the following section to the project's CLAUDE.md. Check for an existing `## GodotPrompter` heading first — if present, skip.
+When preparing for implementation (Step 4), add the following section to the project's AGENTS.md. Check for an existing `## Codex for Godot` heading first — if present, skip.
 
-If CLAUDE.md does not exist, create it with a project overview header and this section.
+If AGENTS.md does not exist, create it with a project overview header and this section.
 
-> ## GodotPrompter
+> ## Codex for Godot
 >
-> This is a Godot project with GodotPrompter skills available. Before implementing any game system, you MUST check for a matching `godot-prompter:*` skill and invoke it. This applies to all agents, subagents, and sessions working in this repository.
+> This is a Godot project with Codex for Godot skills available. Before implementing any game system, you MUST check for a matching skill and read it. This applies to all Codex sessions working in this repository.
 >
 > Key skills: `player-controller`, `state-machine`, `event-bus`, `scene-organization`, `component-system`, `resource-pattern`, `godot-ui`, `hud-system`, `ai-navigation`, `camera-system`, `audio-system`, `save-load`, `inventory-system`, `godot-testing`.
 >
-> For the full skill list, invoke `godot-prompter:using-godot-prompter`.
+> For the full skill list, read `skills/using-codex-for-godot/SKILL.md`.

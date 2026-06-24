@@ -49,7 +49,7 @@ Codex personas live under [.codex/agents/codex-for-godot](.codex/agents/codex-fo
 
 | Skill | Description |
 |-------|-------------|
-| `using-godot-prompter` | Bootstrap skill catalog and workflow guide |
+| `using-codex-for-godot` | Bootstrap skill catalog and workflow guide |
 | `godot-project-setup` | Scaffold directory structure, autoloads, .gitignore, input maps |
 | `godot-brainstorming` | Scene tree planning, node selection, architectural decisions |
 | `godot-code-review` | Review checklist for Godot best practices and common pitfalls |

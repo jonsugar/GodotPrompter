@@ -1,5 +1,5 @@
 ---
-name: using-godot-prompter
+name: using-codex-for-godot
 description: Bootstrap skill for Codex for Godot — use to find the right Godot skill, workflow, and Codex persona
 ---
 
@@ -15,7 +15,7 @@ Codex loads this bootstrap through the repository [AGENTS.md](../../AGENTS.md) f
 
 Use [references/codex-tools.md](references/codex-tools.md) for Codex-specific workflow guidance.
 
-The current bootstrap skill id remains `using-godot-prompter` during the migration so existing imports and validation stay stable. User-facing docs should call the project **Codex for Godot**.
+The bootstrap skill id is `using-codex-for-godot`.
 
 ## 2. Core Rule
 
@@ -103,7 +103,7 @@ Use a persona when the request benefits from a specialist role. Otherwise, work 
 
 ### Core / Process
 
-- `using-godot-prompter` — This bootstrap skill during the migration
+- `using-codex-for-godot` — This bootstrap skill
 - `godot-project-setup` — Project scaffolding, directory layout, autoloads, .gitignore
 - `godot-brainstorming` — Design exploration and implementation planning
 - `godot-code-review` — GDScript/C# review against Godot best practices
