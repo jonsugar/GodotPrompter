@@ -1,213 +1,177 @@
 ---
 name: using-godot-prompter
-description: Bootstrap skill — establishes how to find and use GodotPrompter skills, with platform-specific tool mapping
+description: Bootstrap skill for Codex for Godot — use to find the right Godot skill, workflow, and Codex persona
 ---
 
-# Using GodotPrompter
+# Using Codex For Godot
 
 > **Related skills:** **godot-project-setup** for scaffolding a new project, **godot-brainstorming** for design exploration, **godot-code-review** for reviewing finished code, **godot-debugging** for diagnosing runtime issues.
 
-GodotPrompter provides Godot 4.x domain-specific skills for AI coding agents. Skills cover project setup, architecture patterns, gameplay systems, UI, multiplayer, testing, and deployment — for both GDScript and C#.
+Codex for Godot provides Godot 4.x domain skills for Codex. Skills cover project setup, architecture patterns, gameplay systems, UI, multiplayer, testing, export, optimization, editor tooling, and deployment for both GDScript and C#.
 
-## How to Access Skills
+## 1. How Codex Uses These Skills
 
-**In Claude Code:** Use the `Skill` tool with the skill name (e.g., `Skill: "godot-prompter:state-machine"`).
+Codex loads this bootstrap through the repository [AGENTS.md](../../AGENTS.md) file. When a Godot request matches one of the skills below, Codex should read the matching `SKILL.md` before planning or editing code.
 
-**In Copilot CLI:** Use the `skill` tool. Skills are auto-discovered from installed plugins.
+Use [references/codex-tools.md](references/codex-tools.md) for Codex-specific workflow guidance.
 
-**In Gemini CLI:** Use the `activate_skill` tool. See `references/gemini-tools.md` for tool mapping.
+The current bootstrap skill id remains `using-godot-prompter` during the migration so existing imports and validation stay stable. User-facing docs should call the project **Codex for Godot**.
 
-**In Cursor:** Skills are loaded via custom instructions / rules system.
+## 2. Core Rule
 
-**In Codex:** Skills load natively via the AGENTS.md re-export. Follow skill instructions directly; see `references/codex-tools.md` for tool mapping.
+Before implementing, debugging, reviewing, or planning any Godot system, identify the closest matching skill and read it first.
 
-**In OpenCode:** Skills are discovered from the installed plugin. Use the `/skills` command to browse or invoke skills directly. See `.opencode/INSTALL.md` for setup.
+| Task area | Read first |
+|-----------|------------|
+| Project scaffolding | `godot-project-setup` |
+| Feature design | `godot-brainstorming` |
+| Player movement | `player-controller`, `input-handling` |
+| State machines | `state-machine` |
+| Signals and decoupled communication | `event-bus` |
+| Scene structure | `scene-organization` |
+| UI and HUD | `godot-ui`, `hud-system`, `responsive-ui` |
+| Inventory | `inventory-system`, `resource-pattern` |
+| Save/load | `save-load` |
+| Enemy AI and navigation | `ai-navigation`, `state-machine` |
+| Camera | `camera-system` |
+| Audio | `audio-system` |
+| Abilities and combat | `ability-system`, `component-system` |
+| Input | `input-handling` |
+| Animation | `animation-system`, `tween-animation` |
+| Testing | `godot-testing` |
+| Shaders and VFX | `shader-basics`, `particles-vfx` |
+| Physics | `physics-system` |
+| Multiplayer | `multiplayer-basics`, `multiplayer-sync`, `dedicated-server` |
+| Export and release | `export-pipeline` |
+| Optimization | `godot-optimization` |
+| Editor tooling | `addon-development` |
+| C# | `csharp-godot`, `csharp-signals` |
+| GDScript | `gdscript-patterns`, `gdscript-advanced` |
+| Native extensions | `gdextension` |
+| Third-party behavior tree addons | `limboai`, `beehave` |
 
-**In Antigravity (2.0, IDE, CLI):** Skills activate automatically when your prompt matches a skill's `description` frontmatter — no tool call needed. Install skills into `.agents/skills/` (workspace) or `~/.gemini/config/skills/` (global). See `references/antigravity-tools.md` for tool mapping and full install instructions.
+## 3. Workflow
 
-### Installing GodotPrompter for Antigravity
+### Design
 
-**Workspace (project-scoped) — recommended for active development:**
+Read `godot-brainstorming` when the user is still shaping a feature or system. It guides scope, clarifying questions, scene tree planning, data flow, and implementation sequencing.
 
-```bash
-# Linux / macOS — from your Godot project root:
-mkdir -p .agents
-ln -s /path/to/GodotPrompter/skills .agents/skills
+Save larger plans and specs in the user's project under:
 
-# Windows (PowerShell, Developer Mode or run as admin):
-New-Item -ItemType Directory -Force .agents | Out-Null   # junction won't create the parent
-New-Item -ItemType Junction -Path .agents\skills -Target D:\Godot\GodotPrompter\skills
+```text
+docs/codex-for-godot/plans/
+docs/codex-for-godot/specs/
 ```
 
-> **Legacy path note:** `.agent/skills/` (singular) was the early CLI convention; `.agents/skills/` (plural) is the current standard for all Antigravity products.
+### Implementation
 
-**Global (cross-project):**
+For each implementation task, read the most specific domain skill before editing code. If the task crosses domains, read the primary skill first and then the smallest useful set of supporting skills.
 
-```bash
-# Official path (Google Codelabs): ~/.gemini/config/skills/
-# Symlink individual skill folders so each is a direct child (recommended):
-mkdir -p ~/.gemini/config/skills/
-ln -s /path/to/GodotPrompter/skills/* ~/.gemini/config/skills/
-```
+Examples:
 
-> `~/.gemini/skills/` is a community-verified alias but not the path the official Codelabs docs name. Prefer `~/.gemini/config/skills/` for new installs.
+- A platformer controller usually needs `player-controller`, `input-handling`, and sometimes `state-machine`.
+- Inventory UI usually needs `inventory-system`, `resource-pattern`, and `godot-ui`.
+- Multiplayer spawning usually needs `multiplayer-basics`, then `multiplayer-sync` if state replication is required.
 
-> **Nesting caveat:** Prefer `ln -s skills/*` over cloning the repo directly into the skills dir, so each skill is an immediate child (`<skills-dir>/<skill-name>/SKILL.md`). Confirm nested discovery works before relying on the clone approach.
+### Review
 
-See `references/antigravity-tools.md` for the full tool mapping and SKILL.md frontmatter details.
+Read `godot-code-review` for review tasks. If the code belongs to a specific domain, also read that domain skill so the review checks Godot-specific patterns rather than generic style only.
 
-## Coexistence with Other Plugins (e.g., Superpowers)
+### Debugging
 
-When another plugin (like Superpowers) is handling workflow (brainstorming, planning, execution), GodotPrompter skills STILL APPLY during implementation. They are not replaced — they are domain-specific guidance that workflow plugins cannot provide.
+Read `godot-debugging` for runtime failures, scene-tree confusion, signal issues, or reproduction planning. Pair it with subsystem skills such as `physics-system`, `player-controller`, `godot-ui`, or `multiplayer-basics` when the failure is domain-specific.
 
-**RULE: Before implementing ANY Godot system, you MUST check for a matching godot-prompter skill and invoke it.**
+## 4. Codex Personas
 
-This is not optional. Workflow plugins handle HOW you work. GodotPrompter handles WHAT you build. Both are needed.
+Codex for Godot includes optional specialist personas under `.codex/agents/codex-for-godot/`.
 
-| Implementing...         | MUST invoke skill                                      |
-|-------------------------|--------------------------------------------------------|
-| Player movement         | `godot-prompter:player-controller`                     |
-| State machine / FSM     | `godot-prompter:state-machine`                         |
-| Signals / EventBus      | `godot-prompter:event-bus`                             |
-| Scene tree structure    | `godot-prompter:scene-organization`                    |
-| UI / HUD                | `godot-prompter:godot-ui`, `godot-prompter:hud-system` |
-| Inventory               | `godot-prompter:inventory-system`                      |
-| Save/Load               | `godot-prompter:save-load`                             |
-| Enemy AI / navigation   | `godot-prompter:ai-navigation`                         |
-| Camera                  | `godot-prompter:camera-system`                         |
-| Audio                   | `godot-prompter:audio-system`                          |
-| Weapons / combat        | `godot-prompter:component-system`                      |
-| Resources / data        | `godot-prompter:resource-pattern`                      |
-| Input handling          | `godot-prompter:input-handling`                        |
-| Animation               | `godot-prompter:animation-system`                      |
-| Testing                 | `godot-prompter:godot-testing`                         |
-| Project scaffolding     | `godot-prompter:godot-project-setup`                   |
-| Shaders / VFX           | `godot-prompter:shader-basics`, `godot-prompter:particles-vfx` |
-| Physics                 | `godot-prompter:physics-system`                        |
-| Multiplayer             | `godot-prompter:multiplayer-basics`                    |
-| Export / deploy         | `godot-prompter:export-pipeline`                       |
+| Persona | Use for |
+|---------|---------|
+| `godot-game-architect` | System design, scene trees, signal maps, implementation plans |
+| `godot-game-dev` | General Godot feature implementation and bug fixing |
+| `godot-code-reviewer` | Godot-specific code review |
+| `godot-shader-author` | Shaders, post-processing, canvas item and spatial materials |
+| `godot-performance-profiler` | Profiler-driven performance diagnosis |
+| `godot-animator` | AnimationPlayer, AnimationTree, blend trees, IK, retargeting |
+| `godot-csharp-engineer` | C#-first Godot development |
+| `godot-ui-designer` | Control-tree UI, themes, responsive layouts, localization-aware UI |
+| `godot-tools-engineer` | Editor plugins, inspectors, dock panels, gizmos, `@tool` scripts |
 
-**For subagents:** If you are a subagent executing a plan task in a Godot project, check this table before writing code. The skill provides Godot-specific patterns, node types, and checklists you cannot derive from general knowledge.
+Use a persona when the request benefits from a specialist role. Otherwise, work directly from the relevant skills.
 
-## Workflow: From Idea to Working Game
-
-GodotPrompter handles the full development workflow. No other plugins required.
-
-### 1. Design Phase
-Load `godot-prompter:godot-brainstorming` — it guides you through:
-- Asking clarifying questions about the game/system
-- Proposing architectural approaches with trade-offs
-- Designing scene trees, signal maps, and data flow
-- Creating an implementation plan with ordered tasks
-
-### 2. Implementation Phase
-For each task in the plan, load the relevant domain skill:
-- Building a player? Load `godot-prompter:player-controller` and `godot-prompter:state-machine`
-- Adding inventory? Load `godot-prompter:inventory-system`
-- Need save/load? Load `godot-prompter:save-load`
-
-Each skill provides complete code examples, Godot best practices, and a checklist.
-
-### 3. Review Phase
-Load `godot-prompter:godot-code-review` to review the code against Godot-specific checklists.
-
-### Agents
-
-- **godot-game-architect** — Designs systems, plans scene trees, chooses patterns
-- **godot-game-dev** — Implements features guided by skills
-- **godot-code-reviewer** — Reviews code against Godot best practices
-- **godot-shader-author** — Authors custom shaders, post-processing, Compositor effects
-- **godot-performance-profiler** — Diagnoses performance issues from profiler data
-- **godot-animator** — Designs animation graphs, blend trees, IKModifier3D, BoneConstraint3D, retargeting
-- **godot-csharp-engineer** — C#-first development; parity mode for closing this repo's C# debt
-- **godot-ui-designer** — Builds Control-tree UI — themes, responsive layouts, localization-aware
-- **godot-tools-engineer** — Editor plugins, custom inspectors, gizmos, `@tool` scripts, plugin distribution
-
-### Plan Storage
-Implementation plans and design docs are saved to `docs/godot-prompter/plans/` and `docs/godot-prompter/specs/` in the user's project.
-
-## Platform Adaptation
-
-Skills use Claude Code tool names as the canonical reference. Non-Claude platforms: see the appropriate tool mapping file in `references/` for your platform's equivalents:
-
-- [`references/copilot-tools.md`](references/copilot-tools.md) — GitHub Copilot CLI
-- [`references/codex-tools.md`](references/codex-tools.md) — Codex
-- [`references/cursor-tools.md`](references/cursor-tools.md) — Cursor
-- [`references/gemini-tools.md`](references/gemini-tools.md) — Gemini CLI (Gemini also auto-loads this via `GEMINI.md`)
-- [`references/antigravity-tools.md`](references/antigravity-tools.md) — Antigravity (2.0 desktop, IDE, CLI)
-
-## Available Skill Categories
+## 5. Skill Catalog
 
 ### Core / Process
-- `using-godot-prompter` — This skill (bootstrap)
-- `godot-project-setup` — Scaffold new projects
-- `godot-brainstorming` — Godot-specific design exploration
+
+- `using-godot-prompter` — This bootstrap skill during the migration
+- `godot-project-setup` — Project scaffolding, directory layout, autoloads, .gitignore
+- `godot-brainstorming` — Design exploration and implementation planning
 - `godot-code-review` — GDScript/C# review against Godot best practices
-- `godot-debugging` — Godot-specific debugging techniques
+- `godot-debugging` — Runtime diagnosis, signal tracing, scene-tree debugging
 - `godot-testing` — TDD with GUT and gdUnit4
 
 ### Architecture & Patterns
-- `scene-organization` — Scene tree structure, composition patterns
-- `state-machine` — FSM patterns (node-based, resource-based, enum-based)
-- `event-bus` — Signal-based decoupling, autoload event systems
-- `component-system` — Composition over inheritance
-- `resource-pattern` — Custom Resources as data containers
-- `dependency-injection` — Autoloads, service locators
+
+- `scene-organization` — Scene tree structure and node responsibility boundaries
+- `state-machine` — Enum, node, and resource FSM patterns
+- `event-bus` — Typed signal autoloads and decoupled communication
+- `component-system` — Composition patterns for reusable gameplay systems
+- `resource-pattern` — Custom Resources for data and configuration
+- `dependency-injection` — Autoloads, service locators, exported injection, scene injection
 
 ### Gameplay Systems
-- `player-controller` — CharacterBody2D/3D movement, input handling
-- `input-handling` — InputEvent system, Input Map, controllers/gamepads, mouse/touch, rebinding
+
+- `player-controller` — CharacterBody2D/3D movement
+- `input-handling` — Input Map, InputEvent, controllers, mouse/touch, rebinding
 - `animation-system` — AnimationPlayer, AnimationTree, blend trees, state machines
-- `tween-animation` — Tween class, easing, chaining, parallel sequences, motion recipes
-- `inventory-system` — Resource-based inventory patterns
-- `dialogue-system` — Dialogue trees and patterns
-- `save-load` — Serialization strategies
-- `ai-navigation` — NavigationAgent, behavior trees
-- `camera-system` — Camera follow, shake, zones
-- `audio-system` — Audio buses, music management, SFX pooling, spatial audio
-- `localization` — i18n/l10n, TranslationServer, CSV/PO, locale switching, RTL
-- `procedural-generation` — Noise, BSP dungeons, cellular automata, WFC, seeded randomness
+- `tween-animation` — Tween workflows and common motion recipes
+- `inventory-system` — Resource-based items, slots, stacking, UI binding
+- `dialogue-system` — Dialogue trees, conditions, UI presentation
+- `save-load` — ConfigFile, JSON, Resource serialization, version migration
+- `ai-navigation` — NavigationAgent2D/3D, steering, patrols, behavior trees
+- `ability-system` — Abilities, costs, cooldowns, buffs, tags, HUD binding
+- `camera-system` — Smooth follow, shake, zones, transitions
+- `audio-system` — Audio buses, music, SFX pooling, spatial audio
+- `localization` — TranslationServer, CSV/PO, locale switching, RTL, pluralization
+- `procedural-generation` — Noise, BSP dungeons, cellular automata, WFC
 
-### UI/UX
-- `godot-ui` — Control nodes, themes, containers
-- `responsive-ui` — Multi-resolution scaling
-- `hud-system` — In-game HUD patterns
+### UI, Rendering, Physics, And Platforms
 
-### Multiplayer
-- `multiplayer-basics` — MultiplayerAPI, RPCs, authority
-- `multiplayer-sync` — Synchronization, interpolation
-- `dedicated-server` — Headless export, server architecture
+- `godot-ui` — Control nodes, themes, anchors, containers
+- `responsive-ui` — Stretch modes, aspect ratios, DPI, mobile/desktop adaptation
+- `hud-system` — Health bars, score displays, minimap, notifications
+- `physics-system` — Bodies, areas, raycasts, collisions, Jolt, ragdolls
+- `2d-essentials` — TileMaps, parallax, 2D lights/shadows, particles
+- `3d-essentials` — Materials, lighting, environment, GI, fog, LOD, decals
+- `shader-basics` — Godot shader language and visual shader recipes
+- `particles-vfx` — GPUParticles2D/3D, materials, trails, subemitters
+- `xr-development` — OpenXR, XROrigin3D, hand tracking, Quest deployment
+- `mobile-development` — Android/iOS export, signing, permissions, lifecycle
 
-### Physics & 2D/3D
-- `physics-system` — RigidBody, Area, raycasting, collision shapes, Jolt, ragdolls
-- `2d-essentials` — TileMaps, parallax, 2D lights/shadows, particles, canvas layers
-- `3d-essentials` — Materials, lighting, shadows, environment, GI, fog, LOD, decals
-- `xr-development` — OpenXR, XROrigin3D, hand tracking, controllers, Meta Quest
+### Multiplayer, Build, Scripting, And Data
 
-### Rendering & Visual
-- `shader-basics` — Godot shader language, visual shaders, common recipes, post-processing
-- `particles-vfx` — GPUParticles2D/3D, process materials, subemitters, trails, attractors
-
-### Build & Deploy
-- `export-pipeline` — Platform exports, CI/CD
-- `godot-optimization` — Profiler, performance patterns
-- `addon-development` — EditorPlugin, tool scripts
-- `assets-pipeline` — Image compression, 3D scene import, audio formats, resource management
-
-### Scripting
-- `gdscript-patterns` — Static typing, await/coroutines, lambdas, match, exports, idioms
-- `csharp-godot` — C# conventions, GodotSharp API
-- `csharp-signals` — C# signal patterns
-
-### Math & Data
-- `math-essentials` — Vectors, transforms, interpolation, curves, paths, RNG
-
----
+- `multiplayer-basics` — MultiplayerAPI, ENet/WebSocket, RPCs, authority
+- `multiplayer-sync` — Synchronization, interpolation, prediction, lag compensation
+- `dedicated-server` — Headless export, lobby flow, deployment
+- `export-pipeline` — Export presets, platform settings, CI/CD
+- `godot-optimization` — Profiler, draw calls, physics, memory, bottlenecks
+- `addon-development` — EditorPlugin, inspectors, docks, gizmos
+- `assets-pipeline` — Import settings for images, 3D scenes, audio, resources
+- `gdscript-patterns` — Static typing, await, lambdas, match, exports
+- `gdscript-advanced` — Performance idioms, metaprogramming, `@tool`, async pitfalls
+- `csharp-godot` — Godot C# conventions and GodotSharp APIs
+- `csharp-signals` — C# signal delegates, EmitSignal, async awaiting
+- `gdextension` — Native extension workflows with godot-cpp or Rust gdext
+- `multithreading` — WorkerThreadPool, Thread, Mutex, thread-safe scene access
+- `math-essentials` — Vectors, transforms, interpolation, curves, RNG
+- `limboai` — LimboAI behavior trees and hierarchical state machines
+- `beehave` — Beehave pure-GDScript behavior trees
 
 ## Implementation Checklist
 
-- [ ] Identified the matching domain skill via the table above before writing any system code
-- [ ] Invoked the identified skill with the `Skill` tool (or platform equivalent) before implementation
-- [ ] When a workflow plugin is also active (Superpowers, etc.), still invoked the relevant godot-prompter domain skill during implementation — they are complementary, not exclusive
-- [ ] After implementation, ran `godot-prompter:godot-code-review` to validate against Godot best practices
-- [ ] Logged any newly-discovered domain gap that no current skill covers, so it can become a future skill
+- [ ] Identified the closest matching Codex for Godot skill before acting
+- [ ] Read the selected skill's `SKILL.md`
+- [ ] Read only the relevant `references/*.md` files linked by that skill
+- [ ] Used a Codex persona only when specialist routing added value
+- [ ] Ran `godot-code-review` after significant implementation work
+- [ ] Noted any missing Godot domain guidance that should become a future skill
