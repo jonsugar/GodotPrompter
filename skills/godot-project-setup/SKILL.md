@@ -1,11 +1,11 @@
 ---
 name: godot-project-setup
-description: Use when creating a new Godot 4.x project — scaffolds a minimal starter project with the GodotPrompter entity co-location structure, project settings, autoloads, and version control files
+description: Use when creating a new Godot 4.x project — scaffolds a minimal starter project with the Codex for Godot entity co-location structure, project settings, autoloads, and version control files
 ---
 
 # Godot Project Setup
 
-This skill scaffolds a new Godot 4.3+ project with the GodotPrompter entity co-location structure, starter scenes, project settings, autoloads, and version control configuration.
+This skill scaffolds a new Godot 4.3+ project with the Codex for Godot entity co-location structure, starter scenes, project settings, autoloads, and version control configuration.
 
 > **Related skills:** **scene-organization** for structuring scene trees, **event-bus** for the EventBus autoload pattern, **save-load** for the SaveManager autoload pattern.
 

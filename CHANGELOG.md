@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Renamed the project identity to Codex for Godot.
 - Made Codex the only supported assistant surface for the repository.
 - Replaced legacy bootstrap wording with `using-codex-for-godot`.
-- Moved specialist role guidance to optional Codex personas under `.codex/agents/codex-for-godot/`.
+- Moved specialist role guidance to Codex personas under `.codex/agents/codex-for-godot/`.
 
 ### Removed
 

@@ -14,7 +14,7 @@ Codex for Godot provides Godot 4.x domain skills for Codex. Skills cover project
 Codex loads this bootstrap through the repository [AGENTS.md](../../AGENTS.md) file. When a Godot request matches one of the skills below, Codex should read the matching `SKILL.md` before planning or editing code.
 
 Use [references/codex-tools.md](references/codex-tools.md) for Codex-specific workflow guidance.
-Use [references/project-structure.md](references/project-structure.md) before creating, recommending, or reviewing Godot file paths so new work follows the standard GodotPrompter project layout.
+Use [references/project-structure.md](references/project-structure.md) before creating, recommending, or reviewing Godot file paths so new work follows the standard Codex for Godot project layout.
 
 The bootstrap skill id is `using-codex-for-godot`.
 

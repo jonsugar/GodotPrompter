@@ -1,4 +1,4 @@
-# GodotPrompter Project Structure
+# Codex for Godot Project Structure
 
 Use this reference before creating, recommending, or reviewing Godot file paths. The goal is to keep project files organized by domain while preserving Godot conventions and avoiding empty scaffolding.
 
