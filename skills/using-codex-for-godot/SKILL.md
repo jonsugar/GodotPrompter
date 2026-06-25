@@ -5,7 +5,7 @@ description: Bootstrap skill for Codex for Godot — use to find the right Godot
 
 # Using Codex For Godot
 
-> **Related skills:** **godot-project-setup** for scaffolding a new project, **godot-brainstorming** for design exploration, **godot-code-review** for reviewing finished code, **godot-debugging** for diagnosing runtime issues.
+> **Related skills:** **to-gdd** for turning game ideas into GDDs, **godot-project-setup** for scaffolding a new project, **godot-brainstorming** for design exploration, **godot-code-review** for reviewing finished code, **godot-debugging** for diagnosing runtime issues.
 
 Codex for Godot provides Godot 4.x domain skills for Codex. Skills cover project setup, architecture patterns, gameplay systems, UI, multiplayer, testing, export, optimization, editor tooling, and deployment for both GDScript and C#.
 
@@ -26,6 +26,7 @@ Before creating or recommending any `res://` path, also read [references/project
 
 | Task area | Read first |
 |-----------|------------|
+| Game idea to GDD | `to-gdd` |
 | Project scaffolding | `godot-project-setup` |
 | Feature design | `godot-brainstorming` |
 | Player movement | `player-controller`, `input-handling` |
@@ -56,6 +57,8 @@ Before creating or recommending any `res://` path, also read [references/project
 ## 3. Workflow
 
 ### Design
+
+Read `to-gdd` when the user has a vague game idea, reference-game prompt, genre concept, or asks for a Game Design Document. Keep that workflow engine-agnostic until the GDD is approved and the production-readiness gate passes.
 
 Read `godot-brainstorming` when the user is still shaping a feature or system. It guides scope, clarifying questions, scene tree planning, data flow, and implementation sequencing.
 
@@ -90,6 +93,8 @@ Codex for Godot includes specialist personas under `.codex/agents/codex-for-godo
 
 | Persona | Use for |
 |---------|---------|
+| `godot-game-producer` | Idea-to-GDD workflow, phase gates, scope control, production-readiness review |
+| `godot-game-researcher` | Reference-game, genre, audience, mechanics, loop, and commercial-pattern research |
 | `godot-game-architect` | System design, scene trees, signal maps, implementation plans |
 | `godot-game-dev` | General Godot feature implementation and bug fixing |
 | `godot-code-reviewer` | Godot-specific code review |
@@ -107,6 +112,7 @@ Use a persona when the request benefits from a specialist role. Otherwise, work 
 ### Core / Process
 
 - `using-codex-for-godot` — This bootstrap skill
+- `to-gdd` — Game idea intake, optional research, GDD drafting, and production gate
 - `godot-project-setup` — Project scaffolding, directory layout, autoloads, .gitignore
 - `godot-brainstorming` — Design exploration and implementation planning
 - `godot-code-review` — GDScript/C# review against Godot best practices

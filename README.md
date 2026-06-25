@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Godot 4.x](https://img.shields.io/badge/Godot-4.3+-blue.svg)](https://godotengine.org)
-[![Skills: 51](https://img.shields.io/badge/Skills-51-green.svg)](#available-skills)
+[![Skills: 52](https://img.shields.io/badge/Skills-52-green.svg)](#available-skills)
 
 Codex for Godot is a Codex-only skill pack for Godot 4.x game development. It gives Codex domain-specific guidance for GDScript and C# projects, including project setup, gameplay systems, UI, multiplayer, testing, export, optimization, and Godot editor tooling.
 
@@ -26,16 +26,15 @@ Restart Codex after installing or updating symlinks.
 
 ## How It Works
 
-Codex reads [AGENTS.md](AGENTS.md), which re-exports the bootstrap skill and Codex tool mapping. For Godot work, Codex should load the relevant skill before planning, implementing, reviewing, or debugging a system.
-
 Examples:
 
+- "Turn this game idea into a GDD" uses `to-gdd`.
 - "Set up a new Godot project" uses `godot-project-setup`.
 - "Add a platformer controller with coyote time" uses `player-controller` and `input-handling`.
 - "Design enemy patrol and chase behavior" uses `ai-navigation` and `state-machine`.
 - "Review my Godot code" uses `godot-code-review`.
 
-Codex personas live under [.codex/agents/codex-for-godot](.codex/agents/codex-for-godot). They provide specialist roles such as architect, developer, reviewer, UI designer, animator, shader author, performance profiler, C# engineer, and tools engineer.
+Codex personas live under [.codex/agents/codex-for-godot](.codex/agents/codex-for-godot). They provide specialist roles such as game producer, researcher, architect, developer, reviewer, UI designer, animator, shader author, performance profiler, C# engineer, and tools engineer.
 
 ## Available Skills
 
@@ -44,6 +43,7 @@ Codex personas live under [.codex/agents/codex-for-godot](.codex/agents/codex-fo
 | Skill | Description |
 |-------|-------------|
 | `using-codex-for-godot` | Bootstrap skill catalog and workflow guide |
+| `to-gdd` | Turn vague game ideas and reference prompts into GDDs with research, gates, and a production-readiness review |
 | `godot-project-setup` | Scaffold directory structure, autoloads, .gitignore, input maps |
 | `godot-brainstorming` | Scene tree planning, node selection, architectural decisions |
 | `godot-code-review` | Review checklist for Godot best practices and common pitfalls |

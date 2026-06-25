@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Added the `to-gdd` skill for engine-agnostic game idea discovery, optional reference research, GDD drafting, and a production-readiness gate.
+- Added `godot-game-producer` and `godot-game-researcher` Codex personas for GDD workflow ownership and genre/reference research.
+
 ### Changed
 
 - Reset documentation and test references around the Codex-only project identity.

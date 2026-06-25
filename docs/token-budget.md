@@ -69,10 +69,10 @@ Columns:
 | skill | dialogue-system | 10898 | 10.6 | 2725 | — | ✓ under budget |
 | skill | multiplayer-sync | 10659 | 10.4 | 2665 | — | ✓ under budget |
 | skill | scene-organization | 10447 | 10.2 | 2612 | — | ✓ under budget |
+| skill | using-codex-for-godot | 10429 | 10.2 | 2607 | — | ✓ under budget |
 | reference | godot-optimization/memory-management.md | 10420 | 10.2 | 2605 | — | — |
 | skill | multithreading | 10367 | 10.1 | 2592 | — | ✓ under budget |
 | skill | gdscript-advanced | 10075 | 9.8 | 2519 | — | ✓ under budget |
-| skill | using-codex-for-godot | 9819 | 9.6 | 2455 | — | ✓ under budget |
 | skill | csharp-signals | 9651 | 9.4 | 2413 | — | ✓ under budget |
 | skill | godot-testing | 9564 | 9.3 | 2391 | — | ✓ under budget |
 | reference | dedicated-server/lobby-management.md | 9178 | 9.0 | 2295 | — | — |
@@ -87,6 +87,7 @@ Columns:
 | reference | godot-optimization/cpu-bottlenecks.md | 7752 | 7.6 | 1938 | — | — |
 | reference | dialogue-system/dialogue-manager.md | 7540 | 7.4 | 1885 | — | — |
 | reference | procedural-generation/wave-function-collapse.md | 7334 | 7.2 | 1834 | — | — |
+| skill | to-gdd | 7188 | 7.0 | 1797 | — | ✓ under budget |
 | reference | inventory-system/ui-binding.md | 6873 | 6.7 | 1718 | — | — |
 | reference | godot-optimization/draw-calls.md | 6785 | 6.6 | 1696 | — | — |
 | reference | addon-development/gizmos-deep-dive.md | 6717 | 6.6 | 1679 | — | — |
@@ -131,10 +132,12 @@ Columns:
 | skill | save-load | 4742 | 4.6 | 1186 | — | ✓ under budget |
 | persona | godot-game-dev | 4721 | 4.6 | 1180 | — | — |
 | reference | procedural-generation/cellular-automata.md | 4655 | 4.5 | 1164 | — | — |
+| reference | to-gdd/genre-section-rules.md | 4654 | 4.5 | 1164 | — | — |
 | persona | godot-shader-author | 4645 | 4.5 | 1161 | — | — |
 | reference | input-handling/mouse.md | 4585 | 4.5 | 1146 | — | — |
 | reference | godot-brainstorming/example-chest.md | 4578 | 4.5 | 1145 | — | — |
 | reference | audio-system/sfx-pooling.md | 4531 | 4.4 | 1133 | — | — |
+| reference | to-gdd/interview-guide.md | 4500 | 4.4 | 1125 | — | — |
 | reference | dialogue-system/external-formats.md | 4491 | 4.4 | 1123 | — | — |
 | reference | godot-testing/testing-patterns.md | 4472 | 4.4 | 1118 | — | — |
 | persona | godot-game-architect | 4459 | 4.4 | 1115 | — | — |
@@ -163,6 +166,7 @@ Columns:
 | reference | dependency-injection/testing-with-di.md | 3558 | 3.5 | 890 | — | — |
 | reference | hud-system/minimap.md | 3528 | 3.4 | 882 | — | — |
 | reference | camera-system/camera-zones.md | 3506 | 3.4 | 877 | — | — |
+| persona | godot-game-producer | 3497 | 3.4 | 874 | — | — |
 | reference | physics-system/raycasting-recipes.md | 3493 | 3.4 | 873 | — | — |
 | reference | resource-pattern/configuration-pattern.md | 3481 | 3.4 | 870 | — | — |
 | reference | save-load/configfile.md | 3445 | 3.4 | 861 | — | — |
@@ -182,10 +186,12 @@ Columns:
 | reference | mobile-development/iap-and-ads.md | 3050 | 3.0 | 763 | — | — |
 | reference | export-pipeline/distribution-itch-steam.md | 3026 | 3.0 | 757 | — | — |
 | reference | ai-navigation/patrol-patterns.md | 2992 | 2.9 | 748 | — | — |
+| persona | godot-game-researcher | 2898 | 2.8 | 725 | — | — |
 | reference | responsive-ui/adaptive-layouts.md | 2888 | 2.8 | 722 | — | — |
 | reference | 3d-essentials/fog-recipes.md | 2875 | 2.8 | 719 | — | — |
 | reference | shader-basics/stencil-buffer.md | 2856 | 2.8 | 714 | — | — |
 | reference | godot-ui/focus-and-navigation.md | 2845 | 2.8 | 711 | — | — |
+| reference | to-gdd/quality-checklist.md | 2802 | 2.7 | 701 | — | — |
 | reference | math-essentials/random-numbers.md | 2792 | 2.7 | 698 | — | — |
 | reference | 2d-essentials/parallax.md | 2776 | 2.7 | 694 | — | — |
 | reference | gdscript-patterns/super-in-virtual-methods.md | 2771 | 2.7 | 693 | — | — |
@@ -241,31 +247,3 @@ Columns:
 | reference | xr-development/passthrough.md | 1265 | 1.2 | 316 | — | — |
 | reference | input-handling/touch.md | 1229 | 1.2 | 307 | — | — |
 | reference | animation-system/retargeting.md | 838 | 0.8 | 210 | — | — |
-<!-- END-TOKEN-TABLE -->
-
-## How To Read This
-
-A typical Codex session opens:
-
-1. The repository bootstrap skill, `using-codex-for-godot`
-2. The most specific domain skill for the task
-3. One or more focused reference files only when the task needs extra depth
-4. An optional persona file when specialist routing helps
-
-Keeping individual `SKILL.md` files under 16 KB keeps common 2-4 skill workflows small enough for planning, editing, and validation without flooding context.
-
-## Reducing Token Use
-
-- Start from the closest matching domain skill instead of opening the whole catalog.
-- Open `references/<topic>.md` files only when the active skill points to a relevant topic.
-- Use a Codex persona only when a specialist role adds useful focus.
-
-## Regenerating This Page
-
-This file is committed as a static snapshot. To refresh it after content changes:
-
-```bash
-node scripts/count-tokens.mjs --markdown
-```
-
-Replace the contents between the `BEGIN-TOKEN-TABLE` and `END-TOKEN-TABLE` markers with the new output.
